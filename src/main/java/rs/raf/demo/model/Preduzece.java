@@ -2,9 +2,12 @@ package rs.raf.demo.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Getter
@@ -13,23 +16,26 @@ public class Preduzece {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long preduzeceId;
-    @Column
+    @Column(nullable = false)
     @NotBlank(message = "Naziv je obavezan")
     private String naziv;
-    @Column
+    @Column(nullable = false)
     @NotBlank(message = "PIB je obavezan")
+    @NumberFormat
+    @Size(min = 9, max = 9)
     private String pib;
     @Column
     private String racun;
-    @Column
+    @Column(nullable = false)
     @NotBlank(message = "Adresa je obavezna")
     private String adresa;
-    @Column
+    @Column(nullable = false)
     @NotBlank(message = "Grad je obavezan")
     private String grad;
     @Column
     private String telefon;
     @Column
+    @Email
     private String email;
     @Column
     private String fax;

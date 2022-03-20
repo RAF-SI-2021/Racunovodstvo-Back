@@ -7,9 +7,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.Preduzece;
+import rs.raf.demo.services.IService;
 import rs.raf.demo.services.PreduzeceService;
 
-import javax.print.attribute.standard.Media;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequestMapping("/api/preduzece")
 public class PreduzeceRestController {
 
-    private final PreduzeceService preduzeceService;
+    private final IService<Preduzece, Long> preduzeceService;
 
     public PreduzeceRestController(PreduzeceService preduzeceService){
         this.preduzeceService = preduzeceService;
@@ -71,7 +71,7 @@ public class PreduzeceRestController {
     public Map<String, String> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
