@@ -17,11 +17,4 @@ public class PreduzeceService {
         this.preduzeceRepository = preduzeceRepository;
     }
 
-    public  List<Preduzece> findAll(){
-        return preduzeceRepository.findAll();
-    }
-
-    private Preduzece save(Preduzece preduzece){
-        return  preduzeceRepository.save(preduzece);
-    }
 }

@@ -23,10 +23,8 @@ public class FakturaService {
     }
 
     public List<Faktura> findUlazneFakture(){
-        List<Faktura> all = new ArrayList<>();
-        all = fakturaRepository.findAll();
         List<Faktura> ulazneFakture = new ArrayList<>();
-        for(Faktura f : all){
+        for(Faktura f : fakturaRepository.findAll()){
             if(f.getTipFakture().equals(TipFakture.ULAZNA_FAKTURA)){
                 ulazneFakture.add(f);
             }
@@ -35,10 +33,8 @@ public class FakturaService {
     }
 
     public List<Faktura> findIzlacneFakture(){
-        List<Faktura> all = new ArrayList<>();
-        all = fakturaRepository.findAll();
         List<Faktura> izlacneFakture = new ArrayList<>();
-        for(Faktura f : all){
+        for(Faktura f : fakturaRepository.findAll()){
             if(f.getTipFakture().equals(TipFakture.IZLAZNA_FAKTURA)){
                 izlacneFakture.add(f);
             }

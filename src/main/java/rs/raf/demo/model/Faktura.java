@@ -46,7 +46,4 @@ public class Faktura {
     @JoinColumn(name = "preduzeceId")
     @Column(nullable = false)
     private Preduzece preduzece;
-
-    public Faktura(){}
-
 }

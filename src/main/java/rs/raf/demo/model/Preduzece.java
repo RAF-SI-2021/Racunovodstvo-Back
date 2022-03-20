@@ -17,7 +17,7 @@ public class Preduzece {
     @Column(nullable = false)
     private String naziv;
     @Column(nullable = false)
-    private int PIB;
+    private int pib;
     @Column(nullable = false)
     private String adresa;
     @Column(nullable = false)
@@ -35,11 +35,9 @@ public class Preduzece {
     @OneToMany(mappedBy = "preduzece", fetch =  FetchType.EAGER)
     private List<Faktura> fakture;
 
-    public Preduzece(){}
-
-    public Preduzece(String naziv,int PIB, String adresa, String grad){
+    public Preduzece(String naziv,int pib, String adresa, String grad){
         this.naziv = naziv;
-        this.PIB = PIB;
+        this.pib = pib;
         this.adresa = adresa;
         this.grad = grad;
     }

@@ -7,7 +7,6 @@ import rs.raf.demo.model.Faktura;
 import rs.raf.demo.services.FakturaService;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -49,24 +48,4 @@ public class FakturaRestController {
         }
     }
 
-    /*@PostMapping(value = "/create/{fakturaId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> novaFaktura(@RequestBody Faktura faktura){
-
-    }
-
-    @PutMapping(value = "/edit/{fakturaId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> novaFaktura(@PathVariable Long fakturaId){
-        Optional<Faktura> optionalFaktura = fakturaService.findById(fakturaId);
-
-        if(optionalFaktura.isPresent()){
-            return ResponseEntity.ok(200);
-        }else{
-            return ResponseEntity.status(404).build();
-        }
-
-    }
-    @DeleteMapping(path = "/detleteFaktura/{fakturaId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteFaktura(@PathVariable Long fakturaId){
-
-    }*/
 }
