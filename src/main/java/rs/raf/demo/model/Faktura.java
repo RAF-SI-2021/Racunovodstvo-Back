@@ -13,29 +13,29 @@ public class Faktura {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fakturaId;
-    @Column
+    @Column(nullable = false)
     private String brojFakture;
-    @Column
+    @Column(nullable = false)
     private Date datumIzdavanja;
-    @Column
+    @Column(nullable = false)
     private Date datumPlacanja;
-    @Column
+    @Column(nullable = false)
     private Double prodajnaVrednost;
     @Column
     private String rabatProcenat;
     @Column
     private Double rabat;
-    @Column
+    @Column(nullable = false)
     private String porezProcenat;
-    @Column
+    @Column(nullable = false)
     private Double porez;
-    @Column
+    @Column(nullable = false)
     private Double iznos;
-    @Column
+    @Column(nullable = false)
     private String valuta;
-    @Column
+    @Column(nullable = false)
     private Double kurs;
-    @Column
+    @Column(nullable = false)
     private Double naplata;
     @Column
     private String komentar;
@@ -44,6 +44,7 @@ public class Faktura {
     private TipFakture tipFakture;
     @ManyToOne
     @JoinColumn(name = "preduzeceId")
+    @Column(nullable = false)
     private Preduzece preduzece;
 
     public Faktura(){}

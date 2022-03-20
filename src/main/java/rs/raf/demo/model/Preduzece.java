@@ -14,13 +14,13 @@ public class Preduzece {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long preduzeceId;
-    @Column
+    @Column(nullable = false)
     private String naziv;
-    @Column
+    @Column(nullable = false)
     private int PIB;
-    @Column
+    @Column(nullable = false)
     private String adresa;
-    @Column
+    @Column(nullable = false)
     private String grad;
     @Column
     private String brojTelefona;
