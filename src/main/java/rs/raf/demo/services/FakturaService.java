@@ -43,7 +43,7 @@ public class FakturaService implements IService<Faktura, Long>{
     }
 
     public Optional<Faktura> findById(Long id){
-        return fakturaRepository.findById(id);
+        return fakturaRepository.findByFakturaId(id);
     }
 
     public Faktura save(Faktura faktura){

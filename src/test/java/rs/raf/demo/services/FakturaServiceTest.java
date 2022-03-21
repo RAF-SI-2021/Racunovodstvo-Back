@@ -35,7 +35,7 @@ class FakturaServiceTest {
 
 
     @Test
-    public void testUlazneFakture(){
+    void testUlazneFakture(){
         Faktura f1 = new Faktura();
         f1.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
         Faktura f2 = new Faktura();
@@ -57,7 +57,7 @@ class FakturaServiceTest {
     }
 
     @Test
-    public void testIzlazneFakture(){
+    void testIzlazneFakture(){
         Faktura f1 = new Faktura();
         f1.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
         Faktura f2 = new Faktura();
@@ -80,7 +80,7 @@ class FakturaServiceTest {
     }
 
     @Test
-    public void testAllFakture(){
+    void testAllFakture(){
         List<Faktura> fakture = new ArrayList<>();
         Faktura f1 = new Faktura();
         f1.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
@@ -100,7 +100,7 @@ class FakturaServiceTest {
     }
 
     @Test
-    public void testEmtyFakture(){
+    void testEmtyFakture(){
         when(fakturaRepository.findAll()).thenReturn(fakture);
         List<Faktura> rezultat = fakturaService.findIzlazneFakture();
 

@@ -42,8 +42,8 @@ public class Faktura {
     @Column
     @Enumerated(EnumType.STRING)
     private TipFakture tipFakture;
+
     @ManyToOne
     @JoinColumn(name = "preduzeceId")
-    @Column(nullable = false)
     private Preduzece preduzece;
 }

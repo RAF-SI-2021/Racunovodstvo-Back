@@ -16,16 +16,12 @@ public class BootstrapData implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PermissionRepository permissionRepository;
     private final PasswordEncoder passwordEncoder;
-    private final PreduzeceRepository preduzeceRepository;
-    private final FakturaRepository fakturaRepository;
 
     @Autowired
-    public BootstrapData(UserRepository userRepository, PermissionRepository permissionRepository, PasswordEncoder passwordEncoder, PreduzeceRepository preduzeceRepository, FakturaRepository fakturaRepository) {
+    public BootstrapData(UserRepository userRepository, PermissionRepository permissionRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.permissionRepository = permissionRepository;
-        this.preduzeceRepository = preduzeceRepository;
-        this.fakturaRepository = fakturaRepository;
     }
 
     @Override
@@ -65,19 +61,6 @@ public class BootstrapData implements CommandLineRunner {
 
         this.userRepository.save(user1);
         this.userRepository.save(user2);
-
-        Preduzece preduzece = new Preduzece("Test Preduzece", 5125151, "Kneza Mihaila 6", "Beograd");
-        preduzeceRepository.save(preduzece);
-        Faktura faktura = new Faktura();
-        faktura.setBrojFakture("safas324523");
-        faktura.setPreduzece(preduzece);
-        faktura.setTipFakture(TipFakture.ULAZNA_FAKTURA);
-        fakturaRepository.save(faktura);
-        Faktura faktura2 = new Faktura();
-        faktura2.setBrojFakture("12345324523");
-        faktura2.setPreduzece(preduzece);
-        faktura2.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
-        fakturaRepository.save(faktura2);
         System.out.println("Data loaded!");
     }
 }
