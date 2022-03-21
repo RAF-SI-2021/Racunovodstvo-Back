@@ -9,7 +9,7 @@ import rs.raf.demo.repositories.FakturaRepository;
 import java.util.*;
 
 @Service
-public class FakturaService {
+public class FakturaService implements IService<Faktura, Long>{
 
     private final FakturaRepository fakturaRepository;
 
@@ -32,7 +32,7 @@ public class FakturaService {
         return ulazneFakture;
     }
 
-    public List<Faktura> findIzlacneFakture(){
+    public List<Faktura> findIzlazneFakture(){
         List<Faktura> izlacneFakture = new ArrayList<>();
         for(Faktura f : fakturaRepository.findAll()){
             if(f.getTipFakture().equals(TipFakture.IZLAZNA_FAKTURA)){
@@ -48,5 +48,10 @@ public class FakturaService {
 
     public Faktura save(Faktura faktura){
         return fakturaRepository.save(faktura);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        fakturaRepository.deleteById(id);
     }
 }

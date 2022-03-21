@@ -31,7 +31,7 @@ public class FakturaRestController {
 
     @GetMapping(value = "/izlazneFakture", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getIzlazneFakture() {
-        List<Faktura> izlazneFakture = fakturaService.findIzlacneFakture();
+        List<Faktura> izlazneFakture = fakturaService.findIzlazneFakture();
         if(izlazneFakture.isEmpty()){
             return ResponseEntity.notFound().build();
         }else{
@@ -39,7 +39,7 @@ public class FakturaRestController {
         }
     }
 
-    @GetMapping(value = "/fakture", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getFakture(){
         if(fakturaService.findAll().isEmpty()){
             return ResponseEntity.notFound().build();

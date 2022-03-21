@@ -22,11 +22,11 @@ public class Faktura {
     @Column(nullable = false)
     private Double prodajnaVrednost;
     @Column
-    private String rabatProcenat;
+    private Double rabatProcenat;
     @Column
     private Double rabat;
     @Column(nullable = false)
-    private String porezProcenat;
+    private Double porezProcenat;
     @Column(nullable = false)
     private Double porez;
     @Column(nullable = false)
