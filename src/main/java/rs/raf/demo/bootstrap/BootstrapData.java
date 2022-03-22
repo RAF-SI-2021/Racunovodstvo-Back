@@ -1,5 +1,7 @@
 package rs.raf.demo.bootstrap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +15,7 @@ import java.util.List;
 @Component
 public class BootstrapData implements CommandLineRunner {
 
+    private final Logger log = LoggerFactory.getLogger(BootstrapData.class);
     private final UserRepository userRepository;
     private final PermissionRepository permissionRepository;
     private final PasswordEncoder passwordEncoder;
@@ -27,7 +30,7 @@ public class BootstrapData implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        System.out.println("Loading Data...");
+        log.info("Loading Data...");
 
         Permission permission1 = new Permission();
         permission1.setName("permission1");
@@ -53,7 +56,7 @@ public class BootstrapData implements CommandLineRunner {
         user2.setFirstName("Marko");
         user2.setLastName("Markovic");
 
-        List<Permission> user1Permissions = new ArrayList<Permission>();
+        List<Permission> user1Permissions = new ArrayList<>();
         user1Permissions.add(permission1);
         user1Permissions.add(permission2);
         user1Permissions.add(permission3);
@@ -63,6 +66,6 @@ public class BootstrapData implements CommandLineRunner {
         this.userRepository.save(user2);
 
 
-        System.out.println("Data loaded!");
+        log.info("Data loaded!");
     }
 }

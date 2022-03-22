@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.User;
 import rs.raf.demo.requests.UpdateUserRequest;
-import rs.raf.demo.services.UserService;
+import rs.raf.demo.services.impl.UserService;
 
 import java.util.List;
 import java.util.Optional;

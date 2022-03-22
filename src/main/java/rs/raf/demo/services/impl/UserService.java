@@ -1,4 +1,4 @@
-package rs.raf.demo.services;
+package rs.raf.demo.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.User;
 import rs.raf.demo.repositories.UserRepository;
+import rs.raf.demo.services.IService;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +34,7 @@ public class UserService implements UserDetailsService, IService<User, Long> {
 
     @Override
     public List<User> findAll() {
-        return (List<User>) userRepository.findAll();
+        return userRepository.findAll();
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import rs.raf.demo.services.UserService;
+import rs.raf.demo.services.impl.UserService;
 import rs.raf.demo.utils.JwtUtil;
 
 import javax.servlet.FilterChain;
