@@ -1,5 +1,6 @@
 package rs.raf.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -42,8 +43,9 @@ public class Faktura {
     @Column
     @Enumerated(EnumType.STRING)
     private TipFakture tipFakture;
-
     @ManyToOne
     @JoinColumn(name = "preduzeceId")
     private Preduzece preduzece;
+    @OneToOne(mappedBy = "faktura")
+    private DnevnikKnjizenja dnevnikKnjizenja;
 }
