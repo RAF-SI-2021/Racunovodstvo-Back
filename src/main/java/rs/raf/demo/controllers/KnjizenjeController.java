@@ -10,9 +10,9 @@ import rs.raf.demo.services.impl.DnevnikKnjizenjaService;
 @RequestMapping("/api/knjizenje")
 public class KnjizenjeController {
 
-    private final DnevnikKnjizenjaService knjizenjeService;
+    private final DnevnikKnjizenjaService dnevnikKnjizenjaService;
 
-    public KnjizenjeController(DnevnikKnjizenjaService knjizenjeService) {
-        this.knjizenjeService = knjizenjeService;
+    public KnjizenjeController(DnevnikKnjizenjaService dnevnikKnjizenjaService) {
+        this.dnevnikKnjizenjaService = dnevnikKnjizenjaService;
     }
 }
