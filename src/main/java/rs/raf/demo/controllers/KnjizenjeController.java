@@ -1,15 +1,20 @@
 package rs.raf.demo.controllers;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.DnevnikKnjizenja;
 
+import rs.raf.demo.model.Faktura;
 import rs.raf.demo.services.impl.DnevnikKnjizenjaService;
+import rs.raf.demo.specifications.DnevnikKnjizenjaSpecificationBuilder;
+import rs.raf.demo.specifications.FakturaSpecificationsBuilder;
 
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @CrossOrigin
 @RestController
@@ -59,6 +64,38 @@ public class KnjizenjeController {
         }
     }
 
-    
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> search(@RequestParam(name = "search") String search){
+        DnevnikKnjizenjaSpecificationBuilder builder = new DnevnikKnjizenjaSpecificationBuilder();
+        Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+        Matcher matcher = pattern.matcher(search + ",");
+        while (matcher.find()) {
+            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+
+        Specification<DnevnikKnjizenja> spec = builder.build();
+
+        try{
+            List<DnevnikKnjizenja> result = dnevnikKnjizenjaService.findAll(spec);
+
+            if(result.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            Collections.sort(result, new sortCompare());
+
+            return ResponseEntity.ok(result);
+        }
+        catch (RuntimeException e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    class sortCompare implements Comparator<DnevnikKnjizenja>
+    {
+        @Override
+        public int compare(DnevnikKnjizenja d1, DnevnikKnjizenja d2) {
+            return d1.getDatumKnjizenja().compareTo(d2.getDatumKnjizenja());
+        }
+    }
 
 }
