@@ -1,4 +1,4 @@
-package rs.raf.demo.specifications;
+package rs.raf.demo.compare;
 
 import rs.raf.demo.model.DnevnikKnjizenja;
 

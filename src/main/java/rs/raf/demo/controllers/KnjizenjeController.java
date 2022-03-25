@@ -10,7 +10,7 @@ import rs.raf.demo.model.DnevnikKnjizenja;
 
 import rs.raf.demo.services.IDnevnikKnjizenjaService;
 import rs.raf.demo.services.impl.DnevnikKnjizenjaService;
-import rs.raf.demo.specifications.CompareDnevnikKnjizenja;
+import rs.raf.demo.compare.CompareDnevnikKnjizenja;
 import rs.raf.demo.specifications.RacunSpecificationsBuilder;
 
 
