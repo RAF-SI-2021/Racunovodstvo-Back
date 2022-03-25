@@ -6,10 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.DnevnikKnjizenja;
 
-import rs.raf.demo.model.Faktura;
+
 import rs.raf.demo.services.impl.DnevnikKnjizenjaService;
 import rs.raf.demo.specifications.DnevnikKnjizenjaSpecificationBuilder;
-import rs.raf.demo.specifications.FakturaSpecificationsBuilder;
+
 
 import javax.validation.Valid;
 import java.util.*;
@@ -33,7 +33,7 @@ public class KnjizenjeController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateDnevnikKnjizenja(@Valid @RequestBody DnevnikKnjizenja dnevnikKnjizenja){ // jos jedna uslov ako nije validan????
+    public ResponseEntity<?> updateDnevnikKnjizenja(@Valid @RequestBody DnevnikKnjizenja dnevnikKnjizenja){
         Optional<DnevnikKnjizenja> optionalDnevnik = dnevnikKnjizenjaService.findById(dnevnikKnjizenja.getDnevnikKnjizenjaId());
         if(optionalDnevnik.isPresent()) {
             return ResponseEntity.ok(dnevnikKnjizenjaService.save(dnevnikKnjizenja));

@@ -3,11 +3,9 @@ package rs.raf.demo.services.impl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.DnevnikKnjizenja;
-import rs.raf.demo.model.Faktura;
 import rs.raf.demo.repositories.DnevnikKnjizenjaRepository;
 import rs.raf.demo.services.IService;
 
-import javax.validation.constraints.Null;
 import java.util.*;
 
 @Service
