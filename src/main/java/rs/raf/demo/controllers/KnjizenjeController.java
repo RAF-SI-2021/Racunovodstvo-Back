@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.DnevnikKnjizenja;
 
 
-import rs.raf.demo.services.IDnevnikKnjizenja;
-import rs.raf.demo.services.IService;
+
+import rs.raf.demo.services.IDnevnikKnjizenjaService;
 import rs.raf.demo.services.impl.DnevnikKnjizenjaService;
 import rs.raf.demo.specifications.CompareDnevnikKnjizenja;
-import rs.raf.demo.specifications.DnevnikKnjizenjaSpecificationBuilder;
+import rs.raf.demo.specifications.RacunSpecificationsBuilder;
 
 
 import javax.validation.Valid;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/knjizenje")
 public class KnjizenjeController {
 
-    private final IDnevnikKnjizenja dnevnikKnjizenjaService;
+    private final IDnevnikKnjizenjaService dnevnikKnjizenjaService;
 
     public KnjizenjeController(DnevnikKnjizenjaService dnevnikKnjizenjaService) {
         this.dnevnikKnjizenjaService = dnevnikKnjizenjaService;
@@ -69,7 +69,7 @@ public class KnjizenjeController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> search(@RequestParam(name = "search") String search){
-        DnevnikKnjizenjaSpecificationBuilder builder = new DnevnikKnjizenjaSpecificationBuilder();
+        RacunSpecificationsBuilder<DnevnikKnjizenja> builder = new RacunSpecificationsBuilder<>();
         Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
         Matcher matcher = pattern.matcher(search + ",");
         while (matcher.find()) {

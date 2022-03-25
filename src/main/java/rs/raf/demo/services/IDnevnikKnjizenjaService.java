@@ -7,6 +7,6 @@ import rs.raf.demo.model.DnevnikKnjizenja;
 import java.util.List;
 
 
-public interface IDnevnikKnjizenja extends IService<DnevnikKnjizenja, Long>{
+public interface IDnevnikKnjizenjaService extends IService<DnevnikKnjizenja, Long>{
     List<DnevnikKnjizenja> findAll(Specification<DnevnikKnjizenja> spec);
 }

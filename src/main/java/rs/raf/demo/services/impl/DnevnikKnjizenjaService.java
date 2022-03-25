@@ -4,13 +4,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.DnevnikKnjizenja;
 import rs.raf.demo.repositories.DnevnikKnjizenjaRepository;
-import rs.raf.demo.services.IDnevnikKnjizenja;
-import rs.raf.demo.services.IService;
+import rs.raf.demo.services.IDnevnikKnjizenjaService;
 
 import java.util.*;
 
 @Service
-public class DnevnikKnjizenjaService implements IDnevnikKnjizenja {
+public class DnevnikKnjizenjaService implements IDnevnikKnjizenjaService {
 
     private final DnevnikKnjizenjaRepository dnevnikKnjizenjaRepository;
 
