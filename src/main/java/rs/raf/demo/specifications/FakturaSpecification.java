@@ -13,27 +13,11 @@ import javax.persistence.criteria.Root;
 public class FakturaSpecification implements Specification<Faktura> {
 
     private SearchCriteria criteria;
+    private SearchUtil searchUtil;
 
     @Override
     public Predicate toPredicate
             (Root<Faktura> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-
-        if (criteria.getOperation().equalsIgnoreCase(">")) {
-            return builder.greaterThanOrEqualTo(
-                    root.get(criteria.getKey()), criteria.getValue().toString());
-        }
-        else if (criteria.getOperation().equalsIgnoreCase("<")) {
-            return builder.lessThanOrEqualTo(
-                    root.get(criteria.getKey()), criteria.getValue().toString());
-        }
-        else if (criteria.getOperation().equalsIgnoreCase(":")) {
-            if (root.get(criteria.getKey()).getJavaType() == String.class) {
-                return builder.like(
-                        root.get(criteria.getKey()), "%" + criteria.getValue() + "%");
-            } else {
-                return builder.equal(root.get(criteria.getKey()), criteria.getValue());
-            }
-        }
-        return null;
+            return searchUtil.searchUtilit(criteria, root, query, builder);
     }
 }
