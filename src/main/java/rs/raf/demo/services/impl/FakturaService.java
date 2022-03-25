@@ -89,7 +89,6 @@ public class FakturaService implements IFakturaService {
         return fakturaRepository.save(faktura);
     }
 
-    @Override
     public void deleteById(Long id) {
         fakturaRepository.deleteById(id);
     }
