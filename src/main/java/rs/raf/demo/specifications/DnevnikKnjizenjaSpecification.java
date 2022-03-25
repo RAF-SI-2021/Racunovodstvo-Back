@@ -14,12 +14,13 @@ import javax.persistence.criteria.Root;
 public class DnevnikKnjizenjaSpecification implements Specification<DnevnikKnjizenja> {
 
     private SearchCriteria criteria;
-    private SearchUtil searchUtil;
+
 
 
     @Override
     public Predicate toPredicate(Root<DnevnikKnjizenja> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-         return searchUtil.searchUtilit(criteria, root, query, builder);
+
+        return SearchUtil.search(criteria, root, query, builder);
     }
 
 }

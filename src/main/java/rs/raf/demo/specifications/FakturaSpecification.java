@@ -13,11 +13,10 @@ import javax.persistence.criteria.Root;
 public class FakturaSpecification implements Specification<Faktura> {
 
     private SearchCriteria criteria;
-    private SearchUtil searchUtil;
 
     @Override
     public Predicate toPredicate
             (Root<Faktura> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-            return searchUtil.searchUtilit(criteria, root, query, builder);
+            return SearchUtil.search(criteria, root, query, builder);
     }
 }
