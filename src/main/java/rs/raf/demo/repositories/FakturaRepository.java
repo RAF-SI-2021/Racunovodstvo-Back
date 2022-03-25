@@ -1,5 +1,6 @@
 package rs.raf.demo.repositories;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +15,8 @@ import java.util.Optional;
 public interface FakturaRepository extends JpaRepository<Faktura, Long> {
 
     public List<Faktura> findAll();
+
+    List<Faktura> findAll(Specification<Faktura> spec);
 
     public Optional<Faktura> findByFakturaId(Long fakturaId);
 

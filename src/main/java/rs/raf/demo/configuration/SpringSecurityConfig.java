@@ -20,6 +20,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
     private final JwtFilter jwtFilter;
+    private static final String[] EXCLUDED_URLS = {"/auth/**","/v3/api-docs/**","/swagger-ui.html","/swagger-ui/**"};
 
     @Autowired
     public SpringSecurityConfig(UserService userService, JwtFilter jwtFilter) {
@@ -41,7 +42,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers(EXCLUDED_URLS).permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

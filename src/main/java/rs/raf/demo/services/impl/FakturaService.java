@@ -1,6 +1,7 @@
 package rs.raf.demo.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Faktura;
 
@@ -24,6 +25,11 @@ public class FakturaService implements IFakturaService {
     public List<Faktura> findAll(){
         return fakturaRepository.findAll();
     }
+
+    public List<Faktura> findAll(Specification<Faktura> spec){
+        return fakturaRepository.findAll(spec);
+    }
+
 
     public List<Faktura> findUlazneFakture(){
         List<Faktura> ulazneFakture = new ArrayList<>();

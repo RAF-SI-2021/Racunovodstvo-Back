@@ -10,6 +10,7 @@ import rs.raf.demo.model.*;
 import rs.raf.demo.repositories.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -18,13 +19,32 @@ public class BootstrapData implements CommandLineRunner {
     private final Logger log = LoggerFactory.getLogger(BootstrapData.class);
     private final UserRepository userRepository;
     private final PermissionRepository permissionRepository;
+    private final FakturaRepository fakturaRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public BootstrapData(UserRepository userRepository, PermissionRepository permissionRepository, PasswordEncoder passwordEncoder) {
+    public BootstrapData(UserRepository userRepository,FakturaRepository fakturaRepository, PermissionRepository permissionRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.permissionRepository = permissionRepository;
+        this.fakturaRepository = fakturaRepository;
+    }
+
+    private Faktura getDefaultFaktura(){
+        Faktura f1 = new Faktura();
+        f1.setBrojFakture("1");
+        f1.setIznos(1000.00);
+        f1.setTipFakture(TipFakture.ULAZNA_FAKTURA);
+        f1.setDatumIzdavanja(new Date());
+        f1.setDatumPlacanja(new Date());
+        f1.setKurs(117.8);
+        f1.setNaplata(1000.00);
+        f1.setPorez(10.00);
+        f1.setPorezProcenat(1.00);
+        f1.setProdajnaVrednost(1000.00);
+        f1.setValuta("EUR");
+
+        return f1;
     }
 
     @Override
@@ -65,6 +85,21 @@ public class BootstrapData implements CommandLineRunner {
         this.userRepository.save(user1);
         this.userRepository.save(user2);
 
+        Faktura f1 = getDefaultFaktura();
+        f1.setIznos(1000.00);
+        Faktura f2 = getDefaultFaktura();
+        f2.setIznos(2000.00);
+        Faktura f3 = getDefaultFaktura();
+        f3.setIznos(3000.00);
+        Faktura f4 = getDefaultFaktura();
+        f4.setIznos(4000.00);
+
+
+
+        this.fakturaRepository.save(f1);
+        this.fakturaRepository.save(f2);
+        this.fakturaRepository.save(f3);
+        this.fakturaRepository.save(f4);
 
         log.info("Data loaded!");
     }
