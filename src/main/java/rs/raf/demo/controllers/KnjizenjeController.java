@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.DnevnikKnjizenja;
 
 
+import rs.raf.demo.services.IDnevnikKnjizenja;
+import rs.raf.demo.services.IService;
 import rs.raf.demo.services.impl.DnevnikKnjizenjaService;
+import rs.raf.demo.specifications.CompareDnevnikKnjizenja;
 import rs.raf.demo.specifications.DnevnikKnjizenjaSpecificationBuilder;
 
 
@@ -21,7 +24,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/knjizenje")
 public class KnjizenjeController {
 
-    private final DnevnikKnjizenjaService dnevnikKnjizenjaService;
+    private final IDnevnikKnjizenja dnevnikKnjizenjaService;
 
     public KnjizenjeController(DnevnikKnjizenjaService dnevnikKnjizenjaService) {
         this.dnevnikKnjizenjaService = dnevnikKnjizenjaService;
@@ -81,7 +84,7 @@ public class KnjizenjeController {
             if(result.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-            Collections.sort(result, new sortCompare());
+            Collections.sort(result, new CompareDnevnikKnjizenja());
 
             return ResponseEntity.ok(result);
         }
@@ -90,12 +93,5 @@ public class KnjizenjeController {
         }
     }
 
-    class sortCompare implements Comparator<DnevnikKnjizenja>
-    {
-        @Override
-        public int compare(DnevnikKnjizenja d1, DnevnikKnjizenja d2) {
-            return d1.getDatumKnjizenja().compareTo(d2.getDatumKnjizenja());
-        }
-    }
 
 }

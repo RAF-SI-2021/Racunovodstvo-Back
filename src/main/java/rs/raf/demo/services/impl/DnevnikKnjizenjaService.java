@@ -4,20 +4,19 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.DnevnikKnjizenja;
 import rs.raf.demo.repositories.DnevnikKnjizenjaRepository;
+import rs.raf.demo.services.IDnevnikKnjizenja;
 import rs.raf.demo.services.IService;
 
 import java.util.*;
 
 @Service
-public class DnevnikKnjizenjaService implements IService<DnevnikKnjizenja, Long> {
+public class DnevnikKnjizenjaService implements IDnevnikKnjizenja {
 
     private final DnevnikKnjizenjaRepository dnevnikKnjizenjaRepository;
 
     public DnevnikKnjizenjaService(DnevnikKnjizenjaRepository dnevnikKnjizenjaRepository) {
         this.dnevnikKnjizenjaRepository = dnevnikKnjizenjaRepository;
     }
-
-
 
     public DnevnikKnjizenja save(DnevnikKnjizenja dnevnikKnjizenja){
         return dnevnikKnjizenjaRepository.save(dnevnikKnjizenja);
