@@ -11,6 +11,9 @@ import java.util.List;
 
 
 public class ApiUtil {
+
+    private ApiUtil(){}
+
     public static Pageable resolveSortingAndPagination(Integer page, Integer size, String[] sort) {
         List<Order> orders = new ArrayList<>();
         for (String sortParam : sort) {
