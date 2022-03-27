@@ -68,7 +68,7 @@ public class FakturaRestController {
     public ResponseEntity<?> getFakture(
             @RequestParam(defaultValue = "0") @Min(0) Integer page,
             @RequestParam(defaultValue = "0") @Min(1) Integer size,
-            @RequestParam(defaultValue = "id")  String[] sort
+            @RequestParam(defaultValue = "fakturaId")  String[] sort
     ) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
         return ResponseEntity.ok(fakturaService.findAll(pageSort));
