@@ -21,13 +21,8 @@ public class PermissionRestController {
 
     @GetMapping(value = "/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllPermissions(
-            @RequestParam(defaultValue = "0") Integer pageNo,
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(defaultValue = "id") String sortBy
-    ){
-        Pageable pageSort = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        return ResponseEntity.ok(permissionService.findAll(pageSort));
+    public ResponseEntity<?> getAllPermissions(){
+        return ResponseEntity.ok(permissionService.findAll());
     }
 
 }

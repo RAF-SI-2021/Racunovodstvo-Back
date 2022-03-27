@@ -1,8 +1,6 @@
 package rs.raf.demo.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Permission;
 import rs.raf.demo.repositories.PermissionRepository;
@@ -34,10 +32,6 @@ public class PermissionService implements IService<Permission, Long> {
     @Override
     public List<Permission> findAll() {
         return permissionRepository.findAll();
-    }
-
-    public Page<Permission> findAll(Pageable pageSort) {
-        return permissionRepository.findAll(pageSort);
     }
 
     @Override
