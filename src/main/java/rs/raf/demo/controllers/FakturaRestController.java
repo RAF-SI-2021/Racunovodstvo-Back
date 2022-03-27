@@ -14,6 +14,7 @@ import rs.raf.demo.specifications.FakturaSpecificationsBuilder;
 import rs.raf.demo.utils.ApiUtil;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -66,9 +67,9 @@ public class FakturaRestController {
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getFakture(
-            @RequestParam(defaultValue = "0") @Min(0) Integer page,
-            @RequestParam(defaultValue = "5") @Min(1) Integer size,
-            @RequestParam(defaultValue = "fakturaId")  String[] sort
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+            @RequestParam(defaultValue = "id")  String[] sort
     ) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
         return ResponseEntity.ok(fakturaService.findAll(pageSort));
