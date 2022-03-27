@@ -1,17 +1,15 @@
 package rs.raf.demo.controllers;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.services.impl.PermissionService;
 
 @CrossOrigin
 @RestController
-@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/permissions")
 public class PermissionRestController {
 
@@ -23,8 +21,13 @@ public class PermissionRestController {
 
     @GetMapping(value = "/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllPermissions(){
-        return ResponseEntity.ok(permissionService.findAll());
+    public ResponseEntity<?> getAllPermissions(
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "id") String sortBy
+    ){
+        Pageable pageSort = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        return ResponseEntity.ok(permissionService.findAll(pageSort));
     }
 
 }
