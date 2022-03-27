@@ -15,12 +15,14 @@ public class Konto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long kontoId;
-    @Column(nullable = false)
-    @NotBlank(message = "Broj konta je obavezan")
-    private String brojKonta;
-    @Column(nullable = false)
-    @NotBlank(message = "Naziv konta je obavezan")
-    private String naziv;
-    @ManyToMany(mappedBy = "konto", fetch =  FetchType.EAGER)
-    private List<GlavnaKnjiga> glavnaKnjiga;
+    @Column
+    private Double potrazuje;
+    @Column
+    private Double duguje;
+    @ManyToOne
+    @JoinColumn(name = "kontnaGrupaId")
+    private KontnaGrupa kontnaGrupa;
+    @ManyToOne
+    @JoinColumn(name = "knjizenjeId")
+    private Knjizenje knjizenje;
 }

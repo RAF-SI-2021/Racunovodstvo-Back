@@ -106,7 +106,7 @@ public class FakturaRestController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateFaktura(@Valid @RequestBody Faktura faktura){
-        Optional<Faktura> optionalFaktura = fakturaService.findById(faktura.getFakturaId());
+        Optional<Faktura> optionalFaktura = fakturaService.findById(faktura.getDokumentId());
         if(optionalFaktura.isPresent()) {
             return ResponseEntity.ok(fakturaService.save(faktura));
         } else {

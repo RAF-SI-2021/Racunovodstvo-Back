@@ -7,6 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import rs.raf.demo.model.*;
+import rs.raf.demo.model.enums.TipDokumenta;
+import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.repositories.*;
 
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class BootstrapData implements CommandLineRunner {
         f1.setPorezProcenat(1.00);
         f1.setProdajnaVrednost(1000.00);
         f1.setValuta("EUR");
-
+        f1.setTipDokumenta(TipDokumenta.FAKTURA);
         return f1;
     }
 

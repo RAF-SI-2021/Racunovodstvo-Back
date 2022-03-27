@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Faktura;
 
-import rs.raf.demo.model.TipFakture;
+import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.repositories.FakturaRepository;
 import rs.raf.demo.services.IFakturaService;
 import rs.raf.demo.utils.Utils;
@@ -48,13 +48,13 @@ public class FakturaService implements IFakturaService {
     }
 
     public List<Faktura> findIzlazneFakture(){
-        List<Faktura> izlacneFakture = new ArrayList<>();
+        List<Faktura> izlazneFakture = new ArrayList<>();
         for(Faktura f : fakturaRepository.findAll()){
             if(f.getTipFakture().equals(TipFakture.IZLAZNA_FAKTURA)){
-                izlacneFakture.add(f);
+                izlazneFakture.add(f);
             }
         }
-        return izlacneFakture;
+        return izlazneFakture;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class FakturaService implements IFakturaService {
     }
 
     public Optional<Faktura> findById(Long id){
-        return fakturaRepository.findByFakturaId(id);
+        return fakturaRepository.findByDokumentId(id);
     }
 
     public Faktura save(Faktura faktura){

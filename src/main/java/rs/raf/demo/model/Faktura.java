@@ -1,6 +1,7 @@
 package rs.raf.demo.model;
 
 import lombok.*;
+import rs.raf.demo.model.enums.TipFakture;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,11 +9,9 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-public class Faktura {
+@PrimaryKeyJoinColumn(name = "fakturaId")
+public class Faktura extends Dokument{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fakturaId;
     @Column(nullable = false)
     private String brojFakture;
     @Column(nullable = false)
@@ -45,6 +44,4 @@ public class Faktura {
     @ManyToOne
     @JoinColumn(name = "preduzeceId")
     private Preduzece preduzece;
-    @OneToOne(mappedBy = "faktura")
-    private DnevnikKnjizenja dnevnikKnjizenja;
 }
