@@ -1,16 +1,20 @@
 package rs.raf.demo.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.Faktura;
 import rs.raf.demo.services.IFakturaService;
 import rs.raf.demo.services.impl.FakturaService;
 import rs.raf.demo.specifications.FakturaSpecificationsBuilder;
+import rs.raf.demo.utils.ApiUtil;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +24,7 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @SecurityRequirement(name = "bearerAuth")
+@Validated
 @RequestMapping("/api/faktura")
 public class FakturaRestController {
 
@@ -60,12 +65,13 @@ public class FakturaRestController {
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getFakture(){
-        if(fakturaService.findAll().isEmpty()){
-            return ResponseEntity.notFound().build();
-        }else{
-            return ResponseEntity.ok(fakturaService.findAll());
-        }
+    public ResponseEntity<?> getFakture(
+            @RequestParam(defaultValue = "0") @Min(0) Integer page,
+            @RequestParam(defaultValue = "0") @Min(1) Integer size,
+            @RequestParam(defaultValue = "id")  String[] sort
+    ) {
+        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
+        return ResponseEntity.ok(fakturaService.findAll(pageSort));
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

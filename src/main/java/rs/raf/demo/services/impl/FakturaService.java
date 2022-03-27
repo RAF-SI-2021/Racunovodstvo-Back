@@ -1,6 +1,8 @@
 package rs.raf.demo.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Faktura;
@@ -30,6 +32,10 @@ public class FakturaService implements IFakturaService {
         return fakturaRepository.findAll(spec);
     }
 
+    @Override
+    public Page<Faktura> findAll(Pageable pageSort) {
+        return fakturaRepository.findAll(pageSort);
+    }
 
     public List<Faktura> findUlazneFakture(){
         List<Faktura> ulazneFakture = new ArrayList<>();
