@@ -1,11 +1,14 @@
 package rs.raf.demo.services.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Knjizenje;
 
 import rs.raf.demo.repositories.KnjizenjeRepository;
 import rs.raf.demo.services.IKnjizenjeService;
+
 
 
 import java.util.List;
@@ -41,7 +44,8 @@ public class KnjizenjeService implements IKnjizenjeService {
     }
 
     @Override
-    public List<Knjizenje> findAll(Specification<Knjizenje> spec) {
-        return knjizenjeRepository.findAll(spec);
+    public Page<Knjizenje> findAll(Specification<Knjizenje> spec, Pageable pageSort) {
+        return knjizenjeRepository.findAll(spec, pageSort);
     }
+
 }

@@ -1,6 +1,8 @@
 package rs.raf.demo.controllers;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,8 @@ import rs.raf.demo.specifications.RacunSpecificationsBuilder;
 
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +24,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rs.raf.demo.model.Knjizenje;
-
+import rs.raf.demo.utils.ApiUtil;
 
 
 @CrossOrigin
@@ -75,8 +79,13 @@ public class KnjizenjeController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> search(@RequestParam(name = "search") String search){
+    public ResponseEntity<?> search(@RequestParam(name = "search") String search,
+                                    @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+                                    @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+                                    @RequestParam(defaultValue = "-datumKnjizenja")  String[] sort){
         RacunSpecificationsBuilder<Knjizenje> builder = new RacunSpecificationsBuilder<>();
+        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
+
         Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
         Matcher matcher = pattern.matcher(search + ",");
         while (matcher.find()) {
@@ -86,7 +95,7 @@ public class KnjizenjeController {
         Specification<Knjizenje> spec = builder.build();
 
         try{
-            List<Knjizenje> result = knjizenjaService.findAll(spec);
+            Page<Knjizenje> result = knjizenjaService.findAll(spec, pageSort);
 
             if(result.isEmpty()) {
                 return ResponseEntity.notFound().build();
