@@ -2,8 +2,8 @@ package rs.raf.demo.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import rs.raf.demo.model.GlavnaKnjiga;
+import rs.raf.demo.model.Dokument;
 
 @Repository
-public interface GlavnaKnjigaRepository extends JpaRepository<GlavnaKnjiga, Long> {
+public interface DokumentRepository extends JpaRepository<Dokument, Long> {
 }

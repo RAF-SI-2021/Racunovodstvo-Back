@@ -3,10 +3,9 @@ package rs.raf.demo.repositories;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import rs.raf.demo.model.Faktura;
-import rs.raf.demo.model.TipFakture;
+import rs.raf.demo.model.enums.TipFakture;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +17,7 @@ public interface FakturaRepository extends JpaRepository<Faktura, Long> {
 
     List<Faktura> findAll(Specification<Faktura> spec);
 
-    public Optional<Faktura> findByFakturaId(Long fakturaId);
+    public Optional<Faktura> findByDokumentId(Long dokumentId);
 
     @Query("select f.prodajnaVrednost from Faktura f where f.tipFakture = :tipFakture")
     List<Double> findProdajnaVrednostForTipFakture(TipFakture tipFakture);

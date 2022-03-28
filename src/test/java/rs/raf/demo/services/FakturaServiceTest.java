@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rs.raf.demo.model.Faktura;
-import rs.raf.demo.model.TipFakture;
+import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.repositories.FakturaRepository;
 import rs.raf.demo.services.impl.FakturaService;
 
