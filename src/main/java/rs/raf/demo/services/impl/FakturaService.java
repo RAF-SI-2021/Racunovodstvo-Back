@@ -10,6 +10,7 @@ import rs.raf.demo.model.Faktura;
 import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.repositories.FakturaRepository;
 import rs.raf.demo.services.IFakturaService;
+import rs.raf.demo.utils.FakturaUtil;
 import rs.raf.demo.utils.Utils;
 
 import java.util.*;
@@ -98,6 +99,18 @@ public class FakturaService implements IFakturaService {
     }
 
     public Faktura save(Faktura faktura){
+        Double prodajnaVrednost = faktura.getProdajnaVrednost();
+        Double rabatProcenat = faktura.getRabatProcenat();
+        Double porezProcenat = faktura.getPorezProcenat();
+
+        Double rabat = FakturaUtil.calculateRabat(prodajnaVrednost, rabatProcenat);
+        Double porez = FakturaUtil.calculatePorez(prodajnaVrednost, rabat, porezProcenat);
+        Double iznos = FakturaUtil.calculateIznos(prodajnaVrednost, rabat, porez);
+
+        faktura.setRabat(rabat);
+        faktura.setPorez(porez);
+        faktura.setIznos(iznos);
+
         return fakturaRepository.save(faktura);
     }
 
