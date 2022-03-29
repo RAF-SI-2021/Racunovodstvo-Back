@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ApiUtilTest {
 
     @Test
-    public void testResolveSortingAndPaginationWhenSortIsDesc() {
+    void testResolveSortingAndPaginationWhenSortIsDesc() {
         Integer page = 0;
         Integer size = 50;
         String[] sort = {"-aaa"};
@@ -23,7 +23,7 @@ class ApiUtilTest {
     }
 
     @Test
-    public void testResolveSortingAndPaginationWhenSortIsAsc() {
+    void testResolveSortingAndPaginationWhenSortIsAsc() {
         Integer page = 0;
         Integer size = 50;
         String[] sort = {"+aaa"};
@@ -36,7 +36,7 @@ class ApiUtilTest {
     }
 
     @Test
-    public void testResolveSortingAndPaginationWhenPageIsInvalid() {
+    void testResolveSortingAndPaginationWhenPageIsInvalid() {
         Integer page = -1;
         Integer size = 50;
         String[] sort = {"aaa"};
@@ -49,7 +49,7 @@ class ApiUtilTest {
     }
 
     @Test
-    public void testResolveSortingAndPaginationWhenSizeIsInvalid() {
+    void testResolveSortingAndPaginationWhenSizeIsInvalid() {
         Integer page = 0;
         Integer size = 0;
         String[] sort = {"aaa"};

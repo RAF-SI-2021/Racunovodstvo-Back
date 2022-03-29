@@ -2,6 +2,8 @@ package rs.raf.demo.utils;
 
 public class FakturaUtil {
 
+    private FakturaUtil() {}
+
     public static Double calculateRabat(Double prodajnaVrednost, Double rabatProcenat) {
         return prodajnaVrednost * (rabatProcenat / 100);
     }
