@@ -4,7 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class Knjizenje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long knjizenjeId;
     @Column(nullable = false)
-    @NotBlank(message = "Datum je obavezna")
+    @NotNull(message = "Datum je obavezna")
     private Date datumKnjizenja;
     @ManyToOne
     @JoinColumn(name = "knjizenje")

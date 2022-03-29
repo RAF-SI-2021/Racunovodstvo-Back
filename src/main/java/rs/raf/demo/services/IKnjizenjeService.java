@@ -1,16 +1,14 @@
-package rs.raf.demo.repositories;
+package rs.raf.demo.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import rs.raf.demo.model.Knjizenje;
 
 
-
-@Repository
-public interface KnjizenjeRepository extends JpaRepository<Knjizenje, Long> {
+public interface IKnjizenjeService extends IService<Knjizenje, Long>{
 
     Page<Knjizenje> findAll(Specification<Knjizenje> spec, Pageable pageSort);
+
+
 }
