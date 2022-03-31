@@ -1,5 +1,6 @@
 package rs.raf.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,7 @@ public class Knjizenje {
     @ManyToOne
     @JoinColumn(name = "knjizenje")
     private Dokument dokument;
+    @JsonIgnore
     @OneToMany(mappedBy = "knjizenje", fetch =  FetchType.EAGER)
     private List<Konto> konto;
 }

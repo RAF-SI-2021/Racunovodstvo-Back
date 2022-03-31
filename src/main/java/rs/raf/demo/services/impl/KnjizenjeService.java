@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Knjizenje;
 
+import rs.raf.demo.model.enums.TipDokumenta;
 import rs.raf.demo.repositories.KnjizenjeRepository;
 import rs.raf.demo.services.IKnjizenjeService;
 
@@ -44,8 +45,13 @@ public class KnjizenjeService implements IKnjizenjeService {
     }
 
     @Override
-    public Page<Knjizenje> findAll(Specification<Knjizenje> spec, Pageable pageSort) {
-        return knjizenjeRepository.findAll(spec, pageSort);
+    public List<Knjizenje> findAll(Specification<Knjizenje> spec) {
+        return knjizenjeRepository.findAll(spec);
+    }
+
+    @Override
+    public List<Knjizenje> findByTipDokumenta(TipDokumenta tipDokumenta) {
+        return null;
     }
 
 }

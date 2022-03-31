@@ -80,12 +80,9 @@ public class KnjizenjeController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> search(@RequestParam(name = "search") String search,
-                                    @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
-                                    @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
-                                    @RequestParam(defaultValue = "-datumKnjizenja") String[] sort) {
+    public ResponseEntity<?> search(@RequestParam(name = "search") String search) {
         RacunSpecificationsBuilder<Knjizenje> builder = new RacunSpecificationsBuilder<>();
-        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
+
 
         Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
         Matcher matcher = pattern.matcher(search + ",");
@@ -95,7 +92,7 @@ public class KnjizenjeController {
 
         Specification<Knjizenje> spec = builder.build();
 
-        Page<Knjizenje> result = knjizenjaService.findAll(spec, pageSort);
+        List<Knjizenje> result = knjizenjaService.findAll(spec);
 
         if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
