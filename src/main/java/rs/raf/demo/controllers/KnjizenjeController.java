@@ -1,8 +1,7 @@
 package rs.raf.demo.controllers;
 
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +12,7 @@ import rs.raf.demo.specifications.RacunSpecificationsBuilder;
 
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -25,7 +23,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rs.raf.demo.model.Knjizenje;
-import rs.raf.demo.utils.ApiUtil;
+
 
 
 @CrossOrigin
