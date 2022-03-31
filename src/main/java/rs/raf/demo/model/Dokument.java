@@ -1,5 +1,6 @@
 package rs.raf.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import rs.raf.demo.model.enums.TipDokumenta;
@@ -19,6 +20,7 @@ public class Dokument {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TipDokumenta tipDokumenta;
+    @JsonIgnore
     @OneToMany(mappedBy = "dokument")
     private List<Knjizenje> knjizenje;
 }

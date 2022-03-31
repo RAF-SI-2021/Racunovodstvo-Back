@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import rs.raf.demo.responses.ErrorResponse;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 
 @SuppressWarnings({"unchecked","rawtypes"})
@@ -40,5 +41,13 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler
         details.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("400 Bad request!", details);
         return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public final ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getLocalizedMessage());
+        ErrorResponse error = new ErrorResponse("404 Not found!", details);
+        return new ResponseEntity(error, HttpStatus.NOT_FOUND);
     }
 }
