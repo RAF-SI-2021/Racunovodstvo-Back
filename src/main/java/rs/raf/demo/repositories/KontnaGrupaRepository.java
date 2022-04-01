@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import rs.raf.demo.model.KontnaGrupa;
 
 @Repository
-public interface KontnaGrupaRepository extends JpaRepository<KontnaGrupa, Long> {
+public interface KontnaGrupaRepository extends JpaRepository<KontnaGrupa, String> {
 }

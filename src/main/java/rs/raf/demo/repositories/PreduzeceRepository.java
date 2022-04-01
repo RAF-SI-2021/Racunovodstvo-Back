@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface PreduzeceRepository extends JpaRepository<Preduzece, Long> {
-    public List<Preduzece> findAll();
+    List<Preduzece> findAll();
 
-    public Optional<Preduzece> findByPreduzeceId(Long preduzeceId);
+    Optional<Preduzece> findByPreduzeceId(Long preduzeceId);
 }
