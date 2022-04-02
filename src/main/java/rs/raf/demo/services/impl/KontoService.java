@@ -1,6 +1,8 @@
 package rs.raf.demo.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Konto;
 import rs.raf.demo.repositories.KontoRepository;
@@ -39,5 +41,13 @@ public class KontoService implements IService<Konto, Long> {
     @Override
     public void deleteById(Long id) {
         kontoRepository.deleteById(id);
+    }
+
+    public List<Konto> findByKontnaGrupa(String kontnaGrupa) {
+        return this.kontoRepository.findKontoByKontnaGrupaBrojKonta(kontnaGrupa);
+    }
+
+    public List<Konto> findAll(Specification<Konto> spec) {
+        return this.kontoRepository.findAll(spec);
     }
 }
