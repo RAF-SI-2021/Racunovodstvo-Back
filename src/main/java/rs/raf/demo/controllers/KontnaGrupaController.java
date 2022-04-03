@@ -10,9 +10,11 @@ import rs.raf.demo.services.IKontnaGrupaService;
 import rs.raf.demo.services.impl.KontnaGrupaService;
 import rs.raf.demo.utils.ApiUtil;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -28,11 +30,12 @@ public class KontnaGrupaController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getKontnaGrupa(@PathVariable("id") String id) {
-        try {
-            return ResponseEntity.ok(kontnaGrupaService.findKontnaGrupaById(id));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+        Optional<KontnaGrupa> optionalKontnaGrupa = kontnaGrupaService.findById(id);
+        if (optionalKontnaGrupa.isPresent()) {
+            return ResponseEntity.ok(optionalKontnaGrupa.get());
         }
+
+        throw new EntityNotFoundException();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,7 +58,12 @@ public class KontnaGrupaController {
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteKontnaGrupa(@PathVariable String id) {
-        kontnaGrupaService.deleteById(id);
-        return ResponseEntity.ok().build();
+        Optional<KontnaGrupa> optionalKontnaGrupa = kontnaGrupaService.findById(id);
+        if (optionalKontnaGrupa.isPresent()) {
+            kontnaGrupaService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+
+        throw new EntityNotFoundException();
     }
 }

@@ -12,6 +12,7 @@ import rs.raf.demo.services.IKnjizenjeService;
 import rs.raf.demo.specifications.RacunSpecificationsBuilder;
 
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -52,9 +53,9 @@ public class KnjizenjeController {
         Optional<Knjizenje> optionalDnevnik = knjizenjaService.findById(dnevnikKnjizenja.getKnjizenjeId());
         if (optionalDnevnik.isPresent()) {
             return ResponseEntity.ok(knjizenjaService.save(dnevnikKnjizenja));
-        } else {
-            return ResponseEntity.notFound().build();
         }
+
+        throw new EntityNotFoundException();
     }
 
     @DeleteMapping(value = "/{id}")
@@ -62,10 +63,10 @@ public class KnjizenjeController {
         Optional<Knjizenje> optionalDnevnik = knjizenjaService.findById(id);
         if (optionalDnevnik.isPresent()) {
             knjizenjaService.deleteById(id);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         }
+
+        throw new EntityNotFoundException();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE
@@ -73,10 +74,10 @@ public class KnjizenjeController {
     public ResponseEntity<?> getDnevnikKnjizenjaId(@PathVariable("id") Long id) {
         Optional<Knjizenje> optionalDnevnik = knjizenjaService.findById(id);
         if (optionalDnevnik.isPresent()) {
-            return ResponseEntity.ok(knjizenjaService.findById(id));
-        } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(optionalDnevnik.get());
         }
+
+        throw new EntityNotFoundException();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -97,12 +98,6 @@ public class KnjizenjeController {
 
         Page<Knjizenje> result = knjizenjaService.findAll(spec, pageSort);
 
-        if (result.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(result);
     }
-
-
 }
