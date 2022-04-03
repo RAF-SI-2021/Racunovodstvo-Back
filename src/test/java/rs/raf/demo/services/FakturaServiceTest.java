@@ -112,6 +112,13 @@ class FakturaServiceTest {
     void testSave() {
         Faktura ocekivanaFaktura = new Faktura();
 
+        ocekivanaFaktura.setProdajnaVrednost(123.1);
+        ocekivanaFaktura.setRabatProcenat(123.1);
+        ocekivanaFaktura.setPorezProcenat(123.1);
+        ocekivanaFaktura.setRabat(123.1);
+        ocekivanaFaktura.setPorez(123.1);
+        ocekivanaFaktura.setIznos(123.1);
+
         when(fakturaRepository.save(ocekivanaFaktura)).thenReturn(ocekivanaFaktura);
         Faktura vracenaFaktura = fakturaService.save(ocekivanaFaktura);
 

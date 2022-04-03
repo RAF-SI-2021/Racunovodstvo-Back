@@ -7,29 +7,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FakturaSpecificationsBuilder {
+public class RacunSpecificationsBuilder<T> {
 
     private final List<SearchCriteria> params;
 
-    public FakturaSpecificationsBuilder() {
+    public RacunSpecificationsBuilder() {
         params = new ArrayList<>();
     }
 
-    public FakturaSpecificationsBuilder with (String key, String operation, Object value) {
+    public RacunSpecificationsBuilder<T> with (String key, String operation, Object value) {
         params.add(new SearchCriteria(key, operation, value));
         return this;
     }
 
-    public Specification<Faktura> build() {
+    public Specification<T> build() {
         if (params.size() == 0) {
             return null;
         }
 
-        List<Specification<Faktura>> specs = params.stream()
-                .map(FakturaSpecification::new)
+        List<Specification<T>> specs = params.stream()
+                .map(RacunSpecification<T>::new)
                 .collect(Collectors.toList());
 
-        Specification<Faktura> result = specs.get(0);
+        Specification<T> result = specs.get(0);
 
         for (int i = 1; i < params.size(); i++) {
             result = Specification.where(result).and(specs.get(i));
