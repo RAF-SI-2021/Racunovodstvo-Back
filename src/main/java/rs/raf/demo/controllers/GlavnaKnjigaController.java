@@ -22,9 +22,11 @@ import java.util.stream.Collectors;
 public class GlavnaKnjigaController {
 
     private final KontoService kontoService;
+    private final Pattern pattern;
 
     public GlavnaKnjigaController(KontoService kontoService) {
         this.kontoService = kontoService;
+        this.pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
     }
 
     @GetMapping(value = "/{kontnaGrupa}",
@@ -32,8 +34,7 @@ public class GlavnaKnjigaController {
     public ResponseEntity<?> getPreduzeceById(@PathVariable("kontnaGrupa") String kontnaGrupa,
                                               @RequestParam(name = "search", required = false, defaultValue = "") String search) {
         SpecificationsBuilder<Konto> builder = new SpecificationsBuilder<>();
-        Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-        Matcher matcher = pattern.matcher(search + ",kontnaGrupa_brojKonta:" + kontnaGrupa + ",");
+        Matcher matcher = this.pattern.matcher(search + ",kontnaGrupa_brojKonta:" + kontnaGrupa + ",");
         while (matcher.find()) {
             builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
         }

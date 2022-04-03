@@ -2,7 +2,6 @@ package rs.raf.demo.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Konto;
 import rs.raf.demo.repositories.KontoRepository;
