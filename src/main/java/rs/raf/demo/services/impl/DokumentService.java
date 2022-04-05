@@ -4,26 +4,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Dokument;
 import rs.raf.demo.model.Knjizenje;
-import rs.raf.demo.model.Konto;
 import rs.raf.demo.repositories.DokumentRepository;
 import rs.raf.demo.services.IDokumentService;
+import rs.raf.demo.services.IKnjizenjeService;
 
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 public class DokumentService implements IDokumentService {
+
+    private final IKnjizenjeService knjizenjeService;
 
     private final DokumentRepository dokumentRepository;
 
     @Autowired
-    public DokumentService(DokumentRepository dokumentRepository) {
+    public DokumentService(KnjizenjeService knjizenjeService, DokumentRepository dokumentRepository) {
+        this.knjizenjeService = knjizenjeService;
         this.dokumentRepository = dokumentRepository;
     }
 
     @Override
-    public <S extends Dokument> S save(S var1) {
-        return dokumentRepository.save(var1);
+    public Dokument save(Dokument id) {
+        return dokumentRepository.save(id);
     }
 
     @Override
@@ -37,8 +42,8 @@ public class DokumentService implements IDokumentService {
     }
 
     @Override
-    public void deleteById(Long var1) {
-
+    public void deleteById(Long id) {
+        dokumentRepository.deleteById(id);
     }
 
     @Override
@@ -46,17 +51,12 @@ public class DokumentService implements IDokumentService {
         Optional<Dokument> dok = findById(id);
         if (dok.isPresent()) {
             List<Knjizenje> knjizenja = dok.get().getKnjizenje();
-            Double suma = (double) 0;
-            for (Knjizenje i : knjizenja) {
-                List<Konto> allKonto = i.getKonto();
-                for (Konto j : allKonto) {
-                    suma += j.getPotrazuje();
-                }
-            }
-            return suma;
+            return knjizenja.stream()
+                            .mapToDouble(knjizenje -> knjizenjeService.getSumaPotrazujeZaKnjizenje(knjizenje.getKnjizenjeId()))
+                            .sum();
+        } else {
+            throw new EntityNotFoundException();
         }
-        else
-            return null;
     }
 
     @Override
@@ -64,17 +64,12 @@ public class DokumentService implements IDokumentService {
         Optional<Dokument> dok = findById(id);
         if (dok.isPresent()) {
             List<Knjizenje> knjizenja = dok.get().getKnjizenje();
-            Double suma = (double) 0;
-            for (Knjizenje i : knjizenja) {
-                List<Konto> allKonto = i.getKonto();
-                for (Konto j : allKonto) {
-                    suma += j.getDuguje();
-                }
-            }
-            return suma;
+            return knjizenja.stream()
+                            .mapToDouble(knjizenje -> knjizenjeService.getSumaDugujeZaKnjizenje(knjizenje.getKnjizenjeId()))
+                            .sum();
+        } else {
+            throw new EntityNotFoundException();
         }
-        else
-            return null;
     }
 
     @Override
