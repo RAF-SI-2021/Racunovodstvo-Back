@@ -12,6 +12,7 @@ import rs.raf.demo.model.User;
 import rs.raf.demo.requests.UpdateUserRequest;
 import rs.raf.demo.services.impl.UserService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,9 +41,9 @@ public class UserRestController {
         Optional<User> optionalUser = userService.findById(id);
         if(optionalUser.isPresent()) {
             return ResponseEntity.ok(optionalUser.get());
-        } else {
-            return ResponseEntity.notFound().build();
         }
+
+        throw new EntityNotFoundException();
     }
 
     @GetMapping(value = "/loginuser", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,9 +51,9 @@ public class UserRestController {
         UserDetails optionalUser = userService.loadUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         if(optionalUser != null) {
             return ResponseEntity.ok(optionalUser);
-        } else {
-            return ResponseEntity.notFound().build();
         }
+
+        throw new EntityNotFoundException();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -79,13 +80,19 @@ public class UserRestController {
             optionalUser.get().setPermissions(updatedUser.getPermissions());
             return ResponseEntity.ok(userService.save(optionalUser.get()));
         }
-        return ResponseEntity.status(HttpStatus.valueOf(403)).build();
+
+        throw new EntityNotFoundException();
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id){
-        userService.deleteById(id);
-        return ResponseEntity.ok().build();
+        Optional<User> optionalUser = userService.findById(id);
+        if (optionalUser.isPresent()) {
+            userService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+
+        throw new EntityNotFoundException();
     }
 
 }
