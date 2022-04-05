@@ -34,52 +34,6 @@ class FakturaServiceTest {
         fakture = new ArrayList<>();
     }
 
-
-    @Test
-    void testUlazneFakture(){
-        Faktura f1 = new Faktura();
-        f1.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
-        Faktura f2 = new Faktura();
-        f2.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
-        Faktura f3 = new Faktura();
-        f3.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
-        Faktura f4 = new Faktura();
-        f4.setTipFakture(TipFakture.ULAZNA_FAKTURA);
-        fakture.add(f1);
-        fakture.add(f2);
-        fakture.add(f3);
-        fakture.add(f4);
-        when(fakturaRepository.findAll()).thenReturn(fakture);
-        List<Faktura> ulazneFakture = fakturaService.findUlazneFakture();
-        assertEquals(1,ulazneFakture.size());
-        for(Faktura f : ulazneFakture){
-            assertEquals(TipFakture.ULAZNA_FAKTURA, f.getTipFakture());
-        }
-    }
-
-    @Test
-    void testIzlazneFakture(){
-        Faktura f1 = new Faktura();
-        f1.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
-        Faktura f2 = new Faktura();
-        f2.setTipFakture(TipFakture.ULAZNA_FAKTURA);
-        Faktura f3 = new Faktura();
-        f3.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
-        Faktura f4 = new Faktura();
-        f4.setTipFakture(TipFakture.ULAZNA_FAKTURA);
-        fakture.add(f1);
-        fakture.add(f2);
-        fakture.add(f3);
-        fakture.add(f4);
-        when(fakturaRepository.findAll()).thenReturn(fakture);
-        List<Faktura> izlazneFakture = fakturaService.findIzlazneFakture();
-        assertEquals(2,izlazneFakture.size());
-        for(Faktura f : izlazneFakture){
-            assertEquals(TipFakture.IZLAZNA_FAKTURA, f.getTipFakture());
-        }
-
-    }
-
     @Test
     void testAllFakture(){
         List<Faktura> fakture = new ArrayList<>();
@@ -98,14 +52,6 @@ class FakturaServiceTest {
         when(fakturaRepository.findAll()).thenReturn(fakture);
         List<Faktura> rezultat = fakturaService.findAll();
         assertEquals(4,rezultat.size());
-    }
-
-    @Test
-    void testEmtyFakture(){
-        when(fakturaRepository.findAll()).thenReturn(fakture);
-        List<Faktura> rezultat = fakturaService.findIzlazneFakture();
-
-        assertEquals(0, rezultat.size());
     }
 
     @Test

@@ -38,26 +38,6 @@ public class FakturaService implements IFakturaService {
         return fakturaRepository.findAll(pageSort);
     }
 
-    public List<Faktura> findUlazneFakture(){
-        List<Faktura> ulazneFakture = new ArrayList<>();
-        for(Faktura f : fakturaRepository.findAll()){
-            if(f.getTipFakture().equals(TipFakture.ULAZNA_FAKTURA)){
-                ulazneFakture.add(f);
-            }
-        }
-        return ulazneFakture;
-    }
-
-    public List<Faktura> findIzlazneFakture(){
-        List<Faktura> izlazneFakture = new ArrayList<>();
-        for(Faktura f : fakturaRepository.findAll()){
-            if(f.getTipFakture().equals(TipFakture.IZLAZNA_FAKTURA)){
-                izlazneFakture.add(f);
-            }
-        }
-        return izlazneFakture;
-    }
-
     @Override
     public Map<String, Double> getSume(String tipFakture) {
         TipFakture tip = TipFakture.valueOf(tipFakture);

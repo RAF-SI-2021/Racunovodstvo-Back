@@ -1,7 +1,6 @@
 package rs.raf.demo.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
-import rs.raf.demo.model.Faktura;
 
 import java.util.ArrayList;
 import java.util.List;

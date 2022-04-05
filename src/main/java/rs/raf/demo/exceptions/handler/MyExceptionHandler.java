@@ -7,11 +7,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import rs.raf.demo.exceptions.OperationNotSupportedException;
 import rs.raf.demo.responses.ErrorResponse;
 
 import javax.persistence.EntityNotFoundException;
@@ -28,7 +28,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({ConstraintViolationException.class})
     public final ResponseEntity<Object> handleConstraintViolation(Exception ex, WebRequest request) {
         List<String> details = new ArrayList<>();
         details.add(ex.getLocalizedMessage());
@@ -50,5 +50,13 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler
         details.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("404 Not found!", details);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(OperationNotSupportedException.class)
+    public final ResponseEntity<Object> handleOperationNotSupportedException(Exception ex, WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getLocalizedMessage());
+        ErrorResponse error = new ErrorResponse("418 I am a teapot!", details);
+        return new ResponseEntity<>(error, HttpStatus.I_AM_A_TEAPOT);
     }
 }

@@ -22,17 +22,30 @@ public class BootstrapData implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PermissionRepository permissionRepository;
     private final FakturaRepository fakturaRepository;
+    private final PreduzeceRepository preduzeceRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public BootstrapData(UserRepository userRepository,FakturaRepository fakturaRepository, PermissionRepository permissionRepository, PasswordEncoder passwordEncoder) {
+    public BootstrapData(UserRepository userRepository,FakturaRepository fakturaRepository, PreduzeceRepository preduzeceRepository, PermissionRepository permissionRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.permissionRepository = permissionRepository;
         this.fakturaRepository = fakturaRepository;
+        this.preduzeceRepository = preduzeceRepository;
     }
 
+    private Preduzece getDefaultPreduzece(){
+        Preduzece p1 = new Preduzece();
+        p1.setNaziv("Test Preduzece");
+        p1.setPib("111222333");
+        p1.setAdresa("test adresa");
+        p1.setGrad("Beograd");
+
+        return p1;
+    }
     private Faktura getDefaultFaktura(){
+
+
         Faktura f1 = new Faktura();
         f1.setBrojFakture("1");
         f1.setIznos(1000.00);
@@ -46,6 +59,7 @@ public class BootstrapData implements CommandLineRunner {
         f1.setProdajnaVrednost(1000.00);
         f1.setValuta("EUR");
         f1.setTipDokumenta(TipDokumenta.FAKTURA);
+
         return f1;
     }
 
@@ -87,16 +101,27 @@ public class BootstrapData implements CommandLineRunner {
         this.userRepository.save(user1);
         this.userRepository.save(user2);
 
+        Preduzece p1 = getDefaultPreduzece();
+        Preduzece p2 = getDefaultPreduzece();
+
+        this.preduzeceRepository.save(p1);
+        this.preduzeceRepository.save(p2);
+
         Faktura f1 = getDefaultFaktura();
         f1.setIznos(1000.00);
+        f1.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
+        f1.setPreduzece(p1);
+
         Faktura f2 = getDefaultFaktura();
         f2.setIznos(2000.00);
+        f2.setPreduzece(p2);
+
         Faktura f3 = getDefaultFaktura();
         f3.setIznos(3000.00);
+        f3.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
+
         Faktura f4 = getDefaultFaktura();
         f4.setIznos(4000.00);
-
-
 
         this.fakturaRepository.save(f1);
         this.fakturaRepository.save(f2);

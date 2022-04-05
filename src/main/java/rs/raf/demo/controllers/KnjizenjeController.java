@@ -1,7 +1,8 @@
 package rs.raf.demo.controllers;
 
 
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,11 @@ import rs.raf.demo.services.IKnjizenjeService;
 import rs.raf.demo.specifications.RacunSpecificationsBuilder;
 
 
+import javax.naming.OperationNotSupportedException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
-
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -24,7 +27,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rs.raf.demo.model.Knjizenje;
-
+import rs.raf.demo.utils.ApiUtil;
+import rs.raf.demo.utils.SearchUtil;
 
 
 @CrossOrigin
@@ -35,10 +39,12 @@ public class KnjizenjeController {
 
 
     private final IKnjizenjeService knjizenjaService;
+    private final SearchUtil<Knjizenje> searchUtil;
 
 
     public KnjizenjeController(IKnjizenjeService knjizenjaService) {
         this.knjizenjaService = knjizenjaService;
+        this.searchUtil = new SearchUtil<>();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,19 +85,17 @@ public class KnjizenjeController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> search(@RequestParam(name = "search") String search) {
+    public ResponseEntity<?> search(@RequestParam(name = "search") String search,
+                                    @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+                                    @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+                                    @RequestParam(defaultValue = "-datumKnjizenja") String[] sort) {
         RacunSpecificationsBuilder<Knjizenje> builder = new RacunSpecificationsBuilder<>();
+        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
 
 
-        Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-        Matcher matcher = pattern.matcher(search + ",");
-        while (matcher.find()) {
-            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-        }
+        Specification<Knjizenje> spec = searchUtil.getSpec(search);
 
-        Specification<Knjizenje> spec = builder.build();
-
-        List<Knjizenje> result = knjizenjaService.findAll(spec);
+        Page<Knjizenje> result = knjizenjaService.findAll(spec, pageSort);
 
         return ResponseEntity.ok(result);
     }

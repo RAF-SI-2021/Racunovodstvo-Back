@@ -14,9 +14,5 @@ public interface IFakturaService extends IService<Faktura, Long>{
 
     Page<Faktura> findAll(Pageable pageSort);
 
-    List<Faktura> findUlazneFakture();
-
-    List<Faktura> findIzlazneFakture();
-
     Map<String, Double> getSume(String tipFakture);
 }
