@@ -6,14 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.Konto;
-import rs.raf.demo.responses.GlavnaKnjigaResponse;
 import rs.raf.demo.services.impl.KontoService;
-import rs.raf.demo.specifications.SpecificationsBuilder;
+import rs.raf.demo.utils.SearchUtil;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -22,39 +17,18 @@ import java.util.stream.Collectors;
 public class GlavnaKnjigaController {
 
     private final KontoService kontoService;
-    private final Pattern pattern;
+    private final SearchUtil<Konto> searchUtil;
 
     public GlavnaKnjigaController(KontoService kontoService) {
         this.kontoService = kontoService;
-        this.pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+        this.searchUtil = new SearchUtil<>();
     }
 
     @GetMapping(value = "/{kontnaGrupa}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPreduzeceById(@PathVariable("kontnaGrupa") String kontnaGrupa,
                                               @RequestParam(name = "search", required = false, defaultValue = "") String search) {
-        SpecificationsBuilder<Konto> builder = new SpecificationsBuilder<>();
-        Matcher matcher = this.pattern.matcher(search + ",kontnaGrupa_brojKonta:" + kontnaGrupa + ",");
-        while (matcher.find()) {
-            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-        }
-
-        Specification<Konto> spec = builder.build();
-
-        try {
-            List<Konto> kontoList = this.kontoService.findAll(spec);
-            return ResponseEntity.ok(kontoList.stream().map(
-                    konto -> new GlavnaKnjigaResponse(
-                            konto.getKnjizenje().getKnjizenjeId(),
-                            konto.getKnjizenje().getDatumKnjizenja(),
-                            konto.getPotrazuje(),
-                            konto.getDuguje(),
-                            konto.getDuguje() - konto.getPotrazuje(),
-                            konto.getKontnaGrupa().getNazivKonta(),
-                            konto.getKontnaGrupa().getBrojKonta())
-            ).collect(Collectors.toList()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
+        Specification<Konto> spec = this.searchUtil.getSpec(search + ",kontnaGrupa_brojKonta:" + kontnaGrupa + ",");
+        return ResponseEntity.ok(this.kontoService.findAllGlavnaKnjigaResponse(spec));
     }
 }
