@@ -1,5 +1,6 @@
 package rs.raf.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,6 +32,7 @@ public class Plata {
     @Column
     private String komentar;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "zaposleniId")
     private Zaposleni zaposleni;
 
