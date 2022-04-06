@@ -28,4 +28,6 @@ public class Knjizenje {
     private Dokument dokument;
     @OneToMany(mappedBy = "knjizenje", fetch =  FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Konto> konto;
+    @Column
+    private String komentar;
 }

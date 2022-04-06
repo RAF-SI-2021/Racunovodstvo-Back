@@ -13,4 +13,5 @@ public class KnjizenjeResponse {
     Double saldo;
     Double duguje;
     Double potrazuje;
+    String komentar;
 }

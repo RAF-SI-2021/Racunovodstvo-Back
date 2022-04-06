@@ -30,6 +30,7 @@ public class KnjizenjeConverter {
             response.setKnjizenjeId(currKnjizenje.getKnjizenjeId());
             response.setDatumKnjizenja(currKnjizenje.getDatumKnjizenja());
             response.setBrojNaloga(currKnjizenje.getBrojNaloga());
+            response.setKomentar(currKnjizenje.getKomentar());
             response.setDuguje(knjizenjeService.getSumaDugujeZaKnjizenje(currKnjizenje.getKnjizenjeId()));
             response.setPotrazuje(knjizenjeService.getSumaPotrazujeZaKnjizenje(currKnjizenje.getKnjizenjeId()));
             response.setSaldo(knjizenjeService.getSaldoZaKnjizenje(currKnjizenje.getKnjizenjeId()));
