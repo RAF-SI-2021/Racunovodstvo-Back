@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.Plata;
+import rs.raf.demo.services.impl.KoeficijentService;
 import rs.raf.demo.services.impl.PlataService;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,14 +18,22 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class PlataRestController {
     private final PlataService plataService;
+    private final KoeficijentService koeficijentService;
 
-    public PlataRestController(PlataService plataService) {
+    public PlataRestController(PlataService plataService,
+                               KoeficijentService koeficijentService) {
         this.plataService = plataService;
+        this.koeficijentService = koeficijentService;
     }
 
     @GetMapping(value = "/zaposleni/{id}/plata", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPlataForZaposleni(@PathVariable("id") Long zaposleniId) {
         return ResponseEntity.ok(this.plataService.findByZaposleniZaposleniId(zaposleniId));
+    }
+
+    @GetMapping(value = "/plata", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPlata(@RequestParam(name = "search") String search) {
+        return ResponseEntity.ok(this.plataService.findAll());
     }
 
     @GetMapping(value = "/plata/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,6 +54,7 @@ public class PlataRestController {
         Optional<Plata> optionalPlata = this.plataService.findById(plataId);
         if (optionalPlata.isPresent()) {
             plata.setPlataId(plataId);
+            plata.izracunajDoprinose(this.koeficijentService.getCurrentKoeficijent());
             return ResponseEntity.ok(this.plataService.save(plata));
         }
         throw new EntityNotFoundException();

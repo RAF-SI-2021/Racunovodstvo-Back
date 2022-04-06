@@ -1,5 +1,6 @@
 package rs.raf.demo.services.impl;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Plata;
 import rs.raf.demo.repositories.PlataRepository;
@@ -29,6 +30,10 @@ public class PlataService implements IService<Plata, Long> {
     @Override
     public List<Plata> findAll() {
         return this.platarepository.findAll();
+    }
+
+    public List<Plata> findAll(Specification<Plata> spec) {
+        return this.platarepository.findAll(spec);
     }
 
     @Override

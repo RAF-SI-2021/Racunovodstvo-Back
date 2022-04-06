@@ -23,9 +23,9 @@ public class Koeficijent {
     @Column
     private Double zdravstvenoOsiguranje2;
     @Column
-    private Double nezaposlenostNaTeretPoslodavca1;
+    private Double nezaposlenost1;
     @Column
-    private Double nezaposlenostNaTeretPoslodavca2;
+    private Double nezaposlenost2;
     @Column
     private Double najnizaOsnovica;
     @Column
