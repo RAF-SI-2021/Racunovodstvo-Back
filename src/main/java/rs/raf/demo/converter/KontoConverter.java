@@ -1,5 +1,8 @@
 package rs.raf.demo.converter;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import rs.raf.demo.model.Konto;
 import rs.raf.demo.responses.GlavnaKnjigaResponse;
@@ -10,8 +13,8 @@ import java.util.stream.Collectors;
 @Component
 public class KontoConverter {
 
-    public List<GlavnaKnjigaResponse> convert(List<Konto> kontoList) {
-        return kontoList.stream().map(
+    public Page<GlavnaKnjigaResponse> convert(List<Konto> kontoList) {
+        return new PageImpl(kontoList.stream().map(
                 konto -> new GlavnaKnjigaResponse(
                         konto.getKnjizenje().getKnjizenjeId(),
                         konto.getKnjizenje().getDatumKnjizenja(),
@@ -20,6 +23,6 @@ public class KontoConverter {
                         konto.getDuguje() - konto.getPotrazuje(),
                         konto.getKontnaGrupa().getNazivKonta(),
                         konto.getKontnaGrupa().getBrojKonta())
-        ).collect(Collectors.toList());
+        ).collect(Collectors.toList()));
     }
 }

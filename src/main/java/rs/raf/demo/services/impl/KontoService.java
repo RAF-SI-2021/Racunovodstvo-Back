@@ -2,6 +2,8 @@ package rs.raf.demo.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.converter.KontoConverter;
@@ -58,7 +60,7 @@ public class KontoService implements IService<Konto, Long> {
         return this.kontoRepository.findAll(spec);
     }
 
-    public List<GlavnaKnjigaResponse> findAllGlavnaKnjigaResponse(Specification<Konto> spec) {
-        return this.kontoConverter.convert(this.kontoRepository.findAll(spec));
+    public Page<GlavnaKnjigaResponse> findAllGlavnaKnjigaResponse(Specification<Konto> spec, Pageable pageSort) {
+        return this.kontoConverter.convert(this.kontoRepository.findAll(spec, pageSort).getContent());
     }
 }
