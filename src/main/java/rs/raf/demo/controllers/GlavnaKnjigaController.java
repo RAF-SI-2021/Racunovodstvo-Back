@@ -28,7 +28,7 @@ public class GlavnaKnjigaController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPreduzeceById(@PathVariable("kontnaGrupa") String kontnaGrupa,
                                               @RequestParam(name = "search", required = false, defaultValue = "") String search) {
-        Specification<Konto> spec = this.searchUtil.getSpec(search + ",kontnaGrupa_brojKonta:" + kontnaGrupa + ",");
+        Specification<Konto> spec = this.searchUtil.getSpec(search + ",kontnaGrupa:" + kontnaGrupa + ",");
         return ResponseEntity.ok(this.kontoService.findAllGlavnaKnjigaResponse(spec));
     }
 }

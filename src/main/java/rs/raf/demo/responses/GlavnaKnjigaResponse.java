@@ -10,6 +10,9 @@ import java.util.Date;
 public class GlavnaKnjigaResponse {
     Long brojNaloga;
     Date datum;
-    Double potrazuje, duguje, saldo;
-    String nazivKonta, konto;
+    Double potrazuje;
+    Double duguje;
+    Double saldo;
+    String nazivKonta;
+    String konto;
 }
