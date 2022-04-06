@@ -1,6 +1,5 @@
 package rs.raf.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,12 +18,14 @@ public class Knjizenje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long knjizenjeId;
     @Column(nullable = false)
+    @NotNull(message = "Broj naloga je obavezan")
+    private String brojNaloga;
+    @Column(nullable = false)
     @NotNull(message = "Datum je obavezna")
     private Date datumKnjizenja;
-    @ManyToOne
-    @JoinColumn(name = "knjizenje")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "dokument")
     private Dokument dokument;
-    @JsonIgnore
-    @OneToMany(mappedBy = "knjizenje", fetch =  FetchType.EAGER)
+    @OneToMany(mappedBy = "knjizenje", fetch =  FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Konto> konto;
 }

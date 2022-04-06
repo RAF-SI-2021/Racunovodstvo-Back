@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import rs.raf.demo.responses.KnjizenjeResponse;
 import rs.raf.demo.services.IKnjizenjeService;
 import rs.raf.demo.specifications.RacunSpecificationsBuilder;
 
@@ -95,8 +96,13 @@ public class KnjizenjeController {
 
         Specification<Knjizenje> spec = searchUtil.getSpec(search);
 
-        Page<Knjizenje> result = knjizenjaService.findAll(spec, pageSort);
+        Page<KnjizenjeResponse> result = knjizenjaService.findAll(spec, pageSort);
 
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> findAll() {
+        return ResponseEntity.ok(knjizenjaService.findAllKnjizenjeResponse());
     }
 }

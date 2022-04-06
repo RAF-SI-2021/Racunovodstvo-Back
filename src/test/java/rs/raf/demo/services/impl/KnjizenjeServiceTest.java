@@ -57,7 +57,6 @@ class KnjizenjeServiceTest {
 
     @Test
     public void testHappyPath() {
-
         when(knjizenjeRepository.findById(any(Long.class))).thenReturn(java.util.Optional.of(knjizenje));
 
         double sumaDuguje = knjizenjeService.getSumaDugujeZaKnjizenje(knjizenje.getKnjizenjeId());
