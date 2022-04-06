@@ -12,6 +12,7 @@ import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.repositories.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -24,14 +25,27 @@ public class BootstrapData implements CommandLineRunner {
     private final FakturaRepository fakturaRepository;
     private final PreduzeceRepository preduzeceRepository;
     private final PasswordEncoder passwordEncoder;
+    private final KontnaGrupaRepository kontnaGrupaRepository;
+    private final KontoRepository kontoRepository;
+    private final KnjizenjeRepository knjizenjeRepository;
 
     @Autowired
-    public BootstrapData(UserRepository userRepository,FakturaRepository fakturaRepository, PreduzeceRepository preduzeceRepository, PermissionRepository permissionRepository, PasswordEncoder passwordEncoder) {
+    public BootstrapData(UserRepository userRepository,
+                         FakturaRepository fakturaRepository,
+                         PermissionRepository permissionRepository,
+                         PasswordEncoder passwordEncoder,
+                         KontoRepository kontoRepository,
+                         KontnaGrupaRepository kontnaGrupaRepository,
+                         KnjizenjeRepository knjizenjeRepository,
+                         PreduzeceRepository preduzeceRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.permissionRepository = permissionRepository;
         this.fakturaRepository = fakturaRepository;
         this.preduzeceRepository = preduzeceRepository;
+        this.kontoRepository = kontoRepository;
+        this.kontnaGrupaRepository = kontnaGrupaRepository;
+        this.knjizenjeRepository = knjizenjeRepository;
     }
 
     private Preduzece getDefaultPreduzece(){
@@ -123,10 +137,50 @@ public class BootstrapData implements CommandLineRunner {
         Faktura f4 = getDefaultFaktura();
         f4.setIznos(4000.00);
 
+
         this.fakturaRepository.save(f1);
         this.fakturaRepository.save(f2);
         this.fakturaRepository.save(f3);
         this.fakturaRepository.save(f4);
+
+        KontnaGrupa kg1 = new KontnaGrupa();
+        kg1.setBrojKonta("0");
+        kg1.setNazivKonta("Naziv kontne grupe 0");
+        KontnaGrupa kg2 = new KontnaGrupa();
+        kg2.setBrojKonta("1");
+        kg2.setNazivKonta("Naziv kontne grupe 1");
+        this.kontnaGrupaRepository.save(kg1);
+        this.kontnaGrupaRepository.save(kg2);
+
+        Knjizenje knj1 = new Knjizenje();
+        knj1.setDatumKnjizenja(new Date());
+        Knjizenje knj2 = new Knjizenje();
+        knj2.setDatumKnjizenja(new Date());
+        this.knjizenjeRepository.save(knj1);
+        this.knjizenjeRepository.save(knj2);
+
+        Konto k1 = new Konto();
+        k1.setDuguje(200.0);
+        k1.setPotrazuje(300.0);
+        k1.setKontnaGrupa(kg1);
+        k1.setKnjizenje(knj1);
+        Konto k2 = new Konto();
+        k2.setDuguje(800.0);
+        k2.setPotrazuje(1300.0);
+        k2.setKontnaGrupa(kg2);
+        k2.setKnjizenje(knj1);
+        Konto k3 = new Konto();
+        k3.setDuguje(500.0);
+        k3.setPotrazuje(300.0);
+        k3.setKontnaGrupa(kg1);
+        k3.setKnjizenje(knj2);
+        Konto k4 = new Konto();
+        k4.setDuguje(1200.0);
+        k4.setPotrazuje(300.0);
+        k4.setKontnaGrupa(kg2);
+        k4.setKnjizenje(knj2);
+
+        this.kontoRepository.saveAll(Arrays.asList(k1, k2, k3, k4));
 
         log.info("Data loaded!");
     }
