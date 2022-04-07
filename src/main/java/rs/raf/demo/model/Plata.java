@@ -51,8 +51,8 @@ public class Plata {
         }
         this.doprinos1 = b * (koeficijent.getPenzionoOsiguranje1() + koeficijent.getZdravstvenoOsiguranje1() + koeficijent.getNezaposlenost1());
         this.doprinos2 = b * (koeficijent.getPenzionoOsiguranje2() + koeficijent.getZdravstvenoOsiguranje2() + koeficijent.getNezaposlenost2());
+        this.porez = (b - koeficijent.getPoreskoOslobadjanje()) * koeficijent.getKoeficijentPoreza();
         this.brutoPlata = this.netoPlata + this.porez;
         this.ukupanTrosakZarade = this.brutoPlata + this.doprinos2;
-        this.porez = (this.brutoPlata - koeficijent.getPoreskoOslobadjanje()) * koeficijent.getKoeficijentPoreza();
     }
 }
