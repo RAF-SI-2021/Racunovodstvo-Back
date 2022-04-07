@@ -18,23 +18,46 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 @Service
 public class KnjizenjeService implements IKnjizenjeService {
 
     private final KnjizenjeRepository knjizenjeRepository;
+    private final KontoService kontoService;
 
     @Lazy
     @Autowired
     private KnjizenjeConverter knjizenjeConverter;
 
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, KontoService kontoService) {
         this.knjizenjeRepository = knjizenjeRepository;
+        this.kontoService = kontoService;
     }
 
-    @Override
-    public <S extends Knjizenje> S save(S knjizenje) {
-        return knjizenjeRepository.save(knjizenje);
+    @Transactional
+    public Knjizenje save(Knjizenje knjizenje) {
+
+
+
+        List<Konto> kontoList = knjizenje.getKonto();
+        for(Konto konto : kontoList){
+            if(!kontoService.findAll().contains(konto)){
+                kontoService.save(konto);
+            }
+        }
+
+        Knjizenje newKnjizenje = null;
+
+        newKnjizenje.setDatumKnjizenja(knjizenje.getDatumKnjizenja());
+        newKnjizenje.setBrojNaloga(knjizenje.getBrojNaloga());
+        newKnjizenje.setDokument(knjizenje.getDokument());
+        newKnjizenje.setKomentar(knjizenje.getKomentar());
+        newKnjizenje.setKonto(kontoList);
+
+
+
+        return knjizenjeRepository.save(newKnjizenje);
     }
 
     @Override

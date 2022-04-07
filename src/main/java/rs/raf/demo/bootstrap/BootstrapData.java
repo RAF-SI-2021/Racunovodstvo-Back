@@ -68,6 +68,7 @@ public class BootstrapData implements CommandLineRunner {
         f1.setDatumIzdavanja(new Date());
         f1.setDatumPlacanja(new Date());
         f1.setKurs(117.8);
+        f1.setRokZaPlacanje(new Date());
         f1.setNaplata(1000.00);
         f1.setPorez(10.00);
         f1.setPorezProcenat(1.00);
