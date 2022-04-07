@@ -31,6 +31,10 @@ public class Koeficijent {
     @Column
     private Double najvisaOsnovica;
     @Column
+    private Double poreskoOslobadjanje;
+    @Column
+    private Double koeficijentPoreza;
+    @Column
     private boolean status;
     @Column
     private Date date;
