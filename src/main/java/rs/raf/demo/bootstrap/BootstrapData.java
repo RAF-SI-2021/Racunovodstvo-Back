@@ -71,7 +71,7 @@ public class BootstrapData implements CommandLineRunner {
         f1.setPorezProcenat(1.00);
         f1.setProdajnaVrednost(1000.00);
         f1.setValuta("EUR");
-        f1.setBrojDokumenta("" + new Random().nextInt());
+        f1.setBrojDokumenta("1234");
         f1.setRokZaPlacanje(new Date());
         f1.setTipDokumenta(TipDokumenta.FAKTURA);
 
