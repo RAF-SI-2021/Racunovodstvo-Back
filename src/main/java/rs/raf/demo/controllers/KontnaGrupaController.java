@@ -53,7 +53,9 @@ public class KontnaGrupaController {
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateKontnaGrupa(@Valid @RequestBody KontnaGrupa kontnaGrupa) {
-        return ResponseEntity.ok(kontnaGrupaService.update(kontnaGrupa.getBrojKonta()));
+        if (kontnaGrupaService.findById(kontnaGrupa.getBrojKonta()).isPresent())
+            return ResponseEntity.ok(kontnaGrupaService.save(kontnaGrupa));
+        throw new EntityNotFoundException();
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
