@@ -21,7 +21,6 @@ public class KontnaGrupa {
     @Column(nullable = false)
     @NotBlank(message = "Naziv konta je obavezan")
     private String nazivKonta;
-    @JsonIgnore
     @OneToMany(mappedBy = "kontnaGrupa", fetch =  FetchType.EAGER)
     @JsonIgnore
     private List<Konto> konto;
