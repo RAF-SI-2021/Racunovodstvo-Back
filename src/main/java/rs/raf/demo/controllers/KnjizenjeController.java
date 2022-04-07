@@ -1,6 +1,7 @@
 package rs.raf.demo.controllers;
 
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -50,6 +51,7 @@ public class KnjizenjeController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja) {
+        System.out.println("OVDE SAM");
         return ResponseEntity.ok(knjizenjaService.save(dnevnikKnjizenja));
     }
 
