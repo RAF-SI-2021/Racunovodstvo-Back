@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import rs.raf.demo.converter.KnjizenjeConverter;
 import rs.raf.demo.model.Knjizenje;
 import rs.raf.demo.model.Konto;
+import rs.raf.demo.repositories.DokumentRepository;
 import rs.raf.demo.repositories.KnjizenjeRepository;
 import rs.raf.demo.responses.KnjizenjeResponse;
 import rs.raf.demo.services.IKnjizenjeService;
@@ -23,18 +24,48 @@ import javax.persistence.EntityNotFoundException;
 public class KnjizenjeService implements IKnjizenjeService {
 
     private final KnjizenjeRepository knjizenjeRepository;
+    private final DokumentRepository dokumentRepository;
+    private final KontoService kontoService;
 
     @Lazy
     @Autowired
     private KnjizenjeConverter knjizenjeConverter;
 
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, KontoService kontoService) {
         this.knjizenjeRepository = knjizenjeRepository;
+        this.dokumentRepository = dokumentRepository;
+        this.kontoService = kontoService;
     }
 
     @Override
-    public <S extends Knjizenje> S save(S knjizenje) {
-        return knjizenjeRepository.save(knjizenje);
+    public Knjizenje save(Knjizenje knjizenje) {
+
+        List<Konto> kontoList = knjizenje.getKonto();
+
+        Knjizenje newKnjizenje = new Knjizenje();
+
+        if(!dokumentRepository.findById(knjizenje.getDokument().getDokumentId()).isPresent()){
+            knjizenje.setDokument(dokumentRepository.save(knjizenje.getDokument()));
+        }
+
+        newKnjizenje.setDatumKnjizenja(knjizenje.getDatumKnjizenja());
+        newKnjizenje.setBrojNaloga(knjizenje.getBrojNaloga());
+        newKnjizenje.setDokument(knjizenje.getDokument());
+        newKnjizenje.setKomentar(knjizenje.getKomentar());
+
+
+        newKnjizenje = knjizenjeRepository.save(newKnjizenje);
+
+        for(Konto konto : kontoList){
+            if(konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()){
+                konto.setKnjizenje(newKnjizenje);
+                kontoService.save(konto);
+            }
+        }
+
+        newKnjizenje.setKonto(kontoList);
+
+        return  knjizenjeRepository.save(newKnjizenje);
     }
 
     @Override

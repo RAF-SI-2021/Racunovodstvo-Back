@@ -29,7 +29,7 @@ public class KontnaGrupaController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getKontnaGrupa(@PathVariable("id") String id) {
+    public ResponseEntity<?> getKontnaGrupa(@PathVariable("id") Long id) {
         Optional<KontnaGrupa> optionalKontnaGrupa = kontnaGrupaService.findById(id);
         if (optionalKontnaGrupa.isPresent()) {
             return ResponseEntity.ok(optionalKontnaGrupa.get());
@@ -51,15 +51,15 @@ public class KontnaGrupaController {
         return ResponseEntity.ok(kontnaGrupaService.save(kontnaGrupa));
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateKontnaGrupa(@Valid @RequestBody KontnaGrupa kontnaGrupa) {
-        if (kontnaGrupaService.findById(kontnaGrupa.getBrojKonta()).isPresent())
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateKontnaGrupa(@Valid @RequestBody KontnaGrupa kontnaGrupa, @PathVariable Long id) {
+        if (kontnaGrupaService.findById(id).isPresent())
             return ResponseEntity.ok(kontnaGrupaService.save(kontnaGrupa));
         throw new EntityNotFoundException();
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteKontnaGrupa(@PathVariable String id) {
+    public ResponseEntity<?> deleteKontnaGrupa(@PathVariable Long id) {
         Optional<KontnaGrupa> optionalKontnaGrupa = kontnaGrupaService.findById(id);
         if (optionalKontnaGrupa.isPresent()) {
             kontnaGrupaService.deleteById(id);
