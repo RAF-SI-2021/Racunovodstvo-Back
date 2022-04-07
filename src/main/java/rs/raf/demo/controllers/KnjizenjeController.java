@@ -15,7 +15,6 @@ import rs.raf.demo.specifications.RacunSpecificationsBuilder;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,14 +42,14 @@ public class KnjizenjeController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja) {
+    public ResponseEntity<?> createDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja){
         return ResponseEntity.ok(knjizenjaService.save(dnevnikKnjizenja));
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja) {
+    public ResponseEntity<?> updateDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja){
         Optional<Knjizenje> optionalDnevnik = knjizenjaService.findById(dnevnikKnjizenja.getKnjizenjeId());
-        if (optionalDnevnik.isPresent()) {
+        if(optionalDnevnik.isPresent()) {
             return ResponseEntity.ok(knjizenjaService.save(dnevnikKnjizenja));
         } else {
             return ResponseEntity.notFound().build();
@@ -58,9 +57,9 @@ public class KnjizenjeController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteDnevnikKnjizenja(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteDnevnikKnjizenja(@PathVariable("id") Long id){
         Optional<Knjizenje> optionalDnevnik = knjizenjaService.findById(id);
-        if (optionalDnevnik.isPresent()) {
+        if(optionalDnevnik.isPresent()) {
             knjizenjaService.deleteById(id);
             return ResponseEntity.ok().build();
         } else {
@@ -70,9 +69,9 @@ public class KnjizenjeController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> getDnevnikKnjizenjaId(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getDnevnikKnjizenjaId(@PathVariable("id") Long id){
         Optional<Knjizenje> optionalDnevnik = knjizenjaService.findById(id);
-        if (optionalDnevnik.isPresent()) {
+        if(optionalDnevnik.isPresent()) {
             return ResponseEntity.ok(knjizenjaService.findById(id));
         } else {
             return ResponseEntity.notFound().build();
@@ -83,7 +82,7 @@ public class KnjizenjeController {
     public ResponseEntity<?> search(@RequestParam(name = "search") String search,
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
                                     @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
-                                    @RequestParam(defaultValue = "-datumKnjizenja") String[] sort) {
+                                    @RequestParam(defaultValue = "-datumKnjizenja")  String[] sort){
         RacunSpecificationsBuilder<Knjizenje> builder = new RacunSpecificationsBuilder<>();
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
 
@@ -95,13 +94,18 @@ public class KnjizenjeController {
 
         Specification<Knjizenje> spec = builder.build();
 
-        Page<Knjizenje> result = knjizenjaService.findAll(spec, pageSort);
+        try{
+            Page<Knjizenje> result = knjizenjaService.findAll(spec, pageSort);
 
-        if (result.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            if(result.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok(result);
         }
-
-        return ResponseEntity.ok(result);
+        catch (RuntimeException e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
 
