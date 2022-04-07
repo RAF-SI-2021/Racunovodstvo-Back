@@ -31,11 +31,6 @@ public class KontnaGrupaService implements IKontnaGrupaService {
     }
 
 
-
-    public KontnaGrupa update(Long id) {
-        return save(findById(id).orElseThrow(NoSuchElementException::new));
-    }
-
     @Override
     public KontnaGrupa findKontnaGrupaById(Long id) {
         return findById(id).orElseThrow(NoSuchElementException::new);
