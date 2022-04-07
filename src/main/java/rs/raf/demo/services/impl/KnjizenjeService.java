@@ -44,7 +44,7 @@ public class KnjizenjeService implements IKnjizenjeService {
 
         Knjizenje newKnjizenje = new Knjizenje();
 
-        if(!dokumentRepository.findById(knjizenje.getDokument().getDokumentId()).isPresent()){
+        if(!dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).isPresent()){
             knjizenje.setDokument(dokumentRepository.save(knjizenje.getDokument()));
         }
 

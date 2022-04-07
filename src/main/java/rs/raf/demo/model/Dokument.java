@@ -18,6 +18,8 @@ public class Dokument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long dokumentId;
     @Column(nullable = false)
+    private String brojDokumenta;
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TipDokumenta tipDokumenta;
     @JsonIgnore
