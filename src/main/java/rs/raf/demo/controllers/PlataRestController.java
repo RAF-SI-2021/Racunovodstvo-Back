@@ -54,11 +54,10 @@ public class PlataRestController {
         return ResponseEntity.ok(this.plataService.save(plata));
     }
 
-    @PutMapping(value = "/plata/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> newPlata(@PathVariable("id") Long plataId, @Valid @RequestBody Plata plata) {
-        Optional<Plata> optionalPlata = this.plataService.findById(plataId);
+    @PutMapping(value = "/plata", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> editPlata(@Valid @RequestBody Plata plata) {
+        Optional<Plata> optionalPlata = this.plataService.findById(plata.getPlataId());
         if (optionalPlata.isPresent()) {
-            plata.setPlataId(plataId);
             plata.izracunajDoprinose(this.koeficijentService.getCurrentKoeficijent());
             return ResponseEntity.ok(this.plataService.save(plata));
         }
