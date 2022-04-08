@@ -6,17 +6,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.Plata;
-import rs.raf.demo.model.Zaposleni;
 import rs.raf.demo.requests.PlataRequest;
-import rs.raf.demo.services.impl.KoeficijentService;
 import rs.raf.demo.services.impl.PlataService;
-import rs.raf.demo.services.impl.ZaposleniService;
 import rs.raf.demo.utils.SearchUtil;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.util.Optional;
 
@@ -26,15 +20,10 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class PlataRestController {
     private final PlataService plataService;
-    private final KoeficijentService koeficijentService;
     private final SearchUtil<Plata> searchUtil;
-    @PersistenceContext
-    EntityManager entityManager;
 
-    public PlataRestController(PlataService plataService,
-                               KoeficijentService koeficijentService) {
+    public PlataRestController(PlataService plataService) {
         this.plataService = plataService;
-        this.koeficijentService = koeficijentService;
         this.searchUtil = new SearchUtil<>();
     }
 
@@ -59,13 +48,8 @@ public class PlataRestController {
 
     @PostMapping(value = "/plata", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> newPlata(@Valid @RequestBody PlataRequest plata) {
-        Plata p = new Plata();
-        p.setNetoPlata(plata.getNetoPlata());
-        p.setDatum(plata.getDatum());
-        p.setZaposleni(this.entityManager.getReference(Zaposleni.class, plata.getZaposleniId()));
-        p.izracunajDoprinose(this.koeficijentService.getCurrentKoeficijent());
         try {
-            return ResponseEntity.ok(this.plataService.save(p));
+            return ResponseEntity.ok(this.plataService.save(plata));
         } catch (Exception e) {
             throw new EntityNotFoundException();
         }
@@ -75,13 +59,8 @@ public class PlataRestController {
     public ResponseEntity<?> editPlata(@Valid @RequestBody PlataRequest plata) {
         Optional<Plata> optionalPlata = this.plataService.findById(plata.getPlataId());
         if (optionalPlata.isPresent()) {
-            Plata p = new Plata();
-            p.setNetoPlata(plata.getNetoPlata());
-            p.setDatum(plata.getDatum());
-            p.setZaposleni(this.entityManager.getReference(Zaposleni.class, plata.getZaposleniId()));
-            p.izracunajDoprinose(this.koeficijentService.getCurrentKoeficijent());
             try {
-                return ResponseEntity.ok(this.plataService.save(p));
+                return ResponseEntity.ok(this.plataService.save(plata));
             } catch (Exception e) {
                 throw new EntityNotFoundException();
             }

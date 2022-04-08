@@ -217,9 +217,9 @@ public class BootstrapData implements CommandLineRunner {
 
         Koeficijent koeficijent = new Koeficijent();
         koeficijent.setDate(new Date());
-        koeficijent.setNajnizaOsnovica(30.88);
-        koeficijent.setNajvisaOsnovica(441.44);
-        koeficijent.setPoreskoOslobadjanje(19.3);
+        koeficijent.setNajnizaOsnovica(30880.0);
+        koeficijent.setNajvisaOsnovica(441440.0);
+        koeficijent.setPoreskoOslobadjanje(19300.0);
         koeficijent.setKoeficijentPoreza(10.0);
         koeficijent.setPenzionoOsiguranje1(14.0);
         koeficijent.setPenzionoOsiguranje2(11.0);
