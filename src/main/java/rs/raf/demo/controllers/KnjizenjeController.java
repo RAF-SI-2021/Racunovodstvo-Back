@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import rs.raf.demo.model.KontnaGrupa;
+import rs.raf.demo.model.Konto;
 import rs.raf.demo.responses.KnjizenjeResponse;
 import rs.raf.demo.services.IKnjizenjeService;
 import rs.raf.demo.specifications.RacunSpecificationsBuilder;
@@ -105,4 +107,22 @@ public class KnjizenjeController {
     public ResponseEntity<?> findAll() {
         return ResponseEntity.ok(knjizenjaService.findAllKnjizenjeResponse());
     }
+
+
+    @GetMapping(value = "/{kontnaGrupa}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPreduzeceById(
+            @PathVariable("kontnaGrupa") String kontnaGrupa,
+            @RequestParam(name = "search", required = false, defaultValue = "") String search,
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+            @RequestParam(defaultValue = "kontoId")  String[] sort,
+            @RequestParam KontnaGrupa kontnaGrupaObj
+    ) {
+        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
+        if (search.length() > 0) search += ",";
+        Specification<Knjizenje> spec = this.searchUtil.getSpec(search + "kontnaGrupa:" + kontnaGrupa + ",");
+        return ResponseEntity.ok(this.knjizenjaService.findAllAnalitickeKarticeResponse(spec,pageSort,kontnaGrupaObj));
+    }
+
 }

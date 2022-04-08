@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import rs.raf.demo.model.Knjizenje;
+import rs.raf.demo.model.KontnaGrupa;
+import rs.raf.demo.responses.AnalitickaKarticaResponse;
 import rs.raf.demo.responses.KnjizenjeResponse;
 
 import java.util.List;
@@ -20,4 +22,6 @@ public interface IKnjizenjeService extends IService<Knjizenje, Long> {
     Double getSaldoZaKnjizenje(Long id);
 
     List<KnjizenjeResponse> findAllKnjizenjeResponse();
+
+    Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Specification<Knjizenje> spec, Pageable pageSort, KontnaGrupa kontnaGrupa);
 }

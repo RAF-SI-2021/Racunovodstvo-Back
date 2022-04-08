@@ -28,8 +28,6 @@ public class BilansService {
             bilansStanja.addAll(kontoRepository.findAllBilansStanja(bd.getDatumOd(),bd.getDatumDo()));
         }
         bilansStanja = sumValues(bilansStanja);
-        System.out.println("BILANS STANJA SERVICE");
-        System.out.println(bilansStanja);
         return sortBilans(sumGroupedBilans(bilansStanja,threeChars,twoChars,oneChar));
     }
 
@@ -42,30 +40,24 @@ public class BilansService {
             bilansUspeha.addAll(kontoRepository.findAllBilansUspeha(bd.getDatumOd(),bd.getDatumDo()));
         }
         bilansUspeha = sumValues(bilansUspeha);
-        System.out.println(bilansUspeha);
         return sortBilans(sumGroupedBilans(bilansUspeha,threeChars,twoChars,oneChar));
     }
 
     public List<BilansResponse> findBrutoBilans(BilansRequest bilansRequest){
         List<BilansResponse> bilansList = getBilans(bilansRequest.getDatumOd(),bilansRequest.getDatumDo());
         List<BilansResponse> brutoBilans = new ArrayList<>();
-        System.out.println("BRUTO BILANS SERVICE");
-        System.out.println(bilansList);
         int i=-1,j=-1;
         for(BilansResponse b : bilansList){
             if(b.getBrojKonta().equals(bilansRequest.getKontoOd().getBrojKonta())){
                 i = bilansList.indexOf(b);
-                System.out.println(i);
             }
             if(b.getBrojKonta().equals(bilansRequest.getKontoDo().getBrojKonta()))
                 j = bilansList.indexOf(b);
-            System.out.println(j);
         }
         if(i != -1 && j!=-1)
             for(int k = i;k<=j;k++){
                 brutoBilans.add(bilansList.get(k));
             }
-        System.out.println(brutoBilans);
         return sortBilans(brutoBilans);
     }
 

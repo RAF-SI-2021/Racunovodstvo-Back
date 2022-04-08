@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 import rs.raf.demo.model.Knjizenje;
+import rs.raf.demo.model.Konto;
+import rs.raf.demo.responses.AnalitickaKarticaResponse;
 import rs.raf.demo.responses.KnjizenjeResponse;
 import rs.raf.demo.services.IKnjizenjeService;
 
@@ -36,6 +38,20 @@ public class KnjizenjeConverter {
             response.setSaldo(knjizenjeService.getSaldoZaKnjizenje(currKnjizenje.getKnjizenjeId()));
             responses.add(response);
         }
+        return new PageImpl(responses);
+    }
+    public Page convertKartice(List<Knjizenje> knjizenja){
+        List<AnalitickaKarticaResponse> responses = new ArrayList<>();
+            for(Knjizenje k : knjizenja){
+                Double duguje =0.0;
+                Double potrazuje =0.0;
+                for(Konto konto: k.getKonto()){
+                    duguje += konto.getDuguje();
+                    potrazuje += konto.getPotrazuje();
+                }
+                AnalitickaKarticaResponse a = new AnalitickaKarticaResponse(k.getBrojNaloga(),k.getDatumKnjizenja(),k.getDokument().getBrojDokumenta(),duguje,potrazuje,duguje-potrazuje);
+                responses.add(a);
+            }
         return new PageImpl(responses);
     }
 }

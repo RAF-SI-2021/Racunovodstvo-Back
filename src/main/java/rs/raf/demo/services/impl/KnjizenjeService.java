@@ -8,9 +8,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.converter.KnjizenjeConverter;
 import rs.raf.demo.model.Knjizenje;
+import rs.raf.demo.model.KontnaGrupa;
 import rs.raf.demo.model.Konto;
 import rs.raf.demo.repositories.DokumentRepository;
 import rs.raf.demo.repositories.KnjizenjeRepository;
+import rs.raf.demo.responses.AnalitickaKarticaResponse;
 import rs.raf.demo.responses.KnjizenjeResponse;
 import rs.raf.demo.services.IKnjizenjeService;
 
@@ -81,6 +83,12 @@ public class KnjizenjeService implements IKnjizenjeService {
     @Override
     public List<KnjizenjeResponse> findAllKnjizenjeResponse() {
         return knjizenjeConverter.convert(knjizenjeRepository.findAll()).getContent();
+    }
+
+    @Override
+    public Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Specification<Knjizenje> spec, Pageable pageSort, KontnaGrupa kontnaGrupa) {
+        Page<Knjizenje> page =knjizenjeRepository.findAllKnjizenjaByKontoKontnaGrupa(spec,pageSort,kontnaGrupa);
+        return knjizenjeConverter.convertKartice(page.getContent());
     }
 
     @Override
