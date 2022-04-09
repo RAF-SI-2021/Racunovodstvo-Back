@@ -1,6 +1,8 @@
 package raf.si.racunovodstvo.knjizenje.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
 
@@ -51,4 +53,7 @@ public class Faktura extends Dokument {
     @Column
     @Enumerated(EnumType.STRING)
     private TipFakture tipFakture;
+    @Column
+    private Long preduzeceId;
+
 }
