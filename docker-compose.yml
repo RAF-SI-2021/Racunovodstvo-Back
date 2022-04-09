@@ -1,0 +1,112 @@
+version: "3.8"
+services:
+
+  eureka:
+    restart: always
+    build:
+      context: ./eureka
+      dockerfile: Dockerfile
+    healthcheck:
+       test: curl -f http://localhost:8761
+    ports: 
+      - "8761:8761"
+    expose:
+      - "8761"
+    networks:
+      - racunovodstvo
+
+  zuul:
+    restart: always
+    ports:
+      - "9092:9092"
+    build:
+      context: ./zuul
+      dockerfile: Dockerfile
+    networks:
+      - racunovodstvo
+    depends_on:
+      eureka:
+        condition: service_healthy
+
+  mysql_db:
+    image: mysql:8.0.28
+    command: --default-authentication-plugin=mysql_native_password --init-file /data/application/init-db.sql
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_NAME
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/var/lib/mysql
+      - ./init-db.sql:/data/application/init-db.sql
+    networks:
+      - racunovodstvo
+
+
+  user_service:
+    restart: unless-stopped
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+    ports:
+      - "8080:8080"
+    networks:
+      - racunovodstvo
+    depends_on:
+      - mysql_db
+      - eureka
+
+  knjizenje_service:
+    restart: unless-stopped
+    build:
+      context: ./knjizenje
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+    ports:
+      - "8081:8080"
+    networks:
+      - racunovodstvo
+    depends_on:
+      - mysql_db
+      - eureka
+
+  preduzece_service:
+    restart: unless-stopped
+    build:
+      context: ./preduzece
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+    ports:
+      - "8082:8080"
+    networks:
+      - racunovodstvo
+    depends_on:
+      - mysql_db
+      - eureka
+
+  front:
+    restart: always
+    build:
+      context: ../Racunovodstvo-Front
+      dockerfile: Dockerfile
+    ports: 
+      - 80:80
+    networks:
+      - racunovodstvo
+
+  
+
+volumes:
+  db:
+
+networks:
+  racunovodstvo:
+    name: racunovodstvo
