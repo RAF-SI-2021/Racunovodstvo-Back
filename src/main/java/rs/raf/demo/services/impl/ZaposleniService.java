@@ -2,6 +2,7 @@ package rs.raf.demo.services.impl;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import rs.raf.demo.exceptions.OperationNotSupportedException;
 import rs.raf.demo.model.Staz;
 import rs.raf.demo.model.Zaposleni;
 import rs.raf.demo.model.enums.StatusZaposlenog;
@@ -84,6 +85,10 @@ public class ZaposleniService implements IZaposleniService{
 
         if(!currZaposleni.isPresent()){
             throw new EntityNotFoundException();
+        }
+
+        if(currZaposleni.get().getStatusZaposlenog().equals(StatusZaposlenog.ZAPOSLEN) && zaposleni.getStatusZaposlenog().equals(StatusZaposlenog.NEZAPOSLEN)) {
+            throw new OperationNotSupportedException("Nije dozvoljeno update statusa u nezaposlen na ovoj ruti.");
         }
 
         if(currZaposleni.get().getStatusZaposlenog().equals(StatusZaposlenog.NEZAPOSLEN) && zaposleni.getStatusZaposlenog().equals(StatusZaposlenog.ZAPOSLEN)) {
