@@ -9,6 +9,7 @@ import rs.raf.demo.repositories.ZaposleniRepository;
 import rs.raf.demo.services.IZaposleniService;
 
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,48 +63,42 @@ public class ZaposleniService implements IZaposleniService{
 
         @Override
         public Zaposleni otkazZaposleni(Zaposleni zaposleni) {
-            Zaposleni newZaposleni = new Zaposleni();
-            if (zaposleni != null) {
-                newZaposleni = zaposleni;
-                newZaposleni.setStatusZaposlenog(StatusZaposlenog.NEZAPOSLEN);
-                for(Staz staz : zaposleni.getStaz()){
-                    if(staz.getKrajRada() == null){
-                        staz.setKrajRada(new Date());
-                        stazService.save(staz);
-                    }
+
+            Optional<Zaposleni> currZaposleni = zaposleniRepository.findById(zaposleni.getZaposleniId());
+
+            currZaposleni.get().setStatusZaposlenog(StatusZaposlenog.NEZAPOSLEN);
+            for(Staz staz : currZaposleni.get().getStaz()){
+                if(staz.getKrajRada() == null){
+                    staz.setKrajRada(new Date());
+                    stazService.save(staz);
                 }
             }
-            return zaposleniRepository.save(newZaposleni);
+
+            return zaposleniRepository.save(currZaposleni.get());
         }
 
     @Override
     public Zaposleni updateZaposleni(Zaposleni zaposleni) {
-        List<Staz> stazsNew = new ArrayList<>();
 
         Optional<Zaposleni> currZaposleni = zaposleniRepository.findById(zaposleni.getZaposleniId());
-        Staz newStaz = new Staz();
 
-        if(zaposleniRepository.findById(zaposleni.getZaposleniId()) == null || currZaposleni.get().getStatusZaposlenog().equals(StatusZaposlenog.NEZAPOSLEN)) {
+        if(!currZaposleni.isPresent()){
+            throw new EntityNotFoundException();
+        }
 
+        if(currZaposleni.get().getStatusZaposlenog().equals(StatusZaposlenog.NEZAPOSLEN) && zaposleni.getStatusZaposlenog().equals(StatusZaposlenog.ZAPOSLEN)) {
+            Staz newStaz = new Staz();
             newStaz.setPocetakRada(new Date());
             newStaz.setKrajRada(null);
-            newStaz.setZaposleni(zaposleni);
             stazService.save(newStaz);
 
-            if(zaposleniRepository.findById(zaposleni.getZaposleniId()).get().getStaz() != null){
-
-                stazsNew = zaposleniRepository.findById(zaposleni.getZaposleniId()).get().getStaz();
-
-
-            }
-
-            stazsNew.add(newStaz);
-            zaposleni.setStaz(stazsNew);
+            List<Staz> stazLista = zaposleniRepository.findById(zaposleni.getZaposleniId()).get().getStaz();
+            stazLista.add(newStaz);
+            zaposleni.setStaz(stazLista);
 
         }else{
-            stazsNew = zaposleniRepository.findById(zaposleni.getZaposleniId()).get().getStaz();
-            stazsNew.add(newStaz);
-            zaposleni.setStaz(stazsNew);
+            List<Staz> stazLista = zaposleniRepository.findById(zaposleni.getZaposleniId()).get().getStaz();
+            zaposleni.setStaz(stazLista);
         }
 
         return zaposleniRepository.save(zaposleni);
