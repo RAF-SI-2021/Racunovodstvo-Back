@@ -37,7 +37,7 @@ public class ZaposleniRestController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateZaposleni(@Valid @RequestBody Zaposleni zaposleni,  @PathVariable Long id) {
         if (iZaposleniService.findById(id).isPresent())
-            return ResponseEntity.ok(iZaposleniService.save(zaposleni));
+            return ResponseEntity.ok(iZaposleniService.updateZaposleni(zaposleni));
         throw new EntityNotFoundException();
     }
 
