@@ -38,6 +38,11 @@ public class PlataRestController {
         return ResponseEntity.ok(this.plataService.findAll(spec));
     }
 
+    @GetMapping(value = "/plata/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllPlata() {
+        return ResponseEntity.ok(this.plataService.findAll());
+    }
+
     @GetMapping(value = "/plata/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPlataById(@PathVariable("id") Long plataId) {
         Optional<Plata> optionalPlata = this.plataService.findById(plataId);

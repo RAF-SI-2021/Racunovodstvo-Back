@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import rs.raf.demo.model.*;
 import rs.raf.demo.model.enums.PolZaposlenog;
+import rs.raf.demo.model.enums.RadnaPozicija;
 import rs.raf.demo.model.enums.StatusZaposlenog;
 import rs.raf.demo.model.enums.TipDokumenta;
 import rs.raf.demo.model.enums.TipFakture;
@@ -29,6 +30,7 @@ public class BootstrapData implements CommandLineRunner {
     private final KnjizenjeRepository knjizenjeRepository;
     private final ZaposleniRepository zaposleniRepository;
     private final StazRepository stazRepository;
+    private final PlataRepository plataRepository;
 
     @Autowired
     public BootstrapData(UserRepository userRepository,
@@ -39,7 +41,9 @@ public class BootstrapData implements CommandLineRunner {
                          KontnaGrupaRepository kontnaGrupaRepository,
                          KnjizenjeRepository knjizenjeRepository,
                          PreduzeceRepository preduzeceRepository,
-                         ZaposleniRepository zaposleniRepository, StazRepository stazRepository) {
+                         ZaposleniRepository zaposleniRepository,
+                         StazRepository stazRepository,
+                         PlataRepository plataRepository) {
         this.userRepository = userRepository;
         this.permissionRepository = permissionRepository;
         this.fakturaRepository = fakturaRepository;
@@ -50,6 +54,7 @@ public class BootstrapData implements CommandLineRunner {
         this.kontnaGrupaRepository = kontnaGrupaRepository;
         this.zaposleniRepository = zaposleniRepository;
         this.stazRepository = stazRepository;
+        this.plataRepository = plataRepository;
     }
 
     private Preduzece getDefaultPreduzece(){
@@ -230,14 +235,20 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni.setPol(PolZaposlenog.MUSKO);
         zaposleni.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         zaposleni.setDatumRodjenja(new Date());
+        zaposleni.setRadnaPozicija(RadnaPozicija.DIREKTOR);
         zaposleniRepository.save(zaposleni);
+
+        Plata plata = new Plata();
+        plata.setNetoPlata(100000.0);
+        plata.setZaposleni(zaposleni);
+        plata.setDatum(new Date());
+        plataRepository.save(plata);
 
         Staz staz = new Staz();
         staz.setPocetakRada(new Date());
         staz.setKrajRada(null);
-        staz.setZaposleni(zaposleni);
         stazRepository.save(staz);
-
+        zaposleni.setStaz(List.of(staz));
 
         log.info("Data loaded!");
     }

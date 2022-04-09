@@ -8,6 +8,7 @@ import rs.raf.demo.model.enums.StatusZaposlenog;
 import rs.raf.demo.repositories.ZaposleniRepository;
 import rs.raf.demo.services.IZaposleniService;
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,11 +29,16 @@ public class ZaposleniService implements IZaposleniService{
 
         @Override
         public <S extends Zaposleni> S save(S zaposleni) {
+            Staz newStaz = new Staz();
+            newStaz.setPocetakRada(new Date());
+            newStaz.setKrajRada(null);
+            stazService.save(newStaz);
 
-            return  null;
+            zaposleni.setStaz(List.of(newStaz));
+            zaposleni.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
+
+            return zaposleniRepository.save(zaposleni);
         }
-
-
 
         @Override
         public Optional<Zaposleni> findById(Long id) {

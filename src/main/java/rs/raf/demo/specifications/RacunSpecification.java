@@ -6,6 +6,8 @@ import rs.raf.demo.exceptions.OperationNotSupportedException;
 import rs.raf.demo.model.Dokument;
 import rs.raf.demo.model.KontnaGrupa;
 import rs.raf.demo.model.Preduzece;
+import rs.raf.demo.model.enums.RadnaPozicija;
+import rs.raf.demo.model.enums.StatusZaposlenog;
 import rs.raf.demo.model.enums.TipFakture;
 import rs.raf.demo.relations.*;
 
@@ -47,6 +49,12 @@ public class RacunSpecification<T> implements Specification<T> {
         if (KontnaGrupa.class == keyType) {
             return new KontnaGrupaRelations<>(root, builder, key, val);
         }
+        if (RadnaPozicija.class == keyType) {
+            return new RadnaPozicijaRelations(root, builder, key, val);
+        }
+        if (StatusZaposlenog.class == keyType) {
+            return new StatusZaposlenogRelations(root, builder, key, val);
+        }
 
         throw new OperationNotSupportedException(String.format("Josuvek nije podrzano filtriranje po tipu %s(%s)", key, keyType));
     }
@@ -54,6 +62,13 @@ public class RacunSpecification<T> implements Specification<T> {
     @Override
     public Predicate toPredicate
             (Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+
+        // mgojkovic: Poseban slucaj gde nam treba join kako bismo radili filter po poljima koja nisu kljuc,
+        // join radi samo sa equal trenutno (nezavisno od prosledjene operacije), treba generalizovati
+        if (isJoiningRequired(criteria.getKey())) {
+            Expression exception = getExpresionForJoinedTable(root);
+            return builder.equal(exception, criteria.getValue().toString());
+        }
 
         Class keyType = root.get(criteria.getKey()).getJavaType();
         RacunRelations<T> relations = getRelations(root,builder,keyType,criteria.getKey(),criteria.getValue().toString());
@@ -68,6 +83,16 @@ public class RacunSpecification<T> implements Specification<T> {
             return relations.equalTo();
         }
         throw new OperationNotSupportedException(String.format("Nepoznata operacija \"%s\"",criteria.getOperation()));
+    }
+
+    private Expression getExpresionForJoinedTable(Root<T> root) {
+        String[] tableAndField = criteria.getKey().split("_");
+        Join groupJoin = root.join(tableAndField[0]);
+        return groupJoin.get(tableAndField[1]);
+    }
+
+    private boolean isJoiningRequired(String key) {
+        return key.contains("_");
     }
 
     @Override
