@@ -18,7 +18,7 @@ services:
   zuul:
     restart: always
     ports:
-      - "9092:9092"
+      - "8080:8080"
     build:
       context: ./zuul
       dockerfile: Dockerfile
@@ -53,7 +53,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
     ports:
-      - "8080:8080"
+      - "8081:8080"
     networks:
       - racunovodstvo
     depends_on:
@@ -69,7 +69,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
     ports:
-      - "8081:8080"
+      - "8082:8080"
     networks:
       - racunovodstvo
     depends_on:
@@ -85,7 +85,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
     ports:
-      - "8082:8080"
+      - "8083:8080"
     networks:
       - racunovodstvo
     depends_on:
