@@ -66,7 +66,11 @@ public class FakturaRestController {
         this.restTemplate = restTemplate;
         this.searchUtil = new SearchUtil<>();
     }
-    private Preduzece getPreduzeceById(long id, String token) throws IOException {
+    private Preduzece getPreduzeceById(Long id, String token) throws IOException {
+
+        if(id == null){
+            return null;
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", token);
