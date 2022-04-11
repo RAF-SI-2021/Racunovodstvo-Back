@@ -28,7 +28,7 @@ public class Faktura extends Dokument {
     private Date datumIzdavanja;
     @Column(nullable = false)
     private Date rokZaPlacanje;
-    @Column(nullable = false)
+    @Column
     private Date datumPlacanja;
     @Column(nullable = false)
     private Double prodajnaVrednost;

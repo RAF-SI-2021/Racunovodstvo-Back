@@ -60,9 +60,12 @@ public class PlataService implements IService<Plata, Long> {
                                            .filter(plata -> plata.getZaposleni().getZaposleniId().equals(zaposleni.getZaposleniId()) && plata.getDatumDo() == null)
                                            .collect(Collectors.toList());
 
-        Plata plata = plate.get(0);
-        plata.setDatumDo(new Date());
-        plataRepository.save(plata);
+        if (plate.size() == 1) {
+            Plata plata = plate.get(0);
+            plata.setDatumDo(new Date());
+            plataRepository.save(plata);
+        }
+
     }
 
     @Override

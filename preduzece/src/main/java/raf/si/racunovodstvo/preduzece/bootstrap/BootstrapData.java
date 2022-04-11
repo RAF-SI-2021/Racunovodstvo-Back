@@ -20,6 +20,7 @@ import raf.si.racunovodstvo.preduzece.repositories.PreduzeceRepository;
 import raf.si.racunovodstvo.preduzece.repositories.StazRepository;
 import raf.si.racunovodstvo.preduzece.repositories.ZaposleniRepository;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -47,32 +48,38 @@ public class BootstrapData implements CommandLineRunner {
         this.koeficijentRepository = koeficijentRepository;
     }
 
-    private Preduzece getDefaultPreduzece() {
-        Preduzece p1 = new Preduzece();
-        p1.setNaziv("Test Preduzece");
-        p1.setPib("111222333");
-        p1.setAdresa("test adresa");
-        p1.setGrad("Beograd");
-        p1.setIsActive(true);
-
-        return p1;
-    }
-
     @Override
     public void run(String... args) throws Exception {
 
         log.info("Loading Data...");
 
-        Preduzece p1 = getDefaultPreduzece();
-        Preduzece p2 = getDefaultPreduzece();
+        Preduzece p1 = new Preduzece();
+        p1.setNaziv("Preduzece A");
+        p1.setPib("111222333");
+        p1.setAdresa("test adresa");
+        p1.setGrad("Beograd");
+        p1.setIsActive(true);
+
+        Preduzece p2 = new Preduzece();
+        p2.setNaziv("Preduzece B");
+        p2.setPib("333222111");
+        p2.setAdresa("test adresa");
+        p2.setGrad("Novi Sad");
+        p2.setIsActive(true);
 
         this.preduzeceRepository.save(p1);
         this.preduzeceRepository.save(p2);
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Staz staz = new Staz();
-        staz.setPocetakRada(new Date());
+        staz.setPocetakRada(simpleDateFormat.parse("08-08-2010"));
         staz.setKrajRada(null);
         stazRepository.save(staz);
+
+        Staz staz2 = new Staz();
+        staz2.setPocetakRada(new Date());
+        staz2.setKrajRada(null);
+        stazRepository.save(staz2);
 
         List<Staz> stazevi = new ArrayList<>();
         stazevi.add(staz);
@@ -82,6 +89,8 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni.setPrezime("Markovic");
         zaposleni.setPocetakRadnogOdnosa(new Date());
         zaposleni.setJmbg("1234567890123");
+        zaposleni.setGrad("Beograd");
+        zaposleni.setAdresa("Dorcol");
         zaposleni.setPol(PolZaposlenog.MUSKO);
         zaposleni.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         zaposleni.setDatumRodjenja(new Date());
@@ -89,12 +98,33 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni.setStaz(stazevi);
         zaposleniRepository.save(zaposleni);
 
+        Zaposleni zaposleni2 = new Zaposleni();
+        zaposleni2.setIme("Petar");
+        zaposleni2.setPrezime("Peric");
+        zaposleni2.setPocetakRadnogOdnosa(new Date());
+        zaposleni2.setJmbg("3210987654321");
+        zaposleni2.setGrad("Novi Sad");
+        zaposleni2.setAdresa("Centar");
+        zaposleni2.setPol(PolZaposlenog.MUSKO);
+        zaposleni2.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
+        zaposleni2.setDatumRodjenja(new Date());
+        zaposleni2.setRadnaPozicija(RadnaPozicija.MENADZER);
+        zaposleni2.setStaz(List.of(staz2));
+        zaposleniRepository.save(zaposleni2);
+
         Plata plata = new Plata();
         plata.setNetoPlata(100000.0);
         plata.setZaposleni(zaposleni);
         plata.setDatumOd(new Date());
         plata.setDatumDo(null);
         plataRepository.save(plata);
+
+        Plata plata2 = new Plata();
+        plata2.setNetoPlata(70000.0);
+        plata2.setZaposleni(zaposleni2);
+        plata2.setDatumOd(new Date());
+        plata2.setDatumDo(null);
+        plataRepository.save(plata2);
 
         Koeficijent koeficijent = new Koeficijent();
         koeficijent.setKoeficijentPoreza(1d);
