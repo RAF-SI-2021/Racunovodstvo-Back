@@ -12,18 +12,20 @@ import java.util.List;
 @Repository
 public interface KontnaGrupaRepository extends JpaRepository<KontnaGrupa, Long> {
 
-    @Query("select new raf.si.racunovodstvo.knjizenje.responses.BilansResponse(sum(k.duguje), sum(k.potrazuje), kg.brojKonta, kg.nazivKonta) "
-        + "from Konto k join k.kontnaGrupa kg "
-        + "where :brojKontaOd <= kg.brojKonta and "
-        + "(:brojKontaDo >= kg.brojKonta or kg.brojKonta like :brojKontaDo%) and "
-        + "k.knjizenje.datumKnjizenja between :datumOd and :datumDo "
-        + "group by kg.brojKonta, kg.nazivKonta")
+    @Query(
+        "select new raf.si.racunovodstvo.knjizenje.responses.BilansResponse(sum(k.duguje), sum(k.potrazuje), count(k), kg.brojKonta, kg.nazivKonta) "
+            + "from KontnaGrupa kg join kg.konto k "
+            + "where :brojKontaOd <= kg.brojKonta and "
+            + "(:brojKontaDo >= kg.brojKonta or kg.brojKonta like :brojKontaDo%) and "
+            + "k.knjizenje.datumKnjizenja between :datumOd and :datumDo "
+            + "group by kg.brojKonta, kg.nazivKonta")
     List<BilansResponse> findAllForBilans(String brojKontaOd, String brojKontaDo, Date datumOd, Date datumDo);
 
-    @Query(value = "select new raf.si.racunovodstvo.knjizenje.responses.BilansResponse(sum(k.duguje), sum(k.potrazuje), kg.brojKonta , kg.nazivKonta) "
-        + "from Konto k join k.kontnaGrupa kg where "
-        + "substring(kg.brojKonta, 1, 1) in :startsWith "
-        + "and k.knjizenje.datumKnjizenja between :datumOd and :datumDo "
-        + "group by kg.brojKonta, kg.nazivKonta")
+    @Query(value =
+        "select new raf.si.racunovodstvo.knjizenje.responses.BilansResponse(sum(k.duguje), sum(k.potrazuje), count(k), kg.brojKonta , kg.nazivKonta) "
+            + "from KontnaGrupa kg join kg.konto k where "
+            + "substring(kg.brojKonta, 1, 1) in :startsWith "
+            + "and k.knjizenje.datumKnjizenja between :datumOd and :datumDo "
+            + "group by kg.brojKonta, kg.nazivKonta")
     List<BilansResponse> findAllStartingWith(List<String> startsWith, Date datumOd, Date datumDo);
 }

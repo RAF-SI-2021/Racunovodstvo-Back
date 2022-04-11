@@ -49,7 +49,7 @@ public class BilansService {
             if (length <= 3) {
                 bilansResponse.setDuguje(bilansResponse.getDuguje() + dugujeMap.getOrDefault(brojKonta, 0.0));
                 bilansResponse.setPotrazuje(bilansResponse.getPotrazuje() + potrazujeMap.getOrDefault(brojKonta, 0.0));
-                bilansResponse.setBrojStavki(brojStavkiMap.getOrDefault(brojKonta, 0L));
+                bilansResponse.setBrojStavki(bilansResponse.getBrojStavki() + brojStavkiMap.getOrDefault(brojKonta, 0L));
                 bilansResponse.setSaldo(bilansResponse.getDuguje() - bilansResponse.getPotrazuje());
             }
 

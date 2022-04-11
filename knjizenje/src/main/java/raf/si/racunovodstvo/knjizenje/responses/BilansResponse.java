@@ -16,12 +16,12 @@ public class BilansResponse {
     private Long brojStavki;
     private Double saldo;
 
-    public BilansResponse(Double duguje, Double potrazuje, String brojKonta, String nazivKonta) {
+    public BilansResponse(Double duguje, Double potrazuje, Long brojStavki, String brojKonta, String nazivKonta) {
         this.duguje = duguje;
         this.potrazuje = potrazuje;
         this.brojKonta = brojKonta;
         this.nazivKonta = nazivKonta;
-        this.brojStavki = brojKonta.length() > 3 ? 1L : 0L;
+        this.brojStavki = brojStavki;
         this.saldo = duguje - potrazuje;
     }
 
