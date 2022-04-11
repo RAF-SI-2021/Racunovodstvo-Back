@@ -29,7 +29,7 @@ server:
 
 cors:
   config:
-    origins: http://localhost:4200/
+    origins: http://localhost:4200
 
 eureka:
   client:
