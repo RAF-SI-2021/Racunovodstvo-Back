@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.converter.KnjizenjeConverter;
+import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
@@ -45,15 +46,17 @@ public class KnjizenjeService implements IKnjizenjeService {
 
         Knjizenje newKnjizenje = new Knjizenje();
 
-        if(!dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).isPresent()){
-            knjizenje.setDokument(dokumentRepository.save(knjizenje.getDokument()));
+        Dokument dokument;
+        if(knjizenje.getDokument() != null && dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).isPresent()){
+            dokument = dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).get();
+        } else {
+            dokument = dokumentRepository.save(knjizenje.getDokument());
         }
 
         newKnjizenje.setDatumKnjizenja(knjizenje.getDatumKnjizenja());
         newKnjizenje.setBrojNaloga(knjizenje.getBrojNaloga());
-        newKnjizenje.setDokument(knjizenje.getDokument());
         newKnjizenje.setKomentar(knjizenje.getKomentar());
-
+        newKnjizenje.setDokument(dokument);
 
         newKnjizenje = knjizenjeRepository.save(newKnjizenje);
 
