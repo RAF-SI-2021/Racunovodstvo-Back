@@ -29,8 +29,21 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+      - name: [User service] Build and analyze
+        working-directory: ./user
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Racunovodstvo-Back sonar:sonar -Pcoverage
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Racunovodstvo-Back:user_service -Dsonar.projectName="[Racunovodstvo] User service"
+      - name: [Knjizenje service] Build and analyze
+        working-directory: ./knjizenje
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Racunovodstvo-Back:knjizenje_service -Dsonar.projectName="[Racunovodstvo] Knjizenje service"
+      - name: [Preduzece service] Build and analyze
+        working-directory: ./preduzece
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Racunovodstvo-Back:preduzece_service -Dsonar.projectName="[Racunovodstvo] Preduzece service"
