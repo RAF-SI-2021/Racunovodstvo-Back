@@ -14,12 +14,12 @@
 	<name>knjizenje</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>11</java.version>
 		<spring-cloud.version>2021.0.1</spring-cloud.version>
 		<java.version>11</java.version>
 		<sonar.organization>raf-si-2021-1</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.exclusions>**/bootstrap/*, **/controllers/*,  **/configuration/*, **/model/*, **/responses/*, **/requests, /***/exceptions/*, **/relations/*</sonar.coverage.exclusions>
+		<start-class>raf.si.racunovodstvo.knjizenje.KnjizenjeApplication</start-class>
 	</properties>
 	<dependencies>
 		<dependency>

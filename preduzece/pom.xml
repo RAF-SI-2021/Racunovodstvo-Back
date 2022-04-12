@@ -20,6 +20,7 @@
 		<sonar.organization>raf-si-2021-1</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.exclusions>**/bootstrap/*, **/controllers/*,  **/configuration/*, **/model/*, **/responses/*, **/requests, /***/exceptions/*, **/relations/*</sonar.coverage.exclusions>
+		<start-class>raf.si.racunovodstvo.preduzece.PreduzeceApplication</start-class>
 	</properties>
 	<dependencies>
 		<dependency>
