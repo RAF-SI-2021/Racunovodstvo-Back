@@ -8,10 +8,10 @@
 		<version>2.6.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>rs.raf</groupId>
-	<artifactId>demo</artifactId>
+	<groupId>raf.si.racunovodstvo</groupId>
+	<artifactId>racunovodstvo-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
+	<name>racunovodstvo-backend</name>
 	<description>Demo RAF project for Spring Boot</description>
 	<packaging>pom</packaging>
 	<properties>
