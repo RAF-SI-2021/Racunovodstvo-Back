@@ -19,6 +19,9 @@
 		<java.version>11</java.version>
 		<sonar.organization>raf-si-2021-1</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<jacoco.version>0.8.7</jacoco.version>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.coverage.exclusions>**/bootstrap/*, **/controllers/*,  **/configuration/*, **/model/*, **/responses/*, **/requests, /***/exceptions/*, **/relations/*</sonar.coverage.exclusions>
 		<start-class>raf.si.racunovodstvo.preduzece.PreduzeceApplication</start-class>
 	</properties>
