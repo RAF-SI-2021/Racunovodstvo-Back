@@ -2,7 +2,7 @@ name: Preduzece
 on:
   push:
     branches:
-      - '**'
+      - master
     paths:
       - 'pom.xml'
       - 'preduzece/**'

@@ -2,7 +2,7 @@ name: Knjizenje
 on:
   push:
     branches:
-      - '**'
+      - master
     paths:
       - 'pom.xml'
       - 'knjizenje/**'
