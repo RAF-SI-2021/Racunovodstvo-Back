@@ -9,39 +9,39 @@ import static org.junit.jupiter.api.Assertions.*;
 class SearchCriteriaTest {
 
     @Test
-    public void testSameObject() {
+    void testSameObject() {
         SearchCriteria searchCriteria = new SearchCriteria("key",":", "value");
-        assertTrue(searchCriteria.equals(searchCriteria));
+        assertEquals(true, searchCriteria.equals(searchCriteria));
     }
 
     @Test
-    public void testDifferentClass() {
+    void testDifferentClass() {
         SearchCriteria searchCriteria = new SearchCriteria("key",":", "value");
-        assertFalse(searchCriteria.equals(new String()));
+        assertEquals(false, searchCriteria.equals(new String()));
     }
 
     @Test
-    public void testNull() {
+    void testNull() {
         SearchCriteria searchCriteria = new SearchCriteria("key",":", "value");
-        assertFalse(searchCriteria.equals(null));
+        assertEquals(false, searchCriteria.equals(null));
     }
 
     @Test
-    public void testNotEqualSearchCriteria() {
+    void testNotEqualSearchCriteria() {
         SearchCriteria searchCriteria1 = new SearchCriteria("key",":", "value");
         SearchCriteria searchCriteria2 = new SearchCriteria("key",">", "value");
-        assertFalse(searchCriteria1.equals(searchCriteria2));
+        assertEquals(false, searchCriteria1.equals(searchCriteria2));
     }
 
     @Test
-    public void testEqualSearchCriteria() {
+    void testEqualSearchCriteria() {
         SearchCriteria searchCriteria1 = new SearchCriteria("key",":", "value");
         SearchCriteria searchCriteria2 = new SearchCriteria("key",":", "value");
-        assertTrue(searchCriteria1.equals(searchCriteria2));
+        assertEquals(true, searchCriteria1.equals(searchCriteria2));
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         SearchCriteria searchCriteria = new SearchCriteria("key",":", "value");
         assertEquals(Objects.hash(searchCriteria.getKey(), searchCriteria.getOperation(), searchCriteria.getValue()), searchCriteria.hashCode());
     }
