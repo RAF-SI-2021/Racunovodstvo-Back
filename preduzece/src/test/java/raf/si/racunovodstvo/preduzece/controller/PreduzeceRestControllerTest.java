@@ -29,7 +29,7 @@ class PreduzeceRestControllerTest {
     @Test
     void getAllPreduzece() {
         ResponseEntity<?> responseEntity = preduzeceRestController.getAllPreduzece();
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -37,7 +37,7 @@ class PreduzeceRestControllerTest {
         Preduzece preduzece = new Preduzece();
         given(preduzeceService.findById(MOCK_ID)).willReturn(Optional.of(preduzece));
         ResponseEntity<?> responseEntity = preduzeceRestController.getPreduzeceById(MOCK_ID);
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -51,7 +51,7 @@ class PreduzeceRestControllerTest {
         Preduzece preduzece = new Preduzece();
         ResponseEntity<?> responseEntity = preduzeceRestController.createPreduzece(preduzece);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -62,7 +62,7 @@ class PreduzeceRestControllerTest {
 
         ResponseEntity<?> responseEntity = preduzeceRestController.updatePreduzece(preduzece);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -80,7 +80,7 @@ class PreduzeceRestControllerTest {
 
         ResponseEntity<?> responseEntity = preduzeceRestController.deletePreduzece(MOCK_ID);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test

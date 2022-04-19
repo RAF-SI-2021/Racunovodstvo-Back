@@ -32,13 +32,13 @@ class PlataRestControllerTest {
     @Test
     void getPlataForZaposleni() {
         ResponseEntity<?> responseEntity = plataRestController.getPlataForZaposleni(MOCK_ID);
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
     void getPlata() {
         ResponseEntity<?> responseEntity = plataRestController.getPlata("porez>0");
-        assertEquals(responseEntity.getStatusCodeValue(), 200);    }
+        assertEquals(200, responseEntity.getStatusCodeValue());    }
 
     @Test
     void getPlataException() {
@@ -48,7 +48,7 @@ class PlataRestControllerTest {
     @Test
     void getAllPlata() {
         ResponseEntity<?> responseEntity = plataRestController.getAllPlata();
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -56,7 +56,7 @@ class PlataRestControllerTest {
         Plata plata = new Plata();
         given(plataService.findById(MOCK_ID)).willReturn(Optional.of(plata));
         ResponseEntity<?> responseEntity = plataRestController.getPlataById(MOCK_ID);
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -70,7 +70,7 @@ class PlataRestControllerTest {
         PlataRequest plataRequest = new PlataRequest(MOCK_ID, 500.0, new Date(), MOCK_ID);
         ResponseEntity<?> responseEntity = plataRestController.newPlata(plataRequest);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -88,7 +88,7 @@ class PlataRestControllerTest {
 
         ResponseEntity<?> responseEntity = plataRestController.editPlata(plataRequest);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -116,7 +116,7 @@ class PlataRestControllerTest {
 
         ResponseEntity<?> responseEntity = plataRestController.deletePlata(MOCK_ID);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test

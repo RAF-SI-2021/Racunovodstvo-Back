@@ -2,14 +2,10 @@ package raf.si.racunovodstvo.preduzece.relations;
 
 import raf.si.racunovodstvo.preduzece.exceptions.OperationNotSupportedException;
 
-import java.util.Date;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import static java.lang.Long.parseLong;
 
 public class BooleanRelations<T> extends RacunRelations<T>{
 

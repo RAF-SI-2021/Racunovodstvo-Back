@@ -35,7 +35,7 @@ class ZaposleniRestControllerTest {
         Zaposleni zaposleni = new Zaposleni();
         ResponseEntity<?> responseEntity = zaposleniRestController.createZaposleni(zaposleni);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -44,7 +44,7 @@ class ZaposleniRestControllerTest {
         given(zaposleniService.findById(MOCK_ID)).willReturn(Optional.of(zaposleni));
         ResponseEntity<?> responseEntity = zaposleniRestController.updateZaposleni(zaposleni, MOCK_ID);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -62,7 +62,7 @@ class ZaposleniRestControllerTest {
 
         ResponseEntity<?> responseEntity = zaposleniRestController.zaposleniOtkaz(MOCK_ID);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -78,7 +78,7 @@ class ZaposleniRestControllerTest {
 
         ResponseEntity<?> responseEntity = zaposleniRestController.getZaposleniId(MOCK_ID);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -103,7 +103,7 @@ class ZaposleniRestControllerTest {
         given(zaposleniService.findAll(null)).willReturn(zaposleniList);
         ResponseEntity<?> responseEntity = zaposleniRestController.search(search);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -116,6 +116,6 @@ class ZaposleniRestControllerTest {
         lenient().when(zaposleniService.findAll(null)).thenReturn(zaposleniList);
         ResponseEntity<?> responseEntity = zaposleniRestController.search(search);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 }

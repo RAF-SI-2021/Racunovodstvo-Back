@@ -29,7 +29,7 @@ class KoeficijentControllerTest {
     @Test
     void findAll() {
         ResponseEntity<?> responseEntity = koeficijentController.findAll();
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -40,7 +40,7 @@ class KoeficijentControllerTest {
 
         ResponseEntity<?> responseEntity = koeficijentController.update(koeficijent);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -57,6 +57,6 @@ class KoeficijentControllerTest {
         Koeficijent koeficijent = new Koeficijent();
         ResponseEntity<?> responseEntity = koeficijentController.create(koeficijent);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 }
