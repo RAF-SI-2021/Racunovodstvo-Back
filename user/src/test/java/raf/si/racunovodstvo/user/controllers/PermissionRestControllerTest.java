@@ -26,6 +26,6 @@ class PermissionRestControllerTest {
         given(permissionService.findAll()).willReturn(new ArrayList<>());
         ResponseEntity<?> responseEntity = permissionRestController.getAllPermissions();
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 }
