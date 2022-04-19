@@ -1,5 +1,6 @@
 package raf.si.racunovodstvo.user.filters;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
+    @Autowired
     public JwtFilter(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;

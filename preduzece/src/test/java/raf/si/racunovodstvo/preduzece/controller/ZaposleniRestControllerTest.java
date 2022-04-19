@@ -90,7 +90,7 @@ class ZaposleniRestControllerTest {
     @Test
     void search() {
         String search = "abc";
-        given(zaposleniService.findAll(null)).willReturn(new ArrayList());
+        given(zaposleniService.findAll(null)).willReturn(new ArrayList<>());
 
         assertThrows(EntityNotFoundException.class, () -> zaposleniRestController.search(search));
     }

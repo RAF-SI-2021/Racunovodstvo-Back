@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,8 +19,10 @@ import raf.si.racunovodstvo.user.requests.UpdateUserRequest;
 import raf.si.racunovodstvo.user.services.impl.UserService;
 
 import javax.persistence.EntityNotFoundException;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,14 +43,35 @@ class UserRestControllerTest {
     private PasswordEncoder passwordEncoder;
 
     private static final Long MOCK_ID = 1L;
+    private static final String MOCK_USERNAME = "DUMMY_USERNAME";
 
+
+    @Test
+    void getLoginUserSuccessTest() {
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(MOCK_USERNAME, ""));
+        UserDetails user = new org.springframework.security.core.userdetails.User(MOCK_USERNAME, "", new HashSet<>());
+        given(userService.loadUserByUsername(MOCK_USERNAME)).willReturn(user);
+
+        org.springframework.security.core.userdetails.User responseUser =
+            (org.springframework.security.core.userdetails.User) userRestController.getLoginUser().getBody();
+
+        assertEquals(user, responseUser);
+    }
+
+    @Test
+    void getLoginUserFailTest() {
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(MOCK_USERNAME, ""));
+        given(userService.loadUserByUsername(MOCK_USERNAME)).willReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> userRestController.getLoginUser());
+    }
 
     @Test
     void getAllUsers() {
         given(userService.findAll()).willReturn(new ArrayList<>());
         ResponseEntity<?> responseEntity = userRestController.getAllUsers();
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -56,20 +80,14 @@ class UserRestControllerTest {
         given(userService.findById(MOCK_ID)).willReturn(Optional.of(user));
         ResponseEntity<?> responseEntity = userRestController.getUserById(MOCK_ID);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
     void getUserByIdException() {
-        User user = new User();
         given(userService.findById(MOCK_ID)).willReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> userRestController.getUserById(MOCK_ID));
-    }
-
-    @Test
-    void getLoginUser() {
-
     }
 
     @Test
@@ -79,7 +97,7 @@ class UserRestControllerTest {
         given(userService.findAll()).willReturn(userList);
         ResponseEntity<?> responseEntity = userRestController.createUser(user);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -92,7 +110,7 @@ class UserRestControllerTest {
 
         ResponseEntity<?> responseEntity = userRestController.createUser(user);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 403);
+        assertEquals(403, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -104,7 +122,7 @@ class UserRestControllerTest {
 
         ResponseEntity<?> responseEntity = userRestController.updateUser(updateUserRequest);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 200);
+        assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -124,7 +142,7 @@ class UserRestControllerTest {
 
         ResponseEntity<?> responseEntity = userRestController.deleteUser(MOCK_ID);
 
-        assertEquals(responseEntity.getStatusCodeValue(), 204);
+        assertEquals(204, responseEntity.getStatusCodeValue());
     }
 
     @Test
