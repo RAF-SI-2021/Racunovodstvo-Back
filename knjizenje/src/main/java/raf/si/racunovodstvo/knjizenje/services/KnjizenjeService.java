@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.converter.KnjizenjeConverter;
 import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
+import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
+import raf.si.racunovodstvo.knjizenje.responses.AnalitickaKarticaResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
 
@@ -85,6 +87,12 @@ public class KnjizenjeService implements IKnjizenjeService {
     @Override
     public List<KnjizenjeResponse> findAllKnjizenjeResponse() {
         return knjizenjeConverter.convert(knjizenjeRepository.findAll()).getContent();
+    }
+
+    @Override
+    public Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Specification<Knjizenje> spec, Pageable pageSort, KontnaGrupa kontnaGrupa) {
+        Page<Knjizenje> page =knjizenjeRepository.findAllKnjizenjaByKontoKontnaGrupa(spec,pageSort,kontnaGrupa);
+        return knjizenjeConverter.convertKartice(page.getContent());
     }
 
     @Override
