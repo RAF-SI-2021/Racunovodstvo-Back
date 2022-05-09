@@ -1,7 +1,8 @@
 version: "3.8"
 services:
   eureka:
-    image: racunovodstvo/repo:eureka
+    image: ghcr.io/raf-si-2021/racunovodstvo-eureka:latest
+    build: ./eureka
     restart: always
     container_name: eureka
     hostname: eureka
@@ -11,7 +12,8 @@ services:
       - racunovodstvo
 
   gateway:
-    image: racunovodstvo/repo:gateway
+    image: ghcr.io/raf-si-2021/racunovodstvo-gateway:latest
+    build: ./gateway
     hostname: gateway
     restart: always
     ports:
@@ -42,7 +44,8 @@ services:
       - racunovodstvo
 
   user_service:
-    image: racunovodstvo/repo:user
+    image: ghcr.io/raf-si-2021/racunovodstvo-user:latest
+    build: ./user
     hostname: user
     container_name: user
     restart: unless-stopped
@@ -62,7 +65,8 @@ services:
       - gateway
 
   knjizenje_service:
-    image: racunovodstvo/repo:knjizenje
+    image: ghcr.io/raf-si-2021/racunovodstvo-knjizenje:latest
+    build: ./knjizenje
     hostname: knjizenje
     restart: unless-stopped
     env_file: .env
@@ -81,7 +85,8 @@ services:
       - gateway
 
   preduzece_service:
-    image: racunovodstvo/repo:preduzece
+    image: ghcr.io/raf-si-2021/racunovodstvo-preduzece:latest
+    build: ./preduzece
     hostname: preduzece
     restart: unless-stopped
     env_file: .env
@@ -100,7 +105,7 @@ services:
       - gateway
 
   front:
-    image: racunovodstvo/repo:front
+    image: ghcr.io/raf-si-2021/racunovodstvo-front:latest
     restart: always
     ports:
       - "4200:80"
