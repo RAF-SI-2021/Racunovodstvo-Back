@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
+import raf.si.racunovodstvo.knjizenje.requests.AnalitickaKarticaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.AnalitickaKarticaResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 
@@ -23,5 +24,5 @@ public interface IKnjizenjeService extends IService<Knjizenje, Long> {
 
     List<KnjizenjeResponse> findAllKnjizenjeResponse();
 
-    Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Specification<Knjizenje> spec, Pageable pageSort, KontnaGrupa kontnaGrupa);
+    Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Specification<Knjizenje> spec, Pageable pageSort, AnalitickaKarticaRequest analitickaKarticaRequest);
 }

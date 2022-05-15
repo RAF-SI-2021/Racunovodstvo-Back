@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
+import raf.si.racunovodstvo.knjizenje.requests.AnalitickaKarticaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
 import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecificationsBuilder;
@@ -109,11 +110,11 @@ public class KnjizenjeController {
             @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
             @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
             @RequestParam(defaultValue = "kontoId")  String[] sort,
-            @RequestParam KontnaGrupa kontnaGrupaObj
+            @RequestBody AnalitickaKarticaRequest analitickaKarticaRequest
     ) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
         if (search.length() > 0) search += ",";
         Specification<Knjizenje> spec = this.searchUtil.getSpec(search + "kontnaGrupa:" + kontnaGrupa + ",");
-        return ResponseEntity.ok(this.knjizenjaService.findAllAnalitickeKarticeResponse(spec,pageSort,kontnaGrupaObj));
+        return ResponseEntity.ok(this.knjizenjaService.findAllAnalitickeKarticeResponse(spec,pageSort,analitickaKarticaRequest));
     }
 }

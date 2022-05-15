@@ -1,18 +1,19 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import raf.si.racunovodstvo.knjizenje.converter.KnjizenjeConverter;
+import raf.si.racunovodstvo.knjizenje.converter.IConverter;
+import raf.si.racunovodstvo.knjizenje.converter.impl.KnjizenjeConverter;
 import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
+import raf.si.racunovodstvo.knjizenje.requests.AnalitickaKarticaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.AnalitickaKarticaResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
@@ -30,14 +31,18 @@ public class KnjizenjeService implements IKnjizenjeService {
     private final KnjizenjeRepository knjizenjeRepository;
     private final DokumentRepository dokumentRepository;
     private final KontoService kontoService;
+    private final IConverter<List<Knjizenje>, Page<AnalitickaKarticaResponse>> analitickaKarticaConverter;
+    private final IConverter<AnalitickaKarticaRequest, KontnaGrupa> kontnaGrupaConverter;
 
     @Lazy
     private KnjizenjeConverter knjizenjeConverter;
 
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, KontoService kontoService, KnjizenjeConverter knjizenjeConverter) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, KontoService kontoService, IConverter<List<Knjizenje>, Page<AnalitickaKarticaResponse>> analitickaKarticaConverter, IConverter<AnalitickaKarticaRequest, KontnaGrupa> kontnaGrupaConverter, KnjizenjeConverter knjizenjeConverter) {
         this.knjizenjeRepository = knjizenjeRepository;
         this.dokumentRepository = dokumentRepository;
         this.kontoService = kontoService;
+        this.analitickaKarticaConverter = analitickaKarticaConverter;
+        this.kontnaGrupaConverter = kontnaGrupaConverter;
         this.knjizenjeConverter = knjizenjeConverter;
     }
 
@@ -90,9 +95,10 @@ public class KnjizenjeService implements IKnjizenjeService {
     }
 
     @Override
-    public Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Specification<Knjizenje> spec, Pageable pageSort, KontnaGrupa kontnaGrupa) {
-        Page<Knjizenje> page =knjizenjeRepository.findAllKnjizenjaByKontoKontnaGrupa(spec,pageSort,kontnaGrupa);
-        return knjizenjeConverter.convertKartice(page.getContent());
+    public Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Specification<Knjizenje> spec, Pageable pageSort, AnalitickaKarticaRequest analitickaKarticaRequest) {
+        KontnaGrupa converted = kontnaGrupaConverter.convert(analitickaKarticaRequest);
+        Page<Knjizenje> page =knjizenjeRepository.findAllKnjizenjaByKontoKontnaGrupa(spec,pageSort,converted);
+        return analitickaKarticaConverter.convert(page.getContent());
     }
 
     @Override
