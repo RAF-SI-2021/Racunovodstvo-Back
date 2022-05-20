@@ -16,7 +16,7 @@ import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
-import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
+
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecification;
 import raf.si.racunovodstvo.knjizenje.specifications.SearchCriteria;
@@ -24,7 +24,7 @@ import raf.si.racunovodstvo.knjizenje.specifications.SearchCriteria;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
