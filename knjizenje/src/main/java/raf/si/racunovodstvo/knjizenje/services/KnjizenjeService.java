@@ -34,12 +34,10 @@ public class KnjizenjeService implements IKnjizenjeService {
 
     public KnjizenjeService(KnjizenjeRepository knjizenjeRepository,
                             DokumentRepository dokumentRepository,
-                            KontoService kontoService,
-                            KnjizenjeConverter knjizenjeConverter) {
+                            KontoService kontoService) {
         this.knjizenjeRepository = knjizenjeRepository;
         this.dokumentRepository = dokumentRepository;
         this.kontoService = kontoService;
-        this.knjizenjeConverter = knjizenjeConverter;
     }
 
     @Override

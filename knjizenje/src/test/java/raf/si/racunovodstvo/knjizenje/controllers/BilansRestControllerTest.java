@@ -36,7 +36,7 @@ class BilansRestControllerTest {
         String brojKontaDo = "2";
 
         List<BilansResponse> bilansResponseList = new ArrayList<>();
-        bilansResponseList.add(new BilansResponse(500.0, 500.0, "001", ""));
+        bilansResponseList.add(new BilansResponse(500.0, 500.0, 1L, "001", ""));
 
         given(bilansService.findBilans(any(List.class), any(List.class), any(List.class))).willReturn(bilansResponseList);
         given(bilansService.findBrutoBilans(any(String.class), any(String.class), any(Date.class), any(Date.class))).willReturn(bilansResponseList);

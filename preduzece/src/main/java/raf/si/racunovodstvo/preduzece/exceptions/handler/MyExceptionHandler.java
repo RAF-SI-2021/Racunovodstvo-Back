@@ -15,6 +15,7 @@ import raf.si.racunovodstvo.preduzece.responses.ErrorResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 
@@ -24,6 +25,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         List<String> details = new ArrayList<>();
+        ex.printStackTrace();
         details.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("Server Error", details);
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -59,6 +61,14 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler
         details.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("418 I am a teapot!", details);
         return new ResponseEntity<>(error, HttpStatus.I_AM_A_TEAPOT);
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public final ResponseEntity<Object> handleEntityExistsException(Exception ex, WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getLocalizedMessage());
+        ErrorResponse error = new ErrorResponse("Conflict!", details);
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
