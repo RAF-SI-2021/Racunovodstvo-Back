@@ -4,14 +4,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import raf.si.racunovodstvo.preduzece.model.ObracunZaposleni;
 import raf.si.racunovodstvo.preduzece.services.IObracunZaposleniService;
 
-import javax.persistence.EntityNotFoundException;
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -32,13 +28,8 @@ public class ObracunZaposleniController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteObracunZaposleni(@PathVariable("id") Long id){
-        Optional<ObracunZaposleni> optionalObracunZaposleni = iObracunZaposleniService.findById(id);
-
-        if (optionalObracunZaposleni.isPresent()) {
-            iObracunZaposleniService.deleteById(id);
-            return ResponseEntity.ok().build();
-        }
-        throw new EntityNotFoundException();
+        iObracunZaposleniService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/all",

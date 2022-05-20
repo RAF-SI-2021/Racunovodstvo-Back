@@ -67,7 +67,7 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler
     public final ResponseEntity<Object> handleEntityExistsException(Exception ex, WebRequest request) {
         List<String> details = new ArrayList<>();
         details.add(ex.getLocalizedMessage());
-        ErrorResponse error = new ErrorResponse("Conflict!", details);
+        ErrorResponse error = new ErrorResponse("409 Conflict!", details);
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 

@@ -7,8 +7,6 @@ import raf.si.racunovodstvo.preduzece.model.Plata;
 import raf.si.racunovodstvo.preduzece.model.Zaposleni;
 import raf.si.racunovodstvo.preduzece.repositories.ObracunRepository;
 import raf.si.racunovodstvo.preduzece.repositories.ObracunZaposleniRepository;
-import raf.si.racunovodstvo.preduzece.repositories.PlataRepository;
-import raf.si.racunovodstvo.preduzece.repositories.ZaposleniRepository;
 import raf.si.racunovodstvo.preduzece.services.IObracunZaposleniService;
 
 
@@ -21,18 +19,19 @@ import java.util.Optional;
 public class ObracunZaposleniService implements IObracunZaposleniService {
 
     private final ObracunZaposleniRepository obracunZaposleniRepository;
-    private final ObracunRepository obracunRepository;
-    private final ZaposleniRepository zaposleniRepository;
-    private final PlataRepository plataRepository;
 
-    public ObracunZaposleniService(ObracunZaposleniRepository obracunZaposleniRepository, ObracunRepository obracunRepository, ZaposleniRepository zaposleniRepository, PlataRepository plataRepository) {
+    //TODO zameni obracun repository sa servisom
+    private final ObracunRepository obracunRepository;
+
+    private final ZaposleniService zaposleniService;
+    private final PlataService plataService;
+
+    public ObracunZaposleniService(ObracunZaposleniRepository obracunZaposleniRepository, ObracunRepository obracunRepository, ZaposleniService zaposleniService, PlataService plataService) {
         this.obracunZaposleniRepository = obracunZaposleniRepository;
         this.obracunRepository = obracunRepository;
-        this.zaposleniRepository = zaposleniRepository;
-        this.plataRepository = plataRepository;
+        this.zaposleniService = zaposleniService;
+        this.plataService = plataService;
     }
-
-
 
     @Override
     public <S extends ObracunZaposleni> S save(S var1) {
@@ -50,12 +49,18 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
     }
 
     @Override
-    public void deleteById(Long obracunZaposleniId) {obracunZaposleniRepository.deleteById(obracunZaposleniId);}
+    public void deleteById(Long obracunZaposleniId) {
+        Optional<ObracunZaposleni> optionalObracunZaposleni = obracunZaposleniRepository.findById(obracunZaposleniId);
+        if (optionalObracunZaposleni.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+        obracunZaposleniRepository.deleteById(obracunZaposleniId);
+    }
 
     @Override
     public ObracunZaposleni save(Long zaposleniId, Double ucinak, Long obracunId) {
 
-        Optional<Zaposleni> zaposleni = zaposleniRepository.findById(zaposleniId);
+        Optional<Zaposleni> zaposleni = zaposleniService.findById(zaposleniId);
         Optional<Obracun> obracun = obracunRepository.findById(obracunId);
         ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
 
@@ -75,7 +80,7 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
             throw new EntityExistsException();
         }
 
-        Plata plata = plataRepository.findPlatabyDatumAndZaposleni(obracun.get().getDatumObracuna(), zaposleni.get());
+        Plata plata = plataService.findPlatabyDatumAndZaposleni(obracun.get().getDatumObracuna(), zaposleni.get());
 
         if(plata == null){
             throw new EntityNotFoundException();
