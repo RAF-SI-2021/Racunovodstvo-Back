@@ -1,27 +1,29 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.converter.IConverter;
+import raf.si.racunovodstvo.knjizenje.converter.impl.AnalitickaKarticaConverter;
 import raf.si.racunovodstvo.knjizenje.converter.impl.KnjizenjeConverter;
 import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
-import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
-import raf.si.racunovodstvo.knjizenje.requests.AnalitickaKarticaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.AnalitickaKarticaResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -31,19 +33,20 @@ public class KnjizenjeService implements IKnjizenjeService {
     private final KnjizenjeRepository knjizenjeRepository;
     private final DokumentRepository dokumentRepository;
     private final KontoService kontoService;
-    private final IConverter<List<Knjizenje>, Page<AnalitickaKarticaResponse>> analitickaKarticaConverter;
-    private final IConverter<AnalitickaKarticaRequest, KontnaGrupa> kontnaGrupaConverter;
+    private final IConverter<Knjizenje, AnalitickaKarticaResponse> analitickaKarticaConverter;
 
     @Lazy
+    @Autowired
     private KnjizenjeConverter knjizenjeConverter;
 
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, KontoService kontoService, IConverter<List<Knjizenje>, Page<AnalitickaKarticaResponse>> analitickaKarticaConverter, IConverter<AnalitickaKarticaRequest, KontnaGrupa> kontnaGrupaConverter, KnjizenjeConverter knjizenjeConverter) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository,
+                            DokumentRepository dokumentRepository,
+                            KontoService kontoService,
+                            AnalitickaKarticaConverter analitickaKarticaConverter) {
         this.knjizenjeRepository = knjizenjeRepository;
         this.dokumentRepository = dokumentRepository;
         this.kontoService = kontoService;
         this.analitickaKarticaConverter = analitickaKarticaConverter;
-        this.kontnaGrupaConverter = kontnaGrupaConverter;
-        this.knjizenjeConverter = knjizenjeConverter;
     }
 
     @Override
@@ -54,7 +57,8 @@ public class KnjizenjeService implements IKnjizenjeService {
         Knjizenje newKnjizenje = new Knjizenje();
 
         Dokument dokument;
-        if(knjizenje.getDokument() != null && dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).isPresent()){
+        if (knjizenje.getDokument() != null && dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta())
+                                                                 .isPresent()) {
             dokument = dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).get();
         } else {
             dokument = dokumentRepository.save(knjizenje.getDokument());
@@ -67,8 +71,8 @@ public class KnjizenjeService implements IKnjizenjeService {
 
         newKnjizenje = knjizenjeRepository.save(newKnjizenje);
 
-        for(Konto konto : kontoList){
-            if(konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()){
+        for (Konto konto : kontoList) {
+            if (konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()) {
                 konto.setKnjizenje(newKnjizenje);
                 kontoService.save(konto);
             }
@@ -76,7 +80,7 @@ public class KnjizenjeService implements IKnjizenjeService {
 
         newKnjizenje.setKonto(kontoList);
 
-        return  knjizenjeRepository.save(newKnjizenje);
+        return knjizenjeRepository.save(newKnjizenje);
     }
 
     @Override
@@ -95,10 +99,19 @@ public class KnjizenjeService implements IKnjizenjeService {
     }
 
     @Override
-    public Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Specification<Knjizenje> spec, Pageable pageSort, AnalitickaKarticaRequest analitickaKarticaRequest) {
-        KontnaGrupa converted = kontnaGrupaConverter.convert(analitickaKarticaRequest);
-        Page<Knjizenje> page =knjizenjeRepository.findAllKnjizenjaByKontoKontnaGrupa(spec,pageSort,converted);
-        return analitickaKarticaConverter.convert(page.getContent());
+    public Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Pageable pageSort,
+                                                                            String brojKonta,
+                                                                            Date datumOd,
+                                                                            Date datumDo,
+                                                                            Long komitentId) {
+        Page<Knjizenje> page = knjizenjeRepository.findAllByBrojKontaAndKomitentId(pageSort, brojKonta, komitentId, datumOd, datumDo);
+        return page.map(knjizenje -> {
+            knjizenje.setKonto(knjizenje.getKonto()
+                                        .stream()
+                                        .filter(konto -> konto.getKontnaGrupa().getBrojKonta().equals(brojKonta))
+                                        .collect(Collectors.toList()));
+            return analitickaKarticaConverter.convert(knjizenje);
+        });
     }
 
     @Override

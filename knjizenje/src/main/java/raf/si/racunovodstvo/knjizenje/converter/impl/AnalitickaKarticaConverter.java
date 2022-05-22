@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class AnalitickaKarticaConverter implements IConverter<List<Knjizenje>, Page<AnalitickaKarticaResponse>> {
+public class AnalitickaKarticaConverter implements IConverter<Knjizenje, AnalitickaKarticaResponse> {
 
     private final ModelMapper modelMapper;
 
@@ -21,25 +21,21 @@ public class AnalitickaKarticaConverter implements IConverter<List<Knjizenje>, P
         this.modelMapper = modelMapper;
     }
 
-    public Page convert(List<Knjizenje> knjizenja){
-        List<AnalitickaKarticaResponse> responses = new ArrayList<>();
-        for(Knjizenje k : knjizenja){
-            AnalitickaKarticaResponse response = modelMapper.map(k,AnalitickaKarticaResponse.class);
-            double duguje = 0.0;
-            double potrazuje = 0.0;
-            double saldo;
-            response.setBrojDokumenta(k.getDokument().getDokumentId());
-            for(Konto konto : k.getKonto()){
-                duguje += konto.getDuguje();
-                potrazuje += konto.getPotrazuje();
-            }
-            saldo = duguje-potrazuje;
-            response.setDuguje(duguje);
-            response.setPotrazuje(potrazuje);
-            response.setSaldo(saldo);
-           responses.add(response);
+    public AnalitickaKarticaResponse convert(Knjizenje source) {
+        AnalitickaKarticaResponse response = modelMapper.map(source, AnalitickaKarticaResponse.class);
+        double duguje = 0.0;
+        double potrazuje = 0.0;
+        double saldo;
+        response.setBrojDokumenta(source.getDokument().getBrojDokumenta());
+        for (Konto konto : source.getKonto()) {
+            duguje += konto.getDuguje();
+            potrazuje += konto.getPotrazuje();
         }
-        return new PageImpl<>(responses);
+        saldo = duguje - potrazuje;
+        response.setDuguje(duguje);
+        response.setPotrazuje(potrazuje);
+        response.setSaldo(saldo);
+        return response;
     }
 }
 
