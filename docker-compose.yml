@@ -1,0 +1,116 @@
+version: "3.8"
+services:
+  eureka:
+    image: racunovodstvo/repo:eureka
+    restart: always
+    container_name: eureka
+    hostname: eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - racunovodstvo
+
+  gateway:
+    image: racunovodstvo/repo:gateway
+    hostname: gateway
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      CORS_ORIGINS: http://localhost:4200
+      REGISTRY_HOST: eureka
+    networks:
+      - racunovodstvo
+    depends_on:
+      - eureka
+
+  mysql_db:
+    image: mysql:8.0.28
+    hostname: mysql_db
+    command: --default-authentication-plugin=mysql_native_password --init-file /data/application/init-db.sql
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_DATABASE: $MYSQL_NAME
+    ports:
+      - "33006:3306"
+    volumes:
+      - db:/var/lib/mysql
+      - ./init-db.sql:/data/application/init-db.sql
+    networks:
+      - racunovodstvo
+
+  user_service:
+    image: racunovodstvo/repo:user
+    hostname: user
+    container_name: user
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      MYSQL_HOST: mysql_db
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+      REGISTRY_HOST: eureka
+    ports:
+      - "8082:8080"
+    networks:
+      - racunovodstvo
+    depends_on:
+      - mysql_db
+      - eureka
+      - gateway
+
+  knjizenje_service:
+    image: racunovodstvo/repo:knjizenje
+    hostname: knjizenje
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_HOST: mysql_db
+      REGISTRY_HOST: eureka
+    ports:
+      - "8081:8080"
+    networks:
+      - racunovodstvo
+    depends_on:
+      - mysql_db
+      - eureka
+      - gateway
+
+  preduzece_service:
+    image: racunovodstvo/repo:preduzece
+    hostname: preduzece
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_HOST: mysql_db
+      REGISTRY_HOST: eureka
+    ports:
+      - "8083:8080"
+    networks:
+      - racunovodstvo
+    depends_on:
+      - mysql_db
+      - eureka
+      - gateway
+
+  front:
+    image: racunovodstvo/repo:front
+    restart: always
+    ports:
+      - "4200:80"
+    networks:
+      - racunovodstvo
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  racunovodstvo:
+    name: racunovodstvo

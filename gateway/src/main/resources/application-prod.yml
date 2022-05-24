@@ -1,0 +1,7 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${REGISTRY_HOST}:8761/eureka/
+cors:
+  config:
+    origins: ${CORS_ORIGINS}
