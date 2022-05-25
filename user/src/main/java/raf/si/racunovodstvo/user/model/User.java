@@ -18,7 +18,7 @@ public class User {
     private String firstName;
     @Column
     private String lastName;
-    @Column
+    @Column(unique = true)
     private String username;
     @Column
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
