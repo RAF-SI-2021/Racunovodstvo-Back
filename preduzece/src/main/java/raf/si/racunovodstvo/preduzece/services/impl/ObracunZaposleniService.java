@@ -1,12 +1,15 @@
 package raf.si.racunovodstvo.preduzece.services.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import raf.si.racunovodstvo.preduzece.model.Obracun;
+import raf.si.racunovodstvo.preduzece.converters.IConverter;
+import raf.si.racunovodstvo.preduzece.converters.impl.ObracunZaposleniConverter;
+import raf.si.racunovodstvo.preduzece.model.Koeficijent;
 import raf.si.racunovodstvo.preduzece.model.ObracunZaposleni;
-import raf.si.racunovodstvo.preduzece.model.Plata;
-import raf.si.racunovodstvo.preduzece.model.Zaposleni;
-import raf.si.racunovodstvo.preduzece.repositories.ObracunRepository;
 import raf.si.racunovodstvo.preduzece.repositories.ObracunZaposleniRepository;
+import raf.si.racunovodstvo.preduzece.requests.ObracunZaposleniRequest;
 import raf.si.racunovodstvo.preduzece.services.IObracunZaposleniService;
 
 
@@ -20,17 +23,13 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
 
     private final ObracunZaposleniRepository obracunZaposleniRepository;
 
-    //TODO zameni obracun repository sa servisom
-    private final ObracunRepository obracunRepository;
+    private final IConverter<ObracunZaposleniRequest, ObracunZaposleni> obracunZaposleniConverter;
+    private final KoeficijentService koeficijentService;
 
-    private final ZaposleniService zaposleniService;
-    private final PlataService plataService;
-
-    public ObracunZaposleniService(ObracunZaposleniRepository obracunZaposleniRepository, ObracunRepository obracunRepository, ZaposleniService zaposleniService, PlataService plataService) {
+    public ObracunZaposleniService(ObracunZaposleniRepository obracunZaposleniRepository, ObracunZaposleniConverter obracunZaposleniConverter, KoeficijentService koeficijentService) {
         this.obracunZaposleniRepository = obracunZaposleniRepository;
-        this.obracunRepository = obracunRepository;
-        this.zaposleniService = zaposleniService;
-        this.plataService = plataService;
+        this.obracunZaposleniConverter = obracunZaposleniConverter;
+        this.koeficijentService = koeficijentService;
     }
 
     @Override
@@ -58,49 +57,59 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
     }
 
     @Override
-    public ObracunZaposleni save(Long zaposleniId, Double ucinak, Long obracunId) {
+    public ObracunZaposleni save(ObracunZaposleniRequest obracunZaposleniRequest) {
 
-        Optional<Zaposleni> zaposleni = zaposleniService.findById(zaposleniId);
-        Optional<Obracun> obracun = obracunRepository.findById(obracunId);
-        ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
-
-        if(zaposleni.isPresent()) {
-            obracunZaposleni.setZaposleni(zaposleni.get());
-        }else{
-            throw new EntityNotFoundException();
-        }
-
-        if(obracun.isPresent()){
-            obracunZaposleni.setObracun(obracun.get());
-        }else{
-            throw new EntityNotFoundException();
-        }
-
-        if(obracunZaposleniRepository.findByZaposleniAndObracun(zaposleni.get(), obracun.get()) != null) {
+        ObracunZaposleni obracunZaposleni = obracunZaposleniConverter.convert(obracunZaposleniRequest);
+        if(obracunZaposleniRepository.findByZaposleniAndObracun(obracunZaposleni.getZaposleni(), obracunZaposleni.getObracun()).isPresent()){
             throw new EntityExistsException();
         }
-
-        Plata plata = plataService.findPlatabyDatumAndZaposleni(obracun.get().getDatumObracuna(), zaposleni.get());
-
-        if(plata == null){
-            throw new EntityNotFoundException();
-        }
-
-        obracunZaposleni.setUcinak(ucinak);
-        izracunajUcinak(obracunZaposleni, plata);
+        izracunajUcinak(koeficijentService.getCurrentKoeficijent(), obracunZaposleni);
 
         return obracunZaposleniRepository.save(obracunZaposleni);
     }
 
-    private void izracunajUcinak(ObracunZaposleni obracunZaposleni, Plata plata){
+    @Override
+    public ObracunZaposleni update(ObracunZaposleniRequest obracunZaposleniRequest) {
 
-        Double ucinak = obracunZaposleni.getUcinak();
-        obracunZaposleni.setBrutoPlata(plata.getBrutoPlata() == null ? null : plata.getBrutoPlata()*ucinak);
-        obracunZaposleni.setDoprinos1(plata.getDoprinos1() == null ? null : plata.getDoprinos1()*ucinak);
-        obracunZaposleni.setDoprinos1(plata.getDoprinos2() == null ? null : plata.getDoprinos2()*ucinak);
-        obracunZaposleni.setUkupanTrosakZarade(plata.getUkupanTrosakZarade() == null ? null : plata.getUkupanTrosakZarade()*ucinak);
-        obracunZaposleni.setNetoPlata(plata.getNetoPlata()*ucinak);
-        obracunZaposleni.setKomentar(plata.getKomentar());
-        obracunZaposleni.setPorez(plata.getPorez());
+        Optional<ObracunZaposleni> optionalObracunZaposleni = obracunZaposleniRepository.findById(obracunZaposleniRequest.getObracunZaposleniId());
+
+        if(optionalObracunZaposleni.isEmpty()){
+            throw new EntityNotFoundException();
+        }
+
+        ObracunZaposleni obracunZaposleni = obracunZaposleniConverter.convert(obracunZaposleniRequest);
+        izracunajUcinak(koeficijentService.getCurrentKoeficijent(), obracunZaposleni);
+
+        return obracunZaposleniRepository.save(obracunZaposleni);
     }
+
+    @Override
+    public Page<ObracunZaposleni> findAll(Specification<ObracunZaposleni> spec, Pageable pageSort) {
+        return obracunZaposleniRepository.findAll(spec, pageSort);
+    }
+
+    @Override
+    public Page<ObracunZaposleni> findAll(Pageable pageSort) {
+        return obracunZaposleniRepository.findAll(pageSort);
+    }
+
+    private void izracunajUcinak(Koeficijent koeficijent, ObracunZaposleni obracunZaposleni) {
+        double b;
+        double netoPlata = obracunZaposleni.getNetoPlata()*obracunZaposleni.getUcinak();
+        if (netoPlata < koeficijent.getNajnizaOsnovica()) {
+            b = (netoPlata - 1.93 + (koeficijent.getNajnizaOsnovica() * 19.9)) / 0.9;
+        }
+        else if (netoPlata < koeficijent.getNajvisaOsnovica()) {
+            b = (netoPlata - 1.93) / 0.701;
+        }
+        else {
+            b = (netoPlata - 1.93 + (koeficijent.getNajvisaOsnovica() * 19.9)) / 0.9;
+        }
+        obracunZaposleni.setDoprinos1( b * (koeficijent.getPenzionoOsiguranje1() + koeficijent.getZdravstvenoOsiguranje1() + koeficijent.getNezaposlenost1()));
+        obracunZaposleni.setDoprinos2(b * (koeficijent.getPenzionoOsiguranje2() + koeficijent.getZdravstvenoOsiguranje2() + koeficijent.getNezaposlenost2()));
+        obracunZaposleni.setPorez((b - koeficijent.getPoreskoOslobadjanje()) * koeficijent.getKoeficijentPoreza());
+        obracunZaposleni.setBrutoPlata(netoPlata + obracunZaposleni.getPorez());
+        obracunZaposleni.setUkupanTrosakZarade(obracunZaposleni.getBrutoPlata() + obracunZaposleni.getDoprinos2());
+    }
+
 }
