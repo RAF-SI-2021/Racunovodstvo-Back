@@ -1,6 +1,7 @@
 package raf.si.racunovodstvo.preduzece.controller;
 
 import org.apache.logging.log4j.util.Strings;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.util.ReflectionTestUtils;
 import raf.si.racunovodstvo.preduzece.model.ObracunZaposleni;
 import raf.si.racunovodstvo.preduzece.requests.ObracunZaposleniRequest;
 import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
@@ -40,6 +42,10 @@ class ObracunZaposleniControllerTest {
     @Mock
     private SearchUtil<ObracunZaposleni> searchUtil;
 
+    @BeforeEach
+    void setUp(){
+        ReflectionTestUtils.setField(obracunZaposleniController, "searchUtil", searchUtil);
+    }
 
     @Test
     void createObracunZaposleniTest(){
