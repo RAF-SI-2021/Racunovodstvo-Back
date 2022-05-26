@@ -1,7 +1,8 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.repositories.ProfitniCentarRepository;
@@ -41,45 +42,32 @@ public class ProfitniCentarService implements IProfitniCentarService {
 
 
     @Override
-    public ProfitniCentar addKontosIntoProfitniCentar(Knjizenje knjizejne, ProfitniCentar profitniCentar) {
-        for(Konto k : knjizejne.getKonto()){
-            profitniCentar.getKontoList().add(k);
-            profitniCentar.setUkupniTrosak(profitniCentar.getUkupniTrosak()+(k.getDuguje()-k.getPotrazuje()));
-        }
-        updateProfit(profitniCentar);
-        return profitniCentar;
+    public Page<ProfitniCentar> findAll(Pageable sort) {
+        return profitniCentarRepository.findAll(sort);
     }
 
     @Override
-    public void deleteKontoFromProfitniCentar(Konto konto, ProfitniCentar profitniCentar) {
-        profitniCentar.getKontoList().remove(konto);
-        for(Konto k : profitniCentar.getKontoList()){
-            profitniCentar.setUkupniTrosak(profitniCentar.getUkupniTrosak()+(k.getDuguje()-k.getPotrazuje()));
+    public ProfitniCentar updateProfitniCentar(ProfitniCentar profitniCentar) {
+        double ukupanProfit = 0.0;
+        for(Konto k: profitniCentar.getKontoList()){
+            ukupanProfit += k.getDuguje()-k.getPotrazuje();
         }
-        updateProfit(profitniCentar);
-    }
-
-    @Override
-    public void updateKontoInProfitniCentar(Konto konto, ProfitniCentar profitniCentar) {
-        for(Konto k : profitniCentar.getKontoList()){
-            if(k.getKontoId() == konto.getKontoId()){
-                profitniCentar.setUkupniTrosak(profitniCentar.getUkupniTrosak()-(k.getDuguje()-k.getPotrazuje())+(konto.getDuguje()-konto.getPotrazuje()));
-                profitniCentar.getKontoList().remove(k);
-                profitniCentar.getKontoList().add(konto);
-            }
+        for(ProfitniCentar pc : profitniCentar.getProfitniCentarList()){
+            ukupanProfit += pc.getUkupniTrosak();
         }
+        profitniCentar.setUkupniTrosak(ukupanProfit);
         updateProfit(profitniCentar);
+        return profitniCentarRepository.save(profitniCentar);
     }
 
 
     private void updateProfit(ProfitniCentar pc){
-        if(pc.getParentProfitniCentar()!= null){
-            ProfitniCentar parent = pc.getParentProfitniCentar();
-            do{
+        ProfitniCentar parent = pc.getParentProfitniCentar();
+        while(parent != null){
                 parent.setUkupniTrosak(parent.getUkupniTrosak()+pc.getUkupniTrosak());
                 pc = parent;
+                profitniCentarRepository.save(parent);
                 parent = pc.getParentProfitniCentar();
-            }while(parent != null);
         }
     }
 }

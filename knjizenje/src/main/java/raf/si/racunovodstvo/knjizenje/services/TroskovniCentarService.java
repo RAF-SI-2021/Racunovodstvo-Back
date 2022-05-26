@@ -1,7 +1,8 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 import raf.si.racunovodstvo.knjizenje.repositories.TroskovniCentarRepository;
@@ -40,43 +41,31 @@ public class TroskovniCentarService implements ITroskovniCentarService {
     }
 
     @Override
-    public TroskovniCentar addKontosIntoTroskovniCentar(Knjizenje knjizejne, TroskovniCentar troskovniCentar) {
-        for(Konto k : knjizejne.getKonto()){
-            troskovniCentar.getKontoList().add(k);
-            troskovniCentar.setUkupniTrosak(troskovniCentar.getUkupniTrosak()+(k.getDuguje()-k.getPotrazuje()));
-        }
-        updateTrosak(troskovniCentar);
-        return troskovniCentar;
+    public Page<TroskovniCentar> findAll(Pageable sort) {
+        return troskovniCentarRepository.findAll(sort);
     }
 
     @Override
-    public void deleteKontoFromTroskovniCentar(Konto konto, TroskovniCentar troskovniCentar) {
-        troskovniCentar.getKontoList().remove(konto);
+    public TroskovniCentar updateTroskovniCentar(TroskovniCentar troskovniCentar) {
+        double ukupanTrosak = 0.0;
         for(Konto k : troskovniCentar.getKontoList()){
-            troskovniCentar.setUkupniTrosak(troskovniCentar.getUkupniTrosak()+(k.getDuguje()-k.getPotrazuje()));
+            ukupanTrosak += k.getDuguje()-k.getPotrazuje();
         }
-    }
-
-    @Override
-    public void updateKontoInTroskovniCentar(Konto konto, TroskovniCentar troskovniCentar) {
-        for(Konto k : troskovniCentar.getKontoList()){
-            if(k.getKontoId() == konto.getKontoId()){
-                troskovniCentar.setUkupniTrosak(troskovniCentar.getUkupniTrosak()-(k.getDuguje()-k.getPotrazuje())+(konto.getDuguje()- konto.getPotrazuje()));
-                troskovniCentar.getKontoList().remove(k);
-                troskovniCentar.getKontoList().add(konto);
-            }
+        for(TroskovniCentar tc : troskovniCentar.getTroskovniCentarList()){
+            ukupanTrosak += tc.getUkupniTrosak();
         }
+        troskovniCentar.setUkupniTrosak(ukupanTrosak);
         updateTrosak(troskovniCentar);
+        return troskovniCentarRepository.save(troskovniCentar);
     }
 
     private void updateTrosak(TroskovniCentar tc){
-        if(tc.getParentTroskovniCentar()!= null){
-            TroskovniCentar parent = tc.getParentTroskovniCentar();
-            do{
-                parent.setUkupniTrosak(parent.getUkupniTrosak()+tc.getUkupniTrosak());
-                tc = parent;
-                parent = tc.getParentTroskovniCentar();
-            }while(parent != null);
+        TroskovniCentar parent = tc.getParentTroskovniCentar();
+        while(parent != null){
+            parent.setUkupniTrosak(parent.getUkupniTrosak()+tc.getUkupniTrosak());
+            tc = parent;
+            troskovniCentarRepository.save(parent);
+            parent = tc.getParentTroskovniCentar();
         }
     }
 }

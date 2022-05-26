@@ -1,6 +1,7 @@
 package raf.si.racunovodstvo.knjizenje.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,16 +10,19 @@ import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 import raf.si.racunovodstvo.knjizenje.services.TroskovniCentarService;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
+import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.io.IOException;
 import java.util.Optional;
 
 @CrossOrigin
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/troskovni-centar")
+@RequestMapping("/api//troskovni_centri")
 public class TroskovniCentarController {
 
     private final ITroskovniCentarService troskovniCentarService;
@@ -36,16 +40,15 @@ public class TroskovniCentarController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createTroskovniCentar(@Valid @RequestBody TroskovniCentar troskovniCentar) throws IOException {
+    public ResponseEntity<?> createTroskovniCentar(@Valid @RequestBody TroskovniCentar troskovniCentar){
         return ResponseEntity.ok(troskovniCentarService.save(troskovniCentar));
     }
 
-    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addKontosFromKnjizenje(@Valid @RequestBody Knjizenje knjizenje, @PathVariable Long id){
-        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(id);
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addKontosFromKnjizenje(@Valid @RequestBody TroskovniCentar troskovniCentar){
+        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(troskovniCentar.getId());
         if (optionalTroskovniCentar.isPresent()) {
-            troskovniCentarService.addKontosIntoTroskovniCentar(knjizenje,optionalTroskovniCentar.get());
-            return ResponseEntity.ok(troskovniCentarService.save(optionalTroskovniCentar.get()));
+            return ResponseEntity.ok(troskovniCentarService.updateTroskovniCentar(troskovniCentar));
         }
         throw new EntityNotFoundException();
     }
@@ -60,27 +63,13 @@ public class TroskovniCentarController {
         throw new EntityNotFoundException();
     }
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> findAll(){
-        return ResponseEntity.ok(troskovniCentarService.findAll());
+    public ResponseEntity<?> findAll(
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+            @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+            @RequestParam(value = "sort")  String[] sort
+    ){
+        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page,size,sort);
+        return ResponseEntity.ok(troskovniCentarService.findAll(pageSort));
     }
 
-    @PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateKontoInTroskovniCentar(@Valid @RequestBody Konto konto, @PathVariable Long id){
-        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(id);
-        if (optionalTroskovniCentar.isPresent()) {
-            troskovniCentarService.updateKontoInTroskovniCentar(konto,optionalTroskovniCentar.get());
-            return ResponseEntity.ok(troskovniCentarService.save(optionalTroskovniCentar.get()));
-        }
-        throw new EntityNotFoundException();
-    }
-
-    @DeleteMapping (value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteKontoFromTroskovniCentar(@Valid @RequestBody Konto konto, @PathVariable Long id) {
-        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(id);
-        if (optionalTroskovniCentar.isPresent()) {
-            troskovniCentarService.deleteKontoFromTroskovniCentar(konto, optionalTroskovniCentar.get());
-            return ResponseEntity.ok(troskovniCentarService.save(optionalTroskovniCentar.get()));
-        }
-        throw new EntityNotFoundException();
-    }
 }
