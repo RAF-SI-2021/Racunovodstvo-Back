@@ -83,6 +83,7 @@ services:
   preduzece_service:
     image: racunovodstvo/repo:preduzece
     hostname: preduzece
+    container_name: preduzece
     restart: unless-stopped
     env_file: .env
     environment:

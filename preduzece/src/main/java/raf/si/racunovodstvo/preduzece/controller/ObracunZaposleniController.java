@@ -30,9 +30,9 @@ public class ObracunZaposleniController {
     private final IObracunZaposleniService iObracunZaposleniService;
     private final SearchUtil<ObracunZaposleni> searchUtil;
 
-    private ObracunZaposleniController(IObracunZaposleniService iObracunZaposleniService, SearchUtil<ObracunZaposleni> searchUtil){
+    private ObracunZaposleniController(IObracunZaposleniService iObracunZaposleniService){
         this.iObracunZaposleniService = iObracunZaposleniService;
-        this.searchUtil = searchUtil;
+        this.searchUtil = new SearchUtil<>();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)

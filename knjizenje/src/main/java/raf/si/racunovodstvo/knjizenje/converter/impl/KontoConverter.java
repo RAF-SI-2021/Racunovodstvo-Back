@@ -1,8 +1,9 @@
-package raf.si.racunovodstvo.knjizenje.converter;
+package raf.si.racunovodstvo.knjizenje.converter.impl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
+import raf.si.racunovodstvo.knjizenje.converter.IConverter;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
 
@@ -10,8 +11,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class KontoConverter {
+public class KontoConverter implements IConverter<List<Konto>, Page<GlavnaKnjigaResponse>> {
 
+    @Override
     public Page<GlavnaKnjigaResponse> convert(List<Konto> kontoList) {
         return new PageImpl<>(kontoList.stream().map(
             konto -> new GlavnaKnjigaResponse(
