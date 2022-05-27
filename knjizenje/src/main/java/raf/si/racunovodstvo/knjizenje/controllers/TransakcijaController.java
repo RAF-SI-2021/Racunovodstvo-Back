@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.knjizenje.model.Transakcija;
+import raf.si.racunovodstvo.knjizenje.requests.ObracunTransakcijeRequest;
 import raf.si.racunovodstvo.knjizenje.requests.TransakcijaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.TransakcijaResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITransakcijaService;
@@ -19,6 +20,8 @@ import raf.si.racunovodstvo.knjizenje.validation.groups.OnUpdate;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Date;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -61,4 +64,11 @@ public class TransakcijaController {
         transakcijaService.deleteById(transakcijaId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping(value = "/obracun_plata")
+    public ResponseEntity<?> obracunPlata(@RequestBody List<ObracunTransakcijeRequest> obracunTransakcijeRequestList){
+        /**Thread.sleep(obracunTransakcijeRequestList.get(0).getDatum().getTime() - (new Date().getTime()));*/
+        return ResponseEntity.ok(transakcijaService.obracunZaradeTransakcije(obracunTransakcijeRequestList));
+    }
+
 }

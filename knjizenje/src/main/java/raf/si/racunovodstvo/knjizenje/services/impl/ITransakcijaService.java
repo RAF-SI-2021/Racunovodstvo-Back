@@ -4,8 +4,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.knjizenje.model.Transakcija;
+import raf.si.racunovodstvo.knjizenje.requests.ObracunTransakcijeRequest;
 import raf.si.racunovodstvo.knjizenje.requests.TransakcijaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.TransakcijaResponse;
+
+import java.util.List;
 
 public interface ITransakcijaService extends IService<Transakcija, Long> {
 
@@ -16,4 +19,6 @@ public interface ITransakcijaService extends IService<Transakcija, Long> {
     TransakcijaResponse save(TransakcijaRequest artikalRequest);
 
     TransakcijaResponse update(TransakcijaRequest artikalRequest);
+
+    List<Transakcija> obracunZaradeTransakcije(List<ObracunTransakcijeRequest> obracunTransakcijeRequests);
 }
