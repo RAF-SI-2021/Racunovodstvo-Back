@@ -31,7 +31,9 @@ public class KalkulacijaRequest {
     @NotNull(message = "Tip kalkulacije je obavezan")
     private TipKalkulacije tipKalkulacije;
     private Long dobavljacId;
-    private Long lokacijaId;
+    @Valid
+    @NotNull
+    private LokacijaRequest lokacija;
     private String komentar;
     @Valid
     private List<TroskoviNabavkeRequest> troskoviNabavke;
