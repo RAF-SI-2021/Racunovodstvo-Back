@@ -3,6 +3,7 @@ package raf.si.racunovodstvo.knjizenje.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 import raf.si.racunovodstvo.knjizenje.repositories.TroskovniCentarRepository;
@@ -53,6 +54,17 @@ public class TroskovniCentarService implements ITroskovniCentarService {
         }
         for(TroskovniCentar tc : troskovniCentar.getTroskovniCentarList()){
             ukupanTrosak += tc.getUkupniTrosak();
+        }
+        troskovniCentar.setUkupniTrosak(ukupanTrosak);
+        updateTrosak(troskovniCentar);
+        return troskovniCentarRepository.save(troskovniCentar);
+    }
+    @Override
+    public TroskovniCentar addKontosFromKnjizenje(Knjizenje knjizenje, TroskovniCentar troskovniCentar) {
+        double ukupanTrosak = troskovniCentar.getUkupniTrosak();
+        for(Konto k : knjizenje.getKonto()){
+            ukupanTrosak += k.getDuguje()-k.getPotrazuje();
+            troskovniCentar.getKontoList().add(k);
         }
         troskovniCentar.setUkupniTrosak(ukupanTrosak);
         updateTrosak(troskovniCentar);

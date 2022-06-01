@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 import raf.si.racunovodstvo.knjizenje.services.TroskovniCentarService;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
@@ -19,7 +20,7 @@ import java.util.Optional;
 @CrossOrigin
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api//troskovni_centri")
+@RequestMapping("/api/troskovni-centri")
 public class TroskovniCentarController {
 
     private final ITroskovniCentarService troskovniCentarService;
@@ -42,10 +43,10 @@ public class TroskovniCentarController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addKontosFromKnjizenje(@Valid @RequestBody TroskovniCentar troskovniCentar){
+    public ResponseEntity<?> updateTroskovniCentar(@RequestBody TroskovniCentar troskovniCentar){
         Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(troskovniCentar.getId());
         if (optionalTroskovniCentar.isPresent()) {
-            return ResponseEntity.ok(troskovniCentarService.updateTroskovniCentar(troskovniCentar));
+            return ResponseEntity.ok(troskovniCentarService.updateTroskovniCentar(optionalTroskovniCentar.get()));
         }
         throw new EntityNotFoundException();
     }
@@ -59,7 +60,7 @@ public class TroskovniCentarController {
         }
         throw new EntityNotFoundException();
     }
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> findAll(
             @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
             @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
@@ -67,6 +68,15 @@ public class TroskovniCentarController {
     ){
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page,size,sort);
         return ResponseEntity.ok(troskovniCentarService.findAll(pageSort));
+    }
+
+    @PutMapping(value = "/addFromKnjizenje",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody Knjizenje knjizenje, @RequestBody TroskovniCentar troskovniCentar){
+        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(troskovniCentar.getId());
+        if(optionalTroskovniCentar.isPresent()){
+            return ResponseEntity.ok(troskovniCentarService.addKontosFromKnjizenje(knjizenje,optionalTroskovniCentar.get()));
+        }
+        throw new EntityNotFoundException();
     }
 
 }

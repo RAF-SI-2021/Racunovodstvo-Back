@@ -17,7 +17,7 @@ import javax.persistence.OneToMany;
 public class TroskovniCentar extends BazniCentar {
 
     @ManyToOne
-    @JoinColumn(name = "parentId", nullable = false)
+    @JoinColumn(name = "parentId")
     private TroskovniCentar parentTroskovniCentar;
     @JsonIgnore
     @OneToMany(mappedBy = "parentTroskovniCentar")

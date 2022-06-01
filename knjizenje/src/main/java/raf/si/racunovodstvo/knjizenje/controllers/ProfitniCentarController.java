@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.services.ProfitniCentarService;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
@@ -19,7 +20,7 @@ import java.util.Optional;
 @CrossOrigin
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/profitni_centri")
+@RequestMapping("/api/profitni-centri")
 public class ProfitniCentarController {
     private final IProfitniCentarService profitniCentarService;
 
@@ -42,7 +43,7 @@ public class ProfitniCentarController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateProfitniCentar(@Valid @RequestBody ProfitniCentar profitniCentar){
+    public ResponseEntity<?> updateProfitniCentar(@RequestBody ProfitniCentar profitniCentar){
         Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(profitniCentar.getId());
         if (optionalProfitniCentar.isPresent()) {
             return ResponseEntity.ok(profitniCentarService.updateProfitniCentar(profitniCentar));
@@ -68,4 +69,14 @@ public class ProfitniCentarController {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page,size,sort);
         return ResponseEntity.ok(profitniCentarService.findAll(pageSort));
     }
+
+    @PutMapping(value = "/addFromKnjizenje",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody Knjizenje knjizenje, @RequestBody ProfitniCentar profitniCentar){
+        Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(profitniCentar.getId());
+        if(optionalProfitniCentar.isPresent()){
+            return ResponseEntity.ok(profitniCentarService.addKontosFromKnjizenje(knjizenje,profitniCentar));
+        }
+        throw new EntityNotFoundException();
+    }
+
 }

@@ -8,10 +8,7 @@ import org.springframework.stereotype.Component;
 import raf.si.racunovodstvo.knjizenje.model.*;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipDokumenta;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
-import raf.si.racunovodstvo.knjizenje.repositories.FakturaRepository;
-import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
-import raf.si.racunovodstvo.knjizenje.repositories.KontnaGrupaRepository;
-import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
+import raf.si.racunovodstvo.knjizenje.repositories.*;
 
 
 import java.util.*;
@@ -24,18 +21,22 @@ public class BootstrapData implements CommandLineRunner {
     private final KontnaGrupaRepository kontnaGrupaRepository;
     private final KontoRepository kontoRepository;
     private final KnjizenjeRepository knjizenjeRepository;
+    private final ProfitniCentarRepository profitniCentarRepository;
+    private final TroskovniCentarRepository troskovniCentarRepository;
 
 
     @Autowired
     public BootstrapData(FakturaRepository fakturaRepository,
                          KontoRepository kontoRepository,
                          KontnaGrupaRepository kontnaGrupaRepository,
-                         KnjizenjeRepository knjizenjeRepository
-    ) {
+                         KnjizenjeRepository knjizenjeRepository,
+                         ProfitniCentarRepository profitniCentarRepository, TroskovniCentarRepository troskovniCentarRepository) {
         this.fakturaRepository = fakturaRepository;
         this.kontoRepository = kontoRepository;
         this.knjizenjeRepository = knjizenjeRepository;
         this.kontnaGrupaRepository = kontnaGrupaRepository;
+        this.profitniCentarRepository = profitniCentarRepository;
+        this.troskovniCentarRepository = troskovniCentarRepository;
     }
 
     private Faktura getDefaultFaktura() {
@@ -219,6 +220,22 @@ public class BootstrapData implements CommandLineRunner {
         konto2.setKnjizenje(knjizenje);
         konto3.setKnjizenje(knjizenje);
         kontoRepository.save(konto1);
+
+        ProfitniCentar profitniCentar = new ProfitniCentar();
+        profitniCentar.setUkupniTrosak(100.00);
+        profitniCentar.setNaziv("Profitni centar 1");
+        profitniCentar.setLokacijaId(1l);
+        profitniCentar.setSifra("12365");
+        profitniCentar.setOdgovornoLiceId(1l);
+        profitniCentarRepository.save(profitniCentar);
+
+        TroskovniCentar troskovniCentar = new TroskovniCentar();
+        troskovniCentar.setUkupniTrosak(100.00);
+        troskovniCentar.setNaziv("Troskovni centar 1");
+        troskovniCentar.setLokacijaId(1l);
+        troskovniCentar.setSifra("12345");
+        troskovniCentar.setOdgovornoLiceId(1l);
+        troskovniCentarRepository.save(troskovniCentar);
 
         log.info("Data loaded!");
     }
