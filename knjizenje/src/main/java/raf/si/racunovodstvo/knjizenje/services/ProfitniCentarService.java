@@ -3,7 +3,6 @@ package raf.si.racunovodstvo.knjizenje.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.repositories.ProfitniCentarRepository;
@@ -62,9 +61,9 @@ public class ProfitniCentarService implements IProfitniCentarService {
     }
 
     @Override
-    public ProfitniCentar addKontosFromKnjizenje(Knjizenje knjizenje, ProfitniCentar profitniCentar) {
+    public ProfitniCentar addKontosFromKnjizenje(List<Konto> kontoList, ProfitniCentar profitniCentar) {
         double ukupanProfit = profitniCentar.getUkupniTrosak();
-        for(Konto k: knjizenje.getKonto()){
+        for(Konto k: kontoList){
             ukupanProfit += k.getDuguje()-k.getPotrazuje();
             profitniCentar.getKontoList().add(k);
         }

@@ -12,6 +12,7 @@ import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
+import raf.si.racunovodstvo.knjizenje.requests.KnjizenjeRequest;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
 
@@ -39,6 +40,36 @@ public class KnjizenjeService implements IKnjizenjeService {
         this.knjizenjeConverter = knjizenjeConverter;
     }
 
+    public Knjizenje save(KnjizenjeRequest knjizenje){
+        List<Konto> kontoList = knjizenje.getKonto();
+
+        Knjizenje newKnjizenje = new Knjizenje();
+
+        Dokument dokument;
+        if(knjizenje.getDokument() != null && dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).isPresent()){
+            dokument = dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).get();
+        } else {
+            dokument = dokumentRepository.save(knjizenje.getDokument());
+        }
+
+        newKnjizenje.setDatumKnjizenja(knjizenje.getDatumKnjizenja());
+        newKnjizenje.setBrojNaloga(knjizenje.getBrojNaloga());
+        newKnjizenje.setKomentar(knjizenje.getKomentar());
+        newKnjizenje.setDokument(dokument);
+
+        newKnjizenje = knjizenjeRepository.save(newKnjizenje);
+
+        for(Konto konto : kontoList){
+            if(konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()){
+                konto.setKnjizenje(newKnjizenje);
+                kontoService.save(konto);
+            }
+        }
+
+        newKnjizenje.setKonto(kontoList);
+
+        return  knjizenjeRepository.save(newKnjizenje);
+    }
     @Override
     public Knjizenje save(Knjizenje knjizenje) {
 

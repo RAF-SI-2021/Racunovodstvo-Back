@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
+import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.services.ProfitniCentarService;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
@@ -15,6 +15,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
@@ -71,10 +72,10 @@ public class ProfitniCentarController {
     }
 
     @PutMapping(value = "/addFromKnjizenje",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody Knjizenje knjizenje, @RequestBody ProfitniCentar profitniCentar){
+    public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody List<Konto> kontoList, @RequestBody ProfitniCentar profitniCentar){
         Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(profitniCentar.getId());
         if(optionalProfitniCentar.isPresent()){
-            return ResponseEntity.ok(profitniCentarService.addKontosFromKnjizenje(knjizenje,profitniCentar));
+            return ResponseEntity.ok(profitniCentarService.addKontosFromKnjizenje(kontoList,profitniCentar));
         }
         throw new EntityNotFoundException();
     }

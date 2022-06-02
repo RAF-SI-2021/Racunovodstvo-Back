@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
+import raf.si.racunovodstvo.knjizenje.requests.KnjizenjeRequest;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
@@ -57,13 +58,13 @@ public class KnjizenjeController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja, @RequestParam Long bazniCentarId) {
-        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(bazniCentarId);
-        Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(bazniCentarId);
+    public ResponseEntity<?> createDnevnikKnjizenja(@Valid @RequestBody KnjizenjeRequest dnevnikKnjizenja) {
+        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(dnevnikKnjizenja.getBazniCentarId());
+        Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(dnevnikKnjizenja.getBazniCentarId());
         if(optionalTroskovniCentar.isPresent()){
-            troskovniCentarService.addKontosFromKnjizenje(dnevnikKnjizenja ,optionalTroskovniCentar.get());
+            troskovniCentarService.addKontosFromKnjizenje(dnevnikKnjizenja.getKonto() ,optionalTroskovniCentar.get());
         }else if(optionalProfitniCentar.isPresent()){
-            profitniCentarService.addKontosFromKnjizenje(dnevnikKnjizenja,optionalProfitniCentar.get());
+            profitniCentarService.addKontosFromKnjizenje(dnevnikKnjizenja.getKonto(),optionalProfitniCentar.get());
         }
         return ResponseEntity.ok(knjizenjaService.save(dnevnikKnjizenja));
     }
