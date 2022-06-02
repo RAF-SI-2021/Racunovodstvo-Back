@@ -110,6 +110,7 @@ services:
   preduzece_service:
     image: ghcr.io/raf-si-2021/racunovodstvo-preduzece:latest
     hostname: preduzece
+    container_name: preduzece
     restart: unless-stopped
     env_file: .env
     environment:

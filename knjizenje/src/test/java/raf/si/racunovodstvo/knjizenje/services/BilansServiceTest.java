@@ -59,8 +59,8 @@ class BilansServiceTest {
     @Test
     void findBrutoBilans1(){
         List<BilansResponse> bilansResponseList = new ArrayList<>();
-        BilansResponse bilansResponse = new BilansResponse(500.0, 500.0, 1L, "1", "1");
-        BilansResponse bilansResponse2 = new BilansResponse(1500.0, 1500.0, 2L, "2", "2");
+        BilansResponse bilansResponse = new BilansResponse(500.0, 500.0, 1L, "1L", "1");
+        BilansResponse bilansResponse2 = new BilansResponse(1500.0, 1500.0, 1L, "2L", "2");
         bilansResponseList.add(bilansResponse);
         bilansResponseList.add(bilansResponse2);
         String brojKontaOd = new String();
@@ -78,8 +78,8 @@ class BilansServiceTest {
     @Test
     void findBrutoBilans2(){
         List<BilansResponse> bilansResponseList = new ArrayList<>();
-        BilansResponse bilansResponse = new BilansResponse(500.0, 500.0, 1L, "123333", "1");
-        BilansResponse bilansResponse2 = new BilansResponse(1500.0, 1500.0, 2L, "12222", "2");
+        BilansResponse bilansResponse = new BilansResponse(500.0, 500.0, 1L, "1L", "123333");
+        BilansResponse bilansResponse2 = new BilansResponse(1500.0, 1500.0, 1L, "2L", "12222");
         bilansResponseList.add(bilansResponse);
         bilansResponseList.add(bilansResponse2);
         String brojKontaOd = new String();
@@ -97,8 +97,8 @@ class BilansServiceTest {
     @Test
     void findBrutoBilans3(){
         List<BilansResponse> bilansResponseList = new ArrayList<>();
-        BilansResponse bilansResponse = new BilansResponse(500.0, 500.0, 1L, "123", "1");
-        BilansResponse bilansResponse2 = new BilansResponse(1500.0, 1500.0, 2L, "61", "2");
+        BilansResponse bilansResponse = new BilansResponse(500.0, 500.0, 1L, "1L", "123");
+        BilansResponse bilansResponse2 = new BilansResponse(1500.0, 1500.0, 1L, "2L", "61");
         bilansResponseList.add(bilansResponse);
         bilansResponseList.add(bilansResponse2);
         String brojKontaOd = new String();

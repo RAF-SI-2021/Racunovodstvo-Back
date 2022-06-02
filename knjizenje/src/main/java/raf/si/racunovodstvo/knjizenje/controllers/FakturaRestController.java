@@ -1,13 +1,8 @@
 package raf.si.racunovodstvo.knjizenje.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import raf.si.racunovodstvo.knjizenje.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.knjizenje.model.Faktura;
 import raf.si.racunovodstvo.knjizenje.model.FakturaWithPreduzece;
 import raf.si.racunovodstvo.knjizenje.model.Preduzece;
@@ -31,12 +26,7 @@ import raf.si.racunovodstvo.knjizenje.services.impl.IFakturaService;
 import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
 import raf.si.racunovodstvo.knjizenje.utils.SearchUtil;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,29 +48,19 @@ public class FakturaRestController {
 
     private final SearchUtil<Faktura> searchUtil;
 
-    private RestTemplate restTemplate;
+    private final PreduzeceFeignClient preduzeceFeignClient;
 
-    private String URL = "http://preduzece/api/preduzece/%d";
-
-    public FakturaRestController(FakturaService fakturaService, RestTemplate restTemplate) {
+    public FakturaRestController(FakturaService fakturaService, PreduzeceFeignClient preduzeceFeignClient) {
         this.fakturaService = fakturaService;
-        this.restTemplate = restTemplate;
+        this.preduzeceFeignClient = preduzeceFeignClient;
         this.searchUtil = new SearchUtil<>();
     }
 
-    private Preduzece getPreduzeceById(Long id, String token) throws IOException {
+    private Preduzece getPreduzeceById(Long id, String token) {
         if(id == null){
             return null;
         }
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", token);
-        HttpEntity request = new HttpEntity(headers);
-
-        // baca izuzetak ako nije ispravak token
-        ResponseEntity<String> response = restTemplate.exchange(String.format(URL, id), HttpMethod.GET, request, String.class);
-        String result = response.getBody();
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(result, Preduzece.class);
+        return preduzeceFeignClient.getPreduzeceById(id, token).getBody();
     }
 
     private FakturaWithPreduzece addPreduzeceToFaktura(Faktura faktura, String token) throws IOException {

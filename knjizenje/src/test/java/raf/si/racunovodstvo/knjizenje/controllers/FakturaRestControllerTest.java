@@ -9,12 +9,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 import raf.si.racunovodstvo.knjizenje.exceptions.OperationNotSupportedException;
+import raf.si.racunovodstvo.knjizenje.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.knjizenje.model.Faktura;
+import raf.si.racunovodstvo.knjizenje.model.Preduzece;
 import raf.si.racunovodstvo.knjizenje.services.FakturaService;
 
 import javax.persistence.EntityNotFoundException;
@@ -37,7 +36,7 @@ class FakturaRestControllerTest {
     @Mock
     private FakturaService fakturaService;
     @Mock
-    private RestTemplate restTemplate;
+    private PreduzeceFeignClient preduzeceFeignClient;
 
     private static final String TOKEN = "token";
 
@@ -84,8 +83,9 @@ class FakturaRestControllerTest {
     void createFaktura() throws IOException {
         Faktura faktura = new Faktura();
         faktura.setPreduzeceId(MOCK_ID);
-        String body = "{\"preduzeceId\":1}";
-        given(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).willReturn(ResponseEntity.ok(body));
+        Preduzece preduzece = new Preduzece();
+        preduzece.setPreduzeceId(1L);
+        given(preduzeceFeignClient.getPreduzeceById(MOCK_ID, TOKEN)).willReturn(ResponseEntity.ok(preduzece));
 
         ResponseEntity<?> responseEntity = fakturaRestController.createFaktura(faktura, TOKEN);
         assertEquals(200, responseEntity.getStatusCodeValue());
@@ -102,8 +102,9 @@ class FakturaRestControllerTest {
         Faktura faktura = new Faktura();
         faktura.setPreduzeceId(MOCK_ID);
         faktura.setDokumentId(MOCK_ID);
-        String body = "{\"preduzeceId\":1}";
-        given(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).willReturn(ResponseEntity.ok(body));
+        Preduzece preduzece = new Preduzece();
+        preduzece.setPreduzeceId(MOCK_ID);
+        given(preduzeceFeignClient.getPreduzeceById(MOCK_ID, TOKEN)).willReturn(ResponseEntity.ok(preduzece));
         given(fakturaService.findById(MOCK_ID)).willReturn(Optional.of(faktura));
         ResponseEntity<?> responseEntity = fakturaRestController.updateFaktura(faktura, TOKEN);
         assertEquals(200, responseEntity.getStatusCodeValue());
@@ -114,8 +115,9 @@ class FakturaRestControllerTest {
         Faktura faktura = new Faktura();
         faktura.setPreduzeceId(MOCK_ID);
         faktura.setDokumentId(MOCK_ID);
-        String body = "{\"preduzeceId\":1}";
-        given(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).willReturn(ResponseEntity.ok(body));
+        Preduzece preduzece = new Preduzece();
+        preduzece.setPreduzeceId(MOCK_ID);
+        given(preduzeceFeignClient.getPreduzeceById(MOCK_ID, TOKEN)).willReturn(ResponseEntity.ok(preduzece));
         given(fakturaService.findById(MOCK_ID)).willReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> fakturaRestController.updateFaktura(faktura, TOKEN));
     }
@@ -125,8 +127,7 @@ class FakturaRestControllerTest {
         Faktura faktura = new Faktura();
         faktura.setPreduzeceId(MOCK_ID);
         faktura.setDokumentId(MOCK_ID);
-        String body = "null";
-        lenient().when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(ResponseEntity.ok(body));
+        given(preduzeceFeignClient.getPreduzeceById(MOCK_ID, TOKEN)).willReturn(ResponseEntity.ok(null));
         lenient().when(fakturaService.findById(MOCK_ID)).thenReturn(Optional.of(faktura));
         assertThrows(PersistenceException.class, () -> fakturaRestController.updateFaktura(faktura, TOKEN));
     }
@@ -137,7 +138,7 @@ class FakturaRestControllerTest {
         given(fakturaService.findById(MOCK_ID)).willReturn(Optional.of(faktura));
 
         ResponseEntity<?> responseEntity = fakturaRestController.deleteFaktura(MOCK_ID);
-        assertEquals(responseEntity.getStatusCodeValue(), 204);
+        assertEquals(204, responseEntity.getStatusCodeValue());
     }
 
     @Test

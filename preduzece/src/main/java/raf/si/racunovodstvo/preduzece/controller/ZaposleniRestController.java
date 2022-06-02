@@ -11,6 +11,7 @@ import raf.si.racunovodstvo.preduzece.specifications.RacunSpecificationsBuilder;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -26,6 +27,7 @@ public class ZaposleniRestController {
 
     public ZaposleniRestController(IZaposleniService iZaposleniService) {
         this.iZaposleniService = iZaposleniService;
+
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

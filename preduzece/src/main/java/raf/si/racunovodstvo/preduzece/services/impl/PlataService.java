@@ -86,4 +86,7 @@ public class PlataService implements IService<Plata, Long> {
 
     public List<Plata> findByZaposleniZaposleniId(Long zaposleniId) { return this.plataRepository.findByZaposleniZaposleniId(zaposleniId); }
 
+    public Plata findPlatabyDatumAndZaposleni(Date datumObracuna, Zaposleni zaposleni) {
+        return plataRepository.findPlatabyDatumAndZaposleni(datumObracuna, zaposleni);
+    }
 }
