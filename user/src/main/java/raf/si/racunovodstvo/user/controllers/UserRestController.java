@@ -49,7 +49,7 @@ public class UserRestController {
     @GetMapping(value = "/loginuser", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getLoginUser(){
         Optional<User> optionalUser = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(optionalUser != null) {
+        if(!optionalUser.isEmpty()) {
             return ResponseEntity.ok(optionalUser.get());
         }
         throw new EntityNotFoundException();

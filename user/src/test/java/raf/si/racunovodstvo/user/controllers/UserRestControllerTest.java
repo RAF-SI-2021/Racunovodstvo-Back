@@ -48,20 +48,18 @@ class UserRestControllerTest {
 
     @Test
     void getLoginUserSuccessTest() {
+        User user = new User();
+
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(MOCK_USERNAME, ""));
-        UserDetails user = new org.springframework.security.core.userdetails.User(MOCK_USERNAME, "", new HashSet<>());
-        given(userService.loadUserByUsername(MOCK_USERNAME)).willReturn(user);
+        given(userService.findByUsername(MOCK_USERNAME)).willReturn(Optional.of(user));
 
-        org.springframework.security.core.userdetails.User responseUser =
-            (org.springframework.security.core.userdetails.User) userRestController.getLoginUser().getBody();
-
-        assertEquals(user, responseUser);
+        assertEquals(user, userRestController.getLoginUser().getBody());
     }
 
     @Test
     void getLoginUserFailTest() {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(MOCK_USERNAME, ""));
-        given(userService.loadUserByUsername(MOCK_USERNAME)).willReturn(null);
+        given(userService.findByUsername(MOCK_USERNAME)).willReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> userRestController.getLoginUser());
     }
