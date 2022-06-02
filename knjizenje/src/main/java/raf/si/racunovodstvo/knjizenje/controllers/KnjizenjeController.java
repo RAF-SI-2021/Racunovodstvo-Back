@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
+import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
+import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
+import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
+import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecificationsBuilder;
 import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
 import raf.si.racunovodstvo.knjizenje.utils.SearchUtil;
@@ -40,16 +44,27 @@ public class KnjizenjeController {
 
 
     private final IKnjizenjeService knjizenjaService;
+    private final IProfitniCentarService profitniCentarService;
+    private final ITroskovniCentarService troskovniCentarService;
     private final SearchUtil<Knjizenje> searchUtil;
 
 
-    public KnjizenjeController(IKnjizenjeService knjizenjaService) {
+    public KnjizenjeController(IKnjizenjeService knjizenjaService, IProfitniCentarService profitniCentarService, ITroskovniCentarService troskovniCentarService) {
         this.knjizenjaService = knjizenjaService;
+        this.profitniCentarService = profitniCentarService;
+        this.troskovniCentarService = troskovniCentarService;
         this.searchUtil = new SearchUtil<>();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja) {
+    public ResponseEntity<?> createDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja, @RequestParam Long bazniCentarId) {
+        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(bazniCentarId);
+        Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(bazniCentarId);
+        if(optionalTroskovniCentar.isPresent()){
+            troskovniCentarService.addKontosFromKnjizenje(dnevnikKnjizenja ,optionalTroskovniCentar.get());
+        }else if(optionalProfitniCentar.isPresent()){
+            profitniCentarService.addKontosFromKnjizenje(dnevnikKnjizenja,optionalProfitniCentar.get());
+        }
         return ResponseEntity.ok(knjizenjaService.save(dnevnikKnjizenja));
     }
 
@@ -98,5 +113,10 @@ public class KnjizenjeController {
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> findAll() {
         return ResponseEntity.ok(knjizenjaService.findAllKnjizenjeResponse());
+    }
+
+    @GetMapping(value = "/{id}/kontos", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getKontoByKnjizenjeId(@PathVariable Long knjizenjeId){
+        return ResponseEntity.ok(knjizenjaService.findKontoByKnjizenjeId(knjizenjeId));
     }
 }

@@ -88,6 +88,12 @@ public class KnjizenjeService implements IKnjizenjeService {
     }
 
     @Override
+    public List<Konto> findKontoByKnjizenjeId(Long knjizenjeId) {
+        Optional<Knjizenje> k = knjizenjeRepository.findById(knjizenjeId);
+        return k.get().getKonto();
+    }
+
+    @Override
     public void deleteById(Long id) {
         knjizenjeRepository.deleteById(id);
     }

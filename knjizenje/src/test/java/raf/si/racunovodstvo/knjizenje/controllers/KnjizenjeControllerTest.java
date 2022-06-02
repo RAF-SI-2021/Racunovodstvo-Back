@@ -29,7 +29,7 @@ class KnjizenjeControllerTest {
 
     @Test
     void createDnevnikKnjizenja() {
-        ResponseEntity<?> responseEntity = knjizenjeController.createDnevnikKnjizenja(new Knjizenje());
+        ResponseEntity<?> responseEntity = knjizenjeController.createDnevnikKnjizenja(new Knjizenje(),0l);
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
