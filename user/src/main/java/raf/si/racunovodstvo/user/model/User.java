@@ -26,7 +26,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @Column
-    private int preduzeceId;
+    private Long preduzeceId;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

@@ -5,6 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,12 +17,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
+import raf.si.racunovodstvo.user.model.Preduzece;
 import raf.si.racunovodstvo.user.model.User;
 import raf.si.racunovodstvo.user.requests.UpdateUserRequest;
 import raf.si.racunovodstvo.user.services.impl.UserService;
 
 import javax.persistence.EntityNotFoundException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,9 +47,13 @@ class UserRestControllerTest {
     private UserService userService;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private RestTemplate restTemplate;
 
     private static final Long MOCK_ID = 1L;
     private static final String MOCK_USERNAME = "DUMMY_USERNAME";
+    private static final String TOKEN = "TOKEN";
+
 
 
     @Test
@@ -89,36 +99,56 @@ class UserRestControllerTest {
     }
 
     @Test
-    void createUser() {
+    void createUser() throws IOException {
         User user = new User();
+        user.setPreduzeceId(MOCK_ID);
         List<User> userList = new ArrayList<>();
+        String body = "{\"preduzeceId\":1}";
+
         given(userService.findAll()).willReturn(userList);
-        ResponseEntity<?> responseEntity = userRestController.createUser(user);
+        given(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).willReturn(ResponseEntity.ok(body));
+
+        ResponseEntity<?> responseEntity = userRestController.createUser(user, TOKEN);
 
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
-    void createUserException() {
+    void createUserExceptionWithExistingUsername() throws IOException {
         User user = new User();
         user.setUsername("username");
         List<User> userList = new ArrayList<>();
         userList.add(user);
         given(userService.findAll()).willReturn(userList);
 
-        ResponseEntity<?> responseEntity = userRestController.createUser(user);
+        ResponseEntity<?> responseEntity = userRestController.createUser(user, TOKEN);
 
         assertEquals(403, responseEntity.getStatusCodeValue());
     }
 
     @Test
-    void updateUser() {
+    void createUserExceptionWithNullPreduzeceId() throws IOException {
+        User user = new User();
+        List<User> userList = new ArrayList<>();
+        given(userService.findAll()).willReturn(userList);
+
+        ResponseEntity<?> responseEntity = userRestController.createUser(user, TOKEN);
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
+    }
+
+    @Test
+    void updateUser() throws IOException {
         User user = new User();
         UpdateUserRequest updateUserRequest = new UpdateUserRequest();
         updateUserRequest.setUserId(MOCK_ID);
-        given(userService.findById(MOCK_ID)).willReturn(Optional.of(user));
+        updateUserRequest.setPreduzeceId(MOCK_ID);
+        String body = "{\"preduzeceId\":1}";
 
-        ResponseEntity<?> responseEntity = userRestController.updateUser(updateUserRequest);
+        given(userService.findById(MOCK_ID)).willReturn(Optional.of(user));
+        given(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).willReturn(ResponseEntity.ok(body));
+
+        ResponseEntity<?> responseEntity = userRestController.updateUser(updateUserRequest, TOKEN);
 
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
@@ -130,7 +160,7 @@ class UserRestControllerTest {
         updateUserRequest.setUserId(MOCK_ID);
         given(userService.findById(MOCK_ID)).willReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> userRestController.updateUser(updateUserRequest));
+        assertThrows(EntityNotFoundException.class, () -> userRestController.updateUser(updateUserRequest, TOKEN));
     }
 
     @Test
