@@ -76,6 +76,8 @@ public class UserRestController {
             optionalUser.get().setUsername(updatedUser.getUsername());
             optionalUser.get().setFirstName(updatedUser.getFirstName());
             optionalUser.get().setLastName(updatedUser.getLastName());
+            optionalUser.get().setEmail(updatedUser.getEmail());
+            optionalUser.get().setPreduzeceId(updatedUser.getPreduzeceId());
             optionalUser.get().setPermissions(updatedUser.getPermissions());
             return ResponseEntity.ok(userService.save(optionalUser.get()));
         }
