@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
+import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.TroskovniCentarRepository;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 
@@ -15,9 +16,11 @@ import java.util.Optional;
 public class TroskovniCentarService implements ITroskovniCentarService {
 
     private final TroskovniCentarRepository troskovniCentarRepository;
+    private final KontoRepository kontoRepository;
 
-    public TroskovniCentarService(TroskovniCentarRepository troskovniCentarRepository) {
+    public TroskovniCentarService(TroskovniCentarRepository troskovniCentarRepository, KontoRepository kontoRepository) {
         this.troskovniCentarRepository = troskovniCentarRepository;
+        this.kontoRepository = kontoRepository;
     }
 
     @Override
@@ -49,6 +52,8 @@ public class TroskovniCentarService implements ITroskovniCentarService {
     public TroskovniCentar updateTroskovniCentar(TroskovniCentar troskovniCentar) {
         double ukupanTrosak = 0.0;
         for(Konto k : troskovniCentar.getKontoList()){
+            k.setBazniCentar(troskovniCentar);
+            kontoRepository.save(k);
             ukupanTrosak += k.getDuguje()-k.getPotrazuje();
         }
         for(TroskovniCentar tc : troskovniCentar.getTroskovniCentarList()){
@@ -62,6 +67,8 @@ public class TroskovniCentarService implements ITroskovniCentarService {
     public TroskovniCentar addKontosFromKnjizenje(List<Konto> kontoList, TroskovniCentar troskovniCentar) {
         double ukupanTrosak = troskovniCentar.getUkupniTrosak();
         for(Konto k : kontoList){
+            k.setBazniCentar(troskovniCentar);
+            kontoRepository.save(k);
             ukupanTrosak += k.getDuguje()-k.getPotrazuje();
             troskovniCentar.getKontoList().add(k);
         }

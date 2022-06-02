@@ -1,20 +1,19 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.converter.KnjizenjeConverter;
-import raf.si.racunovodstvo.knjizenje.model.Dokument;
-import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
-import raf.si.racunovodstvo.knjizenje.model.Konto;
+import raf.si.racunovodstvo.knjizenje.model.*;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.requests.KnjizenjeRequest;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
+import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
+import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 
 
 import java.util.List;
@@ -28,14 +27,20 @@ public class KnjizenjeService implements IKnjizenjeService {
 
     private final KnjizenjeRepository knjizenjeRepository;
     private final DokumentRepository dokumentRepository;
+
+    private final IProfitniCentarService profitniCentarService;
+
+    private final ITroskovniCentarService troskovniCentarService;
     private final KontoService kontoService;
 
     @Lazy
     private KnjizenjeConverter knjizenjeConverter;
 
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, KontoService kontoService, KnjizenjeConverter knjizenjeConverter) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, IProfitniCentarService profitniCentarService, ITroskovniCentarService troskovniCentarService, KontoService kontoService, KnjizenjeConverter knjizenjeConverter) {
         this.knjizenjeRepository = knjizenjeRepository;
         this.dokumentRepository = dokumentRepository;
+        this.profitniCentarService = profitniCentarService;
+        this.troskovniCentarService = troskovniCentarService;
         this.kontoService = kontoService;
         this.knjizenjeConverter = knjizenjeConverter;
     }
@@ -67,6 +72,13 @@ public class KnjizenjeService implements IKnjizenjeService {
         }
 
         newKnjizenje.setKonto(kontoList);
+        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(knjizenje.getBazniCentarId());
+        Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(knjizenje.getBazniCentarId());
+        if(optionalTroskovniCentar.isPresent()){
+            troskovniCentarService.addKontosFromKnjizenje(knjizenje.getKonto() ,optionalTroskovniCentar.get());
+        }else if(optionalProfitniCentar.isPresent()){
+            profitniCentarService.addKontosFromKnjizenje(knjizenje.getKonto(),optionalProfitniCentar.get());
+        }
 
         return  knjizenjeRepository.save(newKnjizenje);
     }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
+import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.ProfitniCentarRepository;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
 
@@ -15,9 +16,11 @@ import java.util.Optional;
 public class ProfitniCentarService implements IProfitniCentarService {
 
     private final ProfitniCentarRepository profitniCentarRepository;
+    private final KontoRepository kontoRepository;
 
-    public ProfitniCentarService(ProfitniCentarRepository profitniCentarRepository) {
+    public ProfitniCentarService(ProfitniCentarRepository profitniCentarRepository, KontoRepository kontoRepository) {
         this.profitniCentarRepository = profitniCentarRepository;
+        this.kontoRepository = kontoRepository;
     }
 
     @Override
@@ -50,6 +53,8 @@ public class ProfitniCentarService implements IProfitniCentarService {
     public ProfitniCentar updateProfitniCentar(ProfitniCentar profitniCentar) {
         double ukupanProfit = 0.0;
         for(Konto k: profitniCentar.getKontoList()){
+            k.setBazniCentar(profitniCentar);
+            kontoRepository.save(k);
             ukupanProfit += k.getDuguje()-k.getPotrazuje();
         }
         for(ProfitniCentar pc : profitniCentar.getProfitniCentarList()){
@@ -64,6 +69,8 @@ public class ProfitniCentarService implements IProfitniCentarService {
     public ProfitniCentar addKontosFromKnjizenje(List<Konto> kontoList, ProfitniCentar profitniCentar) {
         double ukupanProfit = profitniCentar.getUkupniTrosak();
         for(Konto k: kontoList){
+            k.setBazniCentar(profitniCentar);
+            kontoRepository.save(k);
             ukupanProfit += k.getDuguje()-k.getPotrazuje();
             profitniCentar.getKontoList().add(k);
         }
