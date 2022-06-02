@@ -18,13 +18,15 @@ public class User {
     private String firstName;
     @Column
     private String lastName;
-    @Column
+    @Column(unique=true)
     private String username;
-    @Column
+    @Column(unique=true)
     private String email;
     @Column
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    @Column
+    private int preduzeceId;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

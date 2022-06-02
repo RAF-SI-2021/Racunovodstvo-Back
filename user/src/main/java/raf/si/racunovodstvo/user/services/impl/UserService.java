@@ -52,4 +52,8 @@ public class UserService implements UserDetailsService, IService<User, Long> {
                 myUser.get().getPermissions());
     }
 
+    public Optional<User> findByUsername(String userName) {
+        return userRepository.findByUsername(userName);
+    }
+
 }
