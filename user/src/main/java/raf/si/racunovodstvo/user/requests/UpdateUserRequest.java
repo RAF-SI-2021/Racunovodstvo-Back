@@ -16,5 +16,9 @@ public class UpdateUserRequest {
 
     private String username;
 
+    private String email;
+
+    private Long preduzeceId;
+
     private List<Permission> permissions;
 }
