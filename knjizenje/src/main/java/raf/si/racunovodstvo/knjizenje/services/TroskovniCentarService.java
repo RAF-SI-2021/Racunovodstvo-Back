@@ -53,7 +53,6 @@ public class TroskovniCentarService implements ITroskovniCentarService {
         double ukupanTrosak = 0.0;
         for(Konto k : troskovniCentar.getKontoList()){
             k.setBazniCentar(troskovniCentar);
-            kontoRepository.save(k);
             ukupanTrosak += k.getDuguje()-k.getPotrazuje();
         }
         for(TroskovniCentar tc : troskovniCentar.getTroskovniCentarList()){

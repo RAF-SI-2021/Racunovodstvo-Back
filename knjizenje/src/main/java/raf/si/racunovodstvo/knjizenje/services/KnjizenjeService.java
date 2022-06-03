@@ -72,12 +72,14 @@ public class KnjizenjeService implements IKnjizenjeService {
         }
 
         newKnjizenje.setKonto(kontoList);
-        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(knjizenje.getBazniCentarId());
-        Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(knjizenje.getBazniCentarId());
-        if(optionalTroskovniCentar.isPresent()){
-            troskovniCentarService.addKontosFromKnjizenje(knjizenje.getKonto() ,optionalTroskovniCentar.get());
-        }else if(optionalProfitniCentar.isPresent()){
-            profitniCentarService.addKontosFromKnjizenje(knjizenje.getKonto(),optionalProfitniCentar.get());
+        if(knjizenje.getBazniCentarId() != null) {
+            Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(knjizenje.getBazniCentarId());
+            Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(knjizenje.getBazniCentarId());
+            if (optionalTroskovniCentar.isPresent()) {
+                troskovniCentarService.addKontosFromKnjizenje(knjizenje.getKonto(), optionalTroskovniCentar.get());
+            } else if (optionalProfitniCentar.isPresent()) {
+                profitniCentarService.addKontosFromKnjizenje(knjizenje.getKonto(), optionalProfitniCentar.get());
+            }
         }
 
         return  knjizenjeRepository.save(newKnjizenje);

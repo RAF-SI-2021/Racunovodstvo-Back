@@ -54,7 +54,6 @@ public class ProfitniCentarService implements IProfitniCentarService {
         double ukupanProfit = 0.0;
         for(Konto k: profitniCentar.getKontoList()){
             k.setBazniCentar(profitniCentar);
-            kontoRepository.save(k);
             ukupanProfit += k.getDuguje()-k.getPotrazuje();
         }
         for(ProfitniCentar pc : profitniCentar.getProfitniCentarList()){
