@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
+import raf.si.racunovodstvo.knjizenje.requests.BazniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.services.TroskovniCentarService;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
@@ -72,10 +73,10 @@ public class TroskovniCentarController {
     }
 
     @PutMapping(value = "/addFromKnjizenje",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody List<Konto> kontoList, @RequestBody TroskovniCentar troskovniCentar){
-        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(troskovniCentar.getId());
+    public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody BazniCentarRequest bazniCentarRequest){
+        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(bazniCentarRequest.getProfitniCentar().getId());
         if(optionalTroskovniCentar.isPresent()){
-            return ResponseEntity.ok(troskovniCentarService.addKontosFromKnjizenje(kontoList,optionalTroskovniCentar.get()));
+            return ResponseEntity.ok(troskovniCentarService.addKontosFromKnjizenje(bazniCentarRequest.getKontoList(),optionalTroskovniCentar.get()));
         }
         throw new EntityNotFoundException();
     }
