@@ -87,7 +87,7 @@ services:
       - gateway
 
   knjizenje_service:
-    image: knjizenje-service-image
+    image: ghcr.io/raf-si-2021/racunovodstvo-knjizenje:latest
     hostname: knjizenje
     restart: unless-stopped
     env_file: .env
