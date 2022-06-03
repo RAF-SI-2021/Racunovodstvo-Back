@@ -6,16 +6,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import raf.si.racunovodstvo.knjizenje.model.Faktura;
 import raf.si.racunovodstvo.knjizenje.model.Povracaj;
 import raf.si.racunovodstvo.knjizenje.services.PovracajService;
 import raf.si.racunovodstvo.knjizenje.services.impl.IPovracajService;
 import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.io.IOException;
 import java.util.Optional;
 
 @CrossOrigin
@@ -39,6 +38,20 @@ public class PovracajiController {
     ) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
         return ResponseEntity.ok(povracajService.findAll(pageSort).toList());
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createPovracaj(@Valid @RequestBody Povracaj povracaj) {
+        return ResponseEntity.ok(povracajService.save(povracaj));
+    }
+
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updatePovracaj(@Valid @RequestBody Povracaj povracaj) {
+        Optional<Povracaj> optionalPovracaj = povracajService.findById(povracaj.getPovracajId());
+        if(optionalPovracaj.isPresent()) {
+            return ResponseEntity.ok(povracajService.save(povracaj));
+        }
+        throw new EntityNotFoundException();
     }
 
     @DeleteMapping(value = "/{id}")
