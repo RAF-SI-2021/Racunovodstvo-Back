@@ -3,8 +3,10 @@ package raf.si.racunovodstvo.knjizenje.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
+import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.ProfitniCentarRepository;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
@@ -17,10 +19,12 @@ public class ProfitniCentarService implements IProfitniCentarService {
 
     private final ProfitniCentarRepository profitniCentarRepository;
     private final KontoRepository kontoRepository;
+    private final KnjizenjeRepository knjizenjeRepository;
 
-    public ProfitniCentarService(ProfitniCentarRepository profitniCentarRepository, KontoRepository kontoRepository) {
+    public ProfitniCentarService(ProfitniCentarRepository profitniCentarRepository, KontoRepository kontoRepository, KnjizenjeRepository knjizenjeRepository) {
         this.profitniCentarRepository = profitniCentarRepository;
         this.kontoRepository = kontoRepository;
+        this.knjizenjeRepository = knjizenjeRepository;
     }
 
     @Override
@@ -65,9 +69,10 @@ public class ProfitniCentarService implements IProfitniCentarService {
     }
 
     @Override
-    public ProfitniCentar addKontosFromKnjizenje(List<Konto> kontoList, ProfitniCentar profitniCentar) {
+    public ProfitniCentar addKontosFromKnjizenje(Knjizenje knjizenje, ProfitniCentar profitniCentar) {
+        Optional<Knjizenje> optionalKnjizenje = knjizenjeRepository.findById(knjizenje.getKnjizenjeId());
         double ukupanProfit = profitniCentar.getUkupniTrosak();
-        for(Konto k: kontoList){
+        for(Konto k: optionalKnjizenje.get().getKonto()){
             k.setBazniCentar(profitniCentar);
             kontoRepository.save(k);
             ukupanProfit += k.getDuguje()-k.getPotrazuje();

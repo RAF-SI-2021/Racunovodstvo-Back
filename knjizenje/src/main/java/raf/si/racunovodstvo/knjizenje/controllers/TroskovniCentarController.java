@@ -76,7 +76,7 @@ public class TroskovniCentarController {
     public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody BazniCentarRequest bazniCentarRequest){
         Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(bazniCentarRequest.getProfitniCentar().getId());
         if(optionalTroskovniCentar.isPresent()){
-            return ResponseEntity.ok(troskovniCentarService.addKontosFromKnjizenje(bazniCentarRequest.getKontoList(),optionalTroskovniCentar.get()));
+            return ResponseEntity.ok(troskovniCentarService.addKontosFromKnjizenje(bazniCentarRequest.getKnjizenje(),optionalTroskovniCentar.get()));
         }
         throw new EntityNotFoundException();
     }

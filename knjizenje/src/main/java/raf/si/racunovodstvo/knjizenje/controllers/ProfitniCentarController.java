@@ -76,7 +76,7 @@ public class ProfitniCentarController {
     public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody BazniCentarRequest bazniCentarRequest){
         Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(bazniCentarRequest.getProfitniCentar().getId());
         if(optionalProfitniCentar.isPresent()){
-            return ResponseEntity.ok(profitniCentarService.addKontosFromKnjizenje(bazniCentarRequest.getKontoList(),optionalProfitniCentar.get()));
+            return ResponseEntity.ok(profitniCentarService.addKontosFromKnjizenje(bazniCentarRequest.getKnjizenje(),optionalProfitniCentar.get()));
         }
         throw new EntityNotFoundException();
     }

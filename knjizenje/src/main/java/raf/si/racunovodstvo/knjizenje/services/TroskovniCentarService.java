@@ -3,8 +3,10 @@ package raf.si.racunovodstvo.knjizenje.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
+import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.TroskovniCentarRepository;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
@@ -17,10 +19,12 @@ public class TroskovniCentarService implements ITroskovniCentarService {
 
     private final TroskovniCentarRepository troskovniCentarRepository;
     private final KontoRepository kontoRepository;
+    private final KnjizenjeRepository knjizenjeRepository;
 
-    public TroskovniCentarService(TroskovniCentarRepository troskovniCentarRepository, KontoRepository kontoRepository) {
+    public TroskovniCentarService(TroskovniCentarRepository troskovniCentarRepository, KontoRepository kontoRepository, KnjizenjeRepository knjizenjeRepository) {
         this.troskovniCentarRepository = troskovniCentarRepository;
         this.kontoRepository = kontoRepository;
+        this.knjizenjeRepository = knjizenjeRepository;
     }
 
     @Override
@@ -63,9 +67,10 @@ public class TroskovniCentarService implements ITroskovniCentarService {
         return troskovniCentarRepository.save(troskovniCentar);
     }
     @Override
-    public TroskovniCentar addKontosFromKnjizenje(List<Konto> kontoList, TroskovniCentar troskovniCentar) {
+    public TroskovniCentar addKontosFromKnjizenje(Knjizenje knjizenje, TroskovniCentar troskovniCentar) {
+        Optional<Knjizenje> optionalKnjizenje = knjizenjeRepository.findById(knjizenje.getKnjizenjeId());
         double ukupanTrosak = troskovniCentar.getUkupniTrosak();
-        for(Konto k : kontoList){
+        for(Konto k : optionalKnjizenje.get().getKonto()){
             k.setBazniCentar(troskovniCentar);
             kontoRepository.save(k);
             ukupanTrosak += k.getDuguje()-k.getPotrazuje();

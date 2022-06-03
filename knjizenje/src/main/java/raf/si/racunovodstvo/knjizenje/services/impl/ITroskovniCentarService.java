@@ -3,7 +3,6 @@ package raf.si.racunovodstvo.knjizenje.services.impl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
-import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 
 import java.util.List;
@@ -14,5 +13,5 @@ public interface ITroskovniCentarService extends IService<TroskovniCentar, Long>
 
     TroskovniCentar updateTroskovniCentar(TroskovniCentar troskovniCentar);
 
-    TroskovniCentar addKontosFromKnjizenje(List<Konto> kontoList, TroskovniCentar troskovniCentar);
+    TroskovniCentar addKontosFromKnjizenje(Knjizenje knjizenje, TroskovniCentar troskovniCentar);
 }

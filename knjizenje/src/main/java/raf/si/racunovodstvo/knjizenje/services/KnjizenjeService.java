@@ -76,9 +76,9 @@ public class KnjizenjeService implements IKnjizenjeService {
             Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(knjizenje.getBazniCentarId());
             Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(knjizenje.getBazniCentarId());
             if (optionalTroskovniCentar.isPresent()) {
-                troskovniCentarService.addKontosFromKnjizenje(knjizenje.getKonto(), optionalTroskovniCentar.get());
+                troskovniCentarService.addKontosFromKnjizenje(newKnjizenje, optionalTroskovniCentar.get());
             } else if (optionalProfitniCentar.isPresent()) {
-                profitniCentarService.addKontosFromKnjizenje(knjizenje.getKonto(), optionalProfitniCentar.get());
+                profitniCentarService.addKontosFromKnjizenje(newKnjizenje, optionalProfitniCentar.get());
             }
         }
 
