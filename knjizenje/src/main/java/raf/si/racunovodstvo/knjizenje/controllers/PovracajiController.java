@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.knjizenje.model.Povracaj;
+import raf.si.racunovodstvo.knjizenje.requests.PovracajRequest;
 import raf.si.racunovodstvo.knjizenje.services.PovracajService;
 import raf.si.racunovodstvo.knjizenje.services.impl.IPovracajService;
 import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
@@ -46,10 +47,10 @@ public class PovracajiController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePovracaj(@Valid @RequestBody Povracaj povracaj) {
-        Optional<Povracaj> optionalPovracaj = povracajService.findById(povracaj.getPovracajId());
+    public ResponseEntity<?> updatePovracaj(@Valid @RequestBody PovracajRequest povracajRequest) {
+        Optional<Povracaj> optionalPovracaj = povracajService.findById(povracajRequest.getPovracajId());
         if(optionalPovracaj.isPresent()) {
-            return ResponseEntity.ok(povracajService.save(povracaj));
+            return ResponseEntity.ok(povracajService.save(optionalPovracaj.get()));
         }
         throw new EntityNotFoundException();
     }
