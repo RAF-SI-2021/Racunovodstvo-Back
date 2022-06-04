@@ -13,6 +13,7 @@ import raf.si.racunovodstvo.knjizenje.requests.TroskovniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.responses.TroskovniCentarResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,37 +61,43 @@ public class TroskovniCentarService implements ITroskovniCentarService {
 
     @Override
     public TroskovniCentar updateTroskovniCentar(TroskovniCentarRequest troskovniCentar) {
-        double ukupanTrosak = 0.0;
         Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarRepository.findById(troskovniCentar.getId());
-        if(troskovniCentar.getKontoList() != null)
-            for(BazniKonto k : troskovniCentar.getKontoList()){
-                k.setBazniCentar(optionalTroskovniCentar.get());
-                bazniKontoRepository.save(k);
-                ukupanTrosak += k.getDuguje()-k.getPotrazuje();
-            }
-        if(troskovniCentar.getTroskovniCentarList() != null)
-            for(TroskovniCentar tc : troskovniCentar.getTroskovniCentarList()){
-                ukupanTrosak += tc.getUkupniTrosak();
-            }
-        optionalTroskovniCentar.get().setUkupniTrosak(ukupanTrosak);
-        updateTrosak(optionalTroskovniCentar.get());
-        return troskovniCentarRepository.save(optionalTroskovniCentar.get());
+        if(optionalTroskovniCentar.isPresent()) {
+            double ukupanTrosak = 0.0;
+            if (troskovniCentar.getKontoList() != null)
+                for (BazniKonto k : troskovniCentar.getKontoList()) {
+                    k.setBazniCentar(optionalTroskovniCentar.get());
+                    bazniKontoRepository.save(k);
+                    ukupanTrosak += k.getDuguje() - k.getPotrazuje();
+                }
+            if (troskovniCentar.getTroskovniCentarList() != null)
+                for (TroskovniCentar tc : troskovniCentar.getTroskovniCentarList()) {
+                    ukupanTrosak += tc.getUkupniTrosak();
+                }
+            optionalTroskovniCentar.get().setUkupniTrosak(ukupanTrosak);
+            updateTrosak(optionalTroskovniCentar.get());
+            return troskovniCentarRepository.save(optionalTroskovniCentar.get());
+
+        }else throw new EntityNotFoundException();
     }
     @Override
     public TroskovniCentar addKontosFromKnjizenje(Knjizenje knjizenje, TroskovniCentar troskovniCentar) {
         Optional<Knjizenje> optionalKnjizenje = knjizenjeRepository.findById(knjizenje.getKnjizenjeId());
-        double ukupanTrosak = troskovniCentar.getUkupniTrosak();
-        if(optionalKnjizenje.get().getKonto() != null)
-            for(Konto k : optionalKnjizenje.get().getKonto()){
-            BazniKonto bazniKonto = bazniKontoConverter.convert(k);
-            bazniKonto.setBazniCentar(troskovniCentar);
-            bazniKontoRepository.save(bazniKonto);
-            ukupanTrosak += bazniKonto.getDuguje()-bazniKonto.getPotrazuje();
-            troskovniCentar.getKontoList().add(bazniKonto);
-        }
-        troskovniCentar.setUkupniTrosak(ukupanTrosak);
-        updateTrosak(troskovniCentar);
-        return troskovniCentarRepository.save(troskovniCentar);
+        if(optionalKnjizenje.isPresent()) {
+            double ukupanTrosak = troskovniCentar.getUkupniTrosak();
+            if (optionalKnjizenje.get().getKonto() != null)
+                for (Konto k : optionalKnjizenje.get().getKonto()) {
+                    BazniKonto bazniKonto = bazniKontoConverter.convert(k);
+                    bazniKonto.setBazniCentar(troskovniCentar);
+                    bazniKontoRepository.save(bazniKonto);
+                    ukupanTrosak += bazniKonto.getDuguje() - bazniKonto.getPotrazuje();
+                    troskovniCentar.getKontoList().add(bazniKonto);
+                }
+            troskovniCentar.setUkupniTrosak(ukupanTrosak);
+            updateTrosak(troskovniCentar);
+            return troskovniCentarRepository.save(troskovniCentar);
+
+        }else throw new EntityNotFoundException();
     }
 
     @Override

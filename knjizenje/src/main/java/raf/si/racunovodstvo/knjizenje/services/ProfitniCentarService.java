@@ -17,6 +17,7 @@ import raf.si.racunovodstvo.knjizenje.requests.ProfitniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.responses.ProfitniCentarResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,38 +68,44 @@ public class ProfitniCentarService implements IProfitniCentarService {
 
     @Override
     public ProfitniCentar updateProfitniCentar(ProfitniCentarRequest profitniCentar) {
-        double ukupanProfit = 0.0;
         Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarRepository.findById(profitniCentar.getId());
-        if(profitniCentar.getKontoList() != null)
-            for(BazniKonto k: profitniCentar.getKontoList()){
-                k.setBazniCentar(optionalProfitniCentar.get());
-                bazniKontoRepository.save(k);
-                ukupanProfit += k.getDuguje()-k.getPotrazuje();
-            }
-        if(profitniCentar.getProfitniCentarList() != null)
-            for(ProfitniCentar pc : profitniCentar.getProfitniCentarList()){
-                ukupanProfit += pc.getUkupniTrosak();
-            }
-        optionalProfitniCentar.get().setUkupniTrosak(ukupanProfit);
-        updateProfit(optionalProfitniCentar.get());
-        return profitniCentarRepository.save(optionalProfitniCentar.get());
+        if(optionalProfitniCentar.isPresent()) {
+            double ukupanProfit = 0.0;
+            if (profitniCentar.getKontoList() != null)
+                for (BazniKonto k : profitniCentar.getKontoList()) {
+                    k.setBazniCentar(optionalProfitniCentar.get());
+                    bazniKontoRepository.save(k);
+                    ukupanProfit += k.getDuguje() - k.getPotrazuje();
+                }
+            if (profitniCentar.getProfitniCentarList() != null)
+                for (ProfitniCentar pc : profitniCentar.getProfitniCentarList()) {
+                    ukupanProfit += pc.getUkupniTrosak();
+                }
+            optionalProfitniCentar.get().setUkupniTrosak(ukupanProfit);
+            updateProfit(optionalProfitniCentar.get());
+            return profitniCentarRepository.save(optionalProfitniCentar.get());
+        }
+        else throw new EntityNotFoundException();
     }
 
     @Override
     public ProfitniCentar addKontosFromKnjizenje(Knjizenje knjizenje, ProfitniCentar profitniCentar) {
         Optional<Knjizenje> optionalKnjizenje = knjizenjeRepository.findById(knjizenje.getKnjizenjeId());
-        double ukupanProfit = profitniCentar.getUkupniTrosak();
-        if(optionalKnjizenje.get().getKonto() != null)
-            for(Konto k: optionalKnjizenje.get().getKonto()){
-                BazniKonto bazniKonto = bazniKontoConverter.convert(k);
-                bazniKonto.setBazniCentar(profitniCentar);
-                bazniKontoRepository.save(bazniKonto);
-                ukupanProfit += k.getDuguje()-k.getPotrazuje();
-                profitniCentar.getKontoList().add(bazniKonto);
-            }
-        profitniCentar.setUkupniTrosak(ukupanProfit);
-        updateProfit(profitniCentar);
-        return profitniCentarRepository.save(profitniCentar);
+        if(optionalKnjizenje.isPresent()) {
+            double ukupanProfit = profitniCentar.getUkupniTrosak();
+            if (optionalKnjizenje.get().getKonto() != null)
+                for (Konto k : optionalKnjizenje.get().getKonto()) {
+                    BazniKonto bazniKonto = bazniKontoConverter.convert(k);
+                    bazniKonto.setBazniCentar(profitniCentar);
+                    bazniKontoRepository.save(bazniKonto);
+                    ukupanProfit += k.getDuguje() - k.getPotrazuje();
+                    profitniCentar.getKontoList().add(bazniKonto);
+                }
+            profitniCentar.setUkupniTrosak(ukupanProfit);
+            updateProfit(profitniCentar);
+            return profitniCentarRepository.save(profitniCentar);
+
+        }else throw new EntityNotFoundException();
     }
 
     @Override

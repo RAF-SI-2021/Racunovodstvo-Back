@@ -148,7 +148,9 @@ public class KnjizenjeService implements IKnjizenjeService {
     @Override
     public List<Konto> findKontoByKnjizenjeId(Long knjizenjeId) {
         Optional<Knjizenje> k = knjizenjeRepository.findById(knjizenjeId);
-        return k.get().getKonto();
+        if(k.isPresent())
+            return k.get().getKonto();
+        else throw new EntityNotFoundException();
     }
     @Override
     public Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Pageable pageSort,
