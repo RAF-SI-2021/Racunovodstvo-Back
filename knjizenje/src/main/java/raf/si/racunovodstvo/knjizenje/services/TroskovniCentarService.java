@@ -5,13 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.converter.BazniKontoConverter;
 import raf.si.racunovodstvo.knjizenje.converter.TroskovniCentarConverter;
-import raf.si.racunovodstvo.knjizenje.model.BazniKonto;
-import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
-import raf.si.racunovodstvo.knjizenje.model.Konto;
-import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
+import raf.si.racunovodstvo.knjizenje.model.*;
 import raf.si.racunovodstvo.knjizenje.repositories.BazniKontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.TroskovniCentarRepository;
+import raf.si.racunovodstvo.knjizenje.requests.TroskovniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.responses.TroskovniCentarResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 
@@ -61,26 +59,29 @@ public class TroskovniCentarService implements ITroskovniCentarService {
     }
 
     @Override
-    public TroskovniCentar updateTroskovniCentar(TroskovniCentar troskovniCentar) {
+    public TroskovniCentar updateTroskovniCentar(TroskovniCentarRequest troskovniCentar) {
         double ukupanTrosak = 0.0;
+        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarRepository.findById(troskovniCentar.getId());
         if(troskovniCentar.getKontoList() != null)
-        for(BazniKonto k : troskovniCentar.getKontoList()){
-            bazniKontoRepository.save(k);
-            ukupanTrosak += k.getDuguje()-k.getPotrazuje();
-        }
+            for(BazniKonto k : troskovniCentar.getKontoList()){
+                k.setBazniCentar(optionalTroskovniCentar.get());
+                bazniKontoRepository.save(k);
+                ukupanTrosak += k.getDuguje()-k.getPotrazuje();
+            }
         if(troskovniCentar.getTroskovniCentarList() != null)
-        for(TroskovniCentar tc : troskovniCentar.getTroskovniCentarList()){
-            ukupanTrosak += tc.getUkupniTrosak();
-        }
-        troskovniCentar.setUkupniTrosak(ukupanTrosak);
-        updateTrosak(troskovniCentar);
-        return troskovniCentarRepository.save(troskovniCentar);
+            for(TroskovniCentar tc : troskovniCentar.getTroskovniCentarList()){
+                ukupanTrosak += tc.getUkupniTrosak();
+            }
+        optionalTroskovniCentar.get().setUkupniTrosak(ukupanTrosak);
+        updateTrosak(optionalTroskovniCentar.get());
+        return troskovniCentarRepository.save(optionalTroskovniCentar.get());
     }
     @Override
     public TroskovniCentar addKontosFromKnjizenje(Knjizenje knjizenje, TroskovniCentar troskovniCentar) {
         Optional<Knjizenje> optionalKnjizenje = knjizenjeRepository.findById(knjizenje.getKnjizenjeId());
         double ukupanTrosak = troskovniCentar.getUkupniTrosak();
-        for(Konto k : optionalKnjizenje.get().getKonto()){
+        if(optionalKnjizenje.get().getKonto() != null)
+            for(Konto k : optionalKnjizenje.get().getKonto()){
             BazniKonto bazniKonto = bazniKontoConverter.convert(k);
             bazniKonto.setBazniCentar(troskovniCentar);
             bazniKontoRepository.save(bazniKonto);

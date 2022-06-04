@@ -13,6 +13,7 @@ import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.repositories.BazniKontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.ProfitniCentarRepository;
+import raf.si.racunovodstvo.knjizenje.requests.ProfitniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.responses.ProfitniCentarResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
 
@@ -65,33 +66,36 @@ public class ProfitniCentarService implements IProfitniCentarService {
     }
 
     @Override
-    public ProfitniCentar updateProfitniCentar(ProfitniCentar profitniCentar) {
+    public ProfitniCentar updateProfitniCentar(ProfitniCentarRequest profitniCentar) {
         double ukupanProfit = 0.0;
-        if(profitniCentar.getKontoList()!=null)
-        for(BazniKonto k: profitniCentar.getKontoList()){
-            bazniKontoRepository.save(k);
-            ukupanProfit += k.getDuguje()-k.getPotrazuje();
-        }
+        Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarRepository.findById(profitniCentar.getId());
+        if(profitniCentar.getKontoList() != null)
+            for(BazniKonto k: profitniCentar.getKontoList()){
+                k.setBazniCentar(optionalProfitniCentar.get());
+                bazniKontoRepository.save(k);
+                ukupanProfit += k.getDuguje()-k.getPotrazuje();
+            }
         if(profitniCentar.getProfitniCentarList() != null)
-        for(ProfitniCentar pc : profitniCentar.getProfitniCentarList()){
-            ukupanProfit += pc.getUkupniTrosak();
-        }
-        profitniCentar.setUkupniTrosak(ukupanProfit);
-        updateProfit(profitniCentar);
-        return profitniCentarRepository.save(profitniCentar);
+            for(ProfitniCentar pc : profitniCentar.getProfitniCentarList()){
+                ukupanProfit += pc.getUkupniTrosak();
+            }
+        optionalProfitniCentar.get().setUkupniTrosak(ukupanProfit);
+        updateProfit(optionalProfitniCentar.get());
+        return profitniCentarRepository.save(optionalProfitniCentar.get());
     }
 
     @Override
     public ProfitniCentar addKontosFromKnjizenje(Knjizenje knjizenje, ProfitniCentar profitniCentar) {
         Optional<Knjizenje> optionalKnjizenje = knjizenjeRepository.findById(knjizenje.getKnjizenjeId());
         double ukupanProfit = profitniCentar.getUkupniTrosak();
-        for(Konto k: optionalKnjizenje.get().getKonto()){
-            BazniKonto bazniKonto = bazniKontoConverter.convert(k);
-            bazniKonto.setBazniCentar(profitniCentar);
-            bazniKontoRepository.save(bazniKonto);
-            ukupanProfit += k.getDuguje()-k.getPotrazuje();
-            profitniCentar.getKontoList().add(bazniKonto);
-        }
+        if(optionalKnjizenje.get().getKonto() != null)
+            for(Konto k: optionalKnjizenje.get().getKonto()){
+                BazniKonto bazniKonto = bazniKontoConverter.convert(k);
+                bazniKonto.setBazniCentar(profitniCentar);
+                bazniKontoRepository.save(bazniKonto);
+                ukupanProfit += k.getDuguje()-k.getPotrazuje();
+                profitniCentar.getKontoList().add(bazniKonto);
+            }
         profitniCentar.setUkupniTrosak(ukupanProfit);
         updateProfit(profitniCentar);
         return profitniCentarRepository.save(profitniCentar);

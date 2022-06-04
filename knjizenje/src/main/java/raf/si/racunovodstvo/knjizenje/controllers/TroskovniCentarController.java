@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.knjizenje.model.BazniKonto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 import raf.si.racunovodstvo.knjizenje.requests.BazniCentarRequest;
+import raf.si.racunovodstvo.knjizenje.requests.TroskovniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.services.TroskovniCentarService;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
@@ -44,7 +45,7 @@ public class TroskovniCentarController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateTroskovniCentar(@RequestBody TroskovniCentar troskovniCentar){
+    public ResponseEntity<?> updateTroskovniCentar(@RequestBody TroskovniCentarRequest troskovniCentar){
         Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(troskovniCentar.getId());
         if (optionalTroskovniCentar.isPresent()) {
             return ResponseEntity.ok(troskovniCentarService.updateTroskovniCentar(troskovniCentar));

@@ -1,4 +1,4 @@
-package raf.si.racunovodstvo.knjizenje.configuration;
+package raf.si.racunovodstvo.knjizenje.controllers.configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

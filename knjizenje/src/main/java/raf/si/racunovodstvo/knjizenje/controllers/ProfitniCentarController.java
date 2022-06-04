@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.knjizenje.model.BazniKonto;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.requests.BazniCentarRequest;
+import raf.si.racunovodstvo.knjizenje.requests.ProfitniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.services.ProfitniCentarService;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
 import raf.si.racunovodstvo.knjizenje.utils.ApiUtil;
@@ -44,15 +45,11 @@ public class ProfitniCentarController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateProfitniCentar(@RequestBody ProfitniCentar profitniCentar){
+    public ResponseEntity<?> updateProfitniCentar(@RequestBody ProfitniCentarRequest profitniCentar){
         Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(profitniCentar.getId());
         if (optionalProfitniCentar.isPresent()) {
-            System.out.println(profitniCentar+"_-------------------------------------- Controller succes\n");
-            System.out.println(optionalProfitniCentar.get().getId());
             return ResponseEntity.ok(profitniCentarService.updateProfitniCentar(profitniCentar));
         }
-        System.out.println(profitniCentar+"_-------------------------------------- Controller fail\n");
-        System.out.println(optionalProfitniCentar.get().getId());
         throw new EntityNotFoundException();
     }
 
