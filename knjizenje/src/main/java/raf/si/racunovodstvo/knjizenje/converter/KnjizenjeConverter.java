@@ -14,8 +14,8 @@ import java.util.List;
 @Component
 public class KnjizenjeConverter {
 
-   /* @Autowired
-    private IKnjizenjeService knjizenjeService;*/
+    @Autowired
+    private IKnjizenjeService knjizenjeService;
 
     public Page<KnjizenjeResponse> convert(List<Knjizenje> knjizenja) {
         List<KnjizenjeResponse> responses = new ArrayList<>();
@@ -30,9 +30,9 @@ public class KnjizenjeConverter {
             response.setDatumKnjizenja(currKnjizenje.getDatumKnjizenja());
             response.setBrojNaloga(currKnjizenje.getBrojNaloga());
             response.setKomentar(currKnjizenje.getKomentar());
-           /* response.setDuguje(knjizenjeService.getSumaDugujeZaKnjizenje(currKnjizenje.getKnjizenjeId()));
+            response.setDuguje(knjizenjeService.getSumaDugujeZaKnjizenje(currKnjizenje.getKnjizenjeId()));
             response.setPotrazuje(knjizenjeService.getSumaPotrazujeZaKnjizenje(currKnjizenje.getKnjizenjeId()));
-            response.setSaldo(knjizenjeService.getSaldoZaKnjizenje(currKnjizenje.getKnjizenjeId()));*/
+            response.setSaldo(knjizenjeService.getSaldoZaKnjizenje(currKnjizenje.getKnjizenjeId()));
             responses.add(response);
         }
         return new PageImpl<>(responses);

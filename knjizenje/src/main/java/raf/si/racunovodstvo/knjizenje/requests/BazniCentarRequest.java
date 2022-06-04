@@ -9,5 +9,5 @@ public class BazniCentarRequest {
 
     private Knjizenje knjizenje;
 
-    private BazniCentar bazniCentar;
+    private Long bazniCentarId;
 }

@@ -1,5 +1,6 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,15 +35,15 @@ public class KnjizenjeService implements IKnjizenjeService {
     private final KontoService kontoService;
 
     @Lazy
+    @Autowired
     private KnjizenjeConverter knjizenjeConverter;
 
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, IProfitniCentarService profitniCentarService, ITroskovniCentarService troskovniCentarService, KontoService kontoService, KnjizenjeConverter knjizenjeConverter) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, IProfitniCentarService profitniCentarService, ITroskovniCentarService troskovniCentarService, KontoService kontoService) {
         this.knjizenjeRepository = knjizenjeRepository;
         this.dokumentRepository = dokumentRepository;
         this.profitniCentarService = profitniCentarService;
         this.troskovniCentarService = troskovniCentarService;
         this.kontoService = kontoService;
-        this.knjizenjeConverter = knjizenjeConverter;
     }
 
     public Knjizenje save(KnjizenjeRequest knjizenje){

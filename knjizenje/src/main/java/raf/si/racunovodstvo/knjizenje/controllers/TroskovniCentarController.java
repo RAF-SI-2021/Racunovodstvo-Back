@@ -48,11 +48,10 @@ public class TroskovniCentarController {
     public ResponseEntity<?> updateTroskovniCentar(@RequestBody TroskovniCentar troskovniCentar){
         Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(troskovniCentar.getId());
         if (optionalTroskovniCentar.isPresent()) {
-            return ResponseEntity.ok(troskovniCentarService.updateTroskovniCentar(optionalTroskovniCentar.get()));
+            return ResponseEntity.ok(troskovniCentarService.updateTroskovniCentar(troskovniCentar));
         }
 
-        System.out.println(troskovniCentar+"_--------------------------------------\n");
-        System.out.println(optionalTroskovniCentar.get().getId());
+
         throw new EntityNotFoundException();
     }
 
@@ -77,7 +76,7 @@ public class TroskovniCentarController {
 
     @PutMapping(value = "/addFromKnjizenje",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody BazniCentarRequest bazniCentarRequest){
-        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(bazniCentarRequest.getBazniCentar().getId());
+        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(bazniCentarRequest.getBazniCentarId());
         if(optionalTroskovniCentar.isPresent()){
             return ResponseEntity.ok(troskovniCentarService.addKontosFromKnjizenje(bazniCentarRequest.getKnjizenje(),optionalTroskovniCentar.get()));
         }
