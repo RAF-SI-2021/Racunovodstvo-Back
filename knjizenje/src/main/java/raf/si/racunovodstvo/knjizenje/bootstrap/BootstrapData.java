@@ -229,6 +229,33 @@ public class BootstrapData implements CommandLineRunner {
         profitniCentar.setOdgovornoLiceId(1l);
         profitniCentarRepository.save(profitniCentar);
 
+        ProfitniCentar profitniCentar2 = new ProfitniCentar();
+        profitniCentar2.setUkupniTrosak(100.00);
+        profitniCentar2.setNaziv("Profitni centar 1");
+        profitniCentar2.setLokacijaId(1l);
+        profitniCentar2.setSifra("12365");
+        profitniCentar2.setOdgovornoLiceId(1l);
+        profitniCentar2.setParentProfitniCentar(profitniCentar);
+        profitniCentarRepository.save(profitniCentar2);
+
+        ProfitniCentar profitniCentar3 = new ProfitniCentar();
+        profitniCentar3.setUkupniTrosak(100.00);
+        profitniCentar3.setNaziv("Profitni centar 1");
+        profitniCentar3.setLokacijaId(1l);
+        profitniCentar3.setSifra("12365");
+        profitniCentar3.setOdgovornoLiceId(1l);
+        profitniCentar3.setParentProfitniCentar(profitniCentar);
+        profitniCentarRepository.save(profitniCentar3);
+
+        ProfitniCentar profitniCentar4 = new ProfitniCentar();
+        profitniCentar4.setUkupniTrosak(100.00);
+        profitniCentar4.setNaziv("Profitni centar 1");
+        profitniCentar4.setLokacijaId(1l);
+        profitniCentar4.setSifra("12365");
+        profitniCentar4.setOdgovornoLiceId(1l);
+        profitniCentar4.setParentProfitniCentar(profitniCentar3);
+        profitniCentarRepository.save(profitniCentar4);
+
         TroskovniCentar troskovniCentar = new TroskovniCentar();
         troskovniCentar.setUkupniTrosak(100.00);
         troskovniCentar.setNaziv("Troskovni centar 1");

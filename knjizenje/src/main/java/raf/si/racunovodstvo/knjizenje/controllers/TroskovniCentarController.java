@@ -74,7 +74,7 @@ public class TroskovniCentarController {
 
     @PutMapping(value = "/addFromKnjizenje",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addKontosFromKnjizenje(@RequestBody BazniCentarRequest bazniCentarRequest){
-        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(bazniCentarRequest.getProfitniCentar().getId());
+        Optional<TroskovniCentar> optionalTroskovniCentar = troskovniCentarService.findById(bazniCentarRequest.getBazniCentar().getId());
         if(optionalTroskovniCentar.isPresent()){
             return ResponseEntity.ok(troskovniCentarService.addKontosFromKnjizenje(bazniCentarRequest.getKnjizenje(),optionalTroskovniCentar.get()));
         }

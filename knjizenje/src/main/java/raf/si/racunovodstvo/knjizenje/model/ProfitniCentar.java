@@ -6,10 +6,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -20,6 +17,6 @@ public class ProfitniCentar extends BazniCentar {
     @JoinColumn(name = "parentId")
     private ProfitniCentar parentProfitniCentar;
     @JsonIgnore
-    @OneToMany(mappedBy = "parentProfitniCentar")
+    @OneToMany(mappedBy = "parentProfitniCentar", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfitniCentar> profitniCentarList;
 }
