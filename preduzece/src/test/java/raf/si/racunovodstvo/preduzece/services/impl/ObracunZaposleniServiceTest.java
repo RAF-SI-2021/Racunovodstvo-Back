@@ -220,7 +220,6 @@ class ObracunZaposleniServiceTest {
         assertEquals(obracunZaposleni, result);
         assertEquals(MOCK_UCINAK, result.getUcinak());
         assertEquals(MOCK_NETO_PLATA, result.getNetoPlata());
-
     }
 
     @Test
@@ -243,7 +242,6 @@ class ObracunZaposleniServiceTest {
         assertEquals(obracunZaposleni, result);
         assertEquals(MOCK_UCINAK, result.getUcinak());
         assertEquals(MOCK_NETO_PLATA, result.getNetoPlata());
-
     }
 
 
@@ -253,6 +251,5 @@ class ObracunZaposleniServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> obracunZaposleniService.update(0.5, null, 1L));
         then(obracunZaposleniRepository).should(never()).save(any());
-
     }
 }

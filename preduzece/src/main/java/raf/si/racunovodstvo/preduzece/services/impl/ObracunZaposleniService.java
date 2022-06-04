@@ -91,7 +91,6 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
         return obracunZaposleniRepository.save(obracunZaposleni);
     }
 
-
     @Override
     public Page<ObracunZaposleni> findAll(Specification<ObracunZaposleni> spec, Pageable pageSort) {
         return obracunZaposleniRepository.findAll(spec, pageSort);

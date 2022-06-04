@@ -107,11 +107,11 @@ public class KnjizenjeController {
         @RequestParam String brojKonta,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datumOd,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datumDo,
-        @RequestParam Long komitent,
+        @RequestParam Long preduzeceId,
         @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
         @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
         @RequestParam(defaultValue = "-datumKnjizenja") String[] sort) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
-        return ResponseEntity.ok(knjizenjaService.findAllAnalitickeKarticeResponse(pageSort, brojKonta, datumOd, datumDo, komitent));
+        return ResponseEntity.ok(knjizenjaService.findAllAnalitickeKarticeResponse(pageSort, brojKonta, datumOd, datumDo, preduzeceId));
     }
 }
