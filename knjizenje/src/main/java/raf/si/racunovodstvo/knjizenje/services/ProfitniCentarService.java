@@ -120,9 +120,13 @@ public class ProfitniCentarService implements IProfitniCentarService {
     private void updateProfit(ProfitniCentar pc){
         ProfitniCentar parent = pc.getParentProfitniCentar();
         while(parent != null){
-                parent.setUkupniTrosak(parent.getUkupniTrosak()+pc.getUkupniTrosak());
-                pc = parent;
+                double ukupanProfit = 0.0;
+                for(BazniKonto k : parent.getKontoList()){
+                    ukupanProfit += k.getDuguje() - k.getPotrazuje();
+                }
+                parent.setUkupniTrosak(ukupanProfit+pc.getUkupniTrosak());
                 profitniCentarRepository.save(parent);
+                pc = parent;
                 parent = pc.getParentProfitniCentar();
         }
     }

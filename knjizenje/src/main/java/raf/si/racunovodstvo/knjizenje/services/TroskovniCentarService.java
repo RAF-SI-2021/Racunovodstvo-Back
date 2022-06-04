@@ -111,9 +111,13 @@ public class TroskovniCentarService implements ITroskovniCentarService {
     private void updateTrosak(TroskovniCentar tc){
         TroskovniCentar parent = tc.getParentTroskovniCentar();
         while(parent != null){
-            parent.setUkupniTrosak(parent.getUkupniTrosak()+tc.getUkupniTrosak());
-            tc = parent;
+            double ukupanTrosak = 0.0;
+            for(BazniKonto k : parent.getKontoList()){
+                ukupanTrosak += k.getDuguje() - k.getPotrazuje();
+            }
+            parent.setUkupniTrosak(ukupanTrosak+tc.getUkupniTrosak());
             troskovniCentarRepository.save(parent);
+            tc = parent;
             parent = tc.getParentTroskovniCentar();
         }
     }
