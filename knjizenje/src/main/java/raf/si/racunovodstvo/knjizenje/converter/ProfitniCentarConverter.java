@@ -15,7 +15,14 @@ public class ProfitniCentarConverter {
     public Page<BazniCentarResponse> convert(List<ProfitniCentar> profitniCentarList){
         return new PageImpl<>(profitniCentarList.stream().map(
                 profitniCentar -> new BazniCentarResponse(
-                        profitniCentar,profitniCentar.getKontoList()
+                        profitniCentar.getId(),
+                        profitniCentar.getSifra(),
+                        profitniCentar.getNaziv(),
+                        profitniCentar.getUkupniTrosak(),
+                        profitniCentar.getLokacijaId(),
+                        profitniCentar.getOdgovornoLiceId(),
+                        profitniCentar.getKontoList(),
+                        profitniCentar.getParentProfitniCentar()
                 )
         ).collect(Collectors.toList()));
     }

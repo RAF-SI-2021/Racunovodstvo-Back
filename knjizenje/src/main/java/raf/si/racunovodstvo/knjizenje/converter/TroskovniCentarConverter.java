@@ -15,7 +15,14 @@ public class TroskovniCentarConverter {
     public Page<BazniCentarResponse> convert(List<TroskovniCentar> troskovniCentarList){
         return new PageImpl<>(troskovniCentarList.stream().map(
                 troskovniCentar -> new BazniCentarResponse(
-                        troskovniCentar,troskovniCentar.getKontoList()
+                        troskovniCentar.getId(),
+                        troskovniCentar.getSifra(),
+                        troskovniCentar.getNaziv(),
+                        troskovniCentar.getUkupniTrosak(),
+                        troskovniCentar.getLokacijaId(),
+                        troskovniCentar.getOdgovornoLiceId(),
+                        troskovniCentar.getKontoList(),
+                        troskovniCentar.getParentTroskovniCentar()
                 )
         ).collect(Collectors.toList()));
     }

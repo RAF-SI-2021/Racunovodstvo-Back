@@ -239,7 +239,7 @@ public class BootstrapData implements CommandLineRunner {
         profitniCentarRepository.save(profitniCentar2);
 
         ProfitniCentar profitniCentar3 = new ProfitniCentar();
-        profitniCentar3.setUkupniTrosak(100.00);
+        profitniCentar3.setUkupniTrosak(500.00);
         profitniCentar3.setNaziv("Profitni centar 1");
         profitniCentar3.setLokacijaId(1l);
         profitniCentar3.setSifra("12365");
@@ -257,12 +257,18 @@ public class BootstrapData implements CommandLineRunner {
         profitniCentarRepository.save(profitniCentar4);
 
         TroskovniCentar troskovniCentar = new TroskovniCentar();
-        troskovniCentar.setUkupniTrosak(100.00);
+        troskovniCentar.setUkupniTrosak(500.00);
         troskovniCentar.setNaziv("Troskovni centar 1");
         troskovniCentar.setLokacijaId(1l);
         troskovniCentar.setSifra("12345");
         troskovniCentar.setOdgovornoLiceId(1l);
+        konto1.setBazniCentar(troskovniCentar);
+        konto3.setBazniCentar(troskovniCentar);
+        troskovniCentar.setKontoList(List.of(konto1));
         troskovniCentarRepository.save(troskovniCentar);
+        kontoRepository.save(konto1);
+
+
 
         log.info("Data loaded!");
     }

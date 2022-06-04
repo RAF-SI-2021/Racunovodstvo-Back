@@ -34,6 +34,7 @@ public abstract class BazniCentar {
     private Long lokacijaId;
     @Column(nullable = false)
     private Long odgovornoLiceId;
+    @JsonIgnore
     @OneToMany(mappedBy = "bazniCentar")
     private List<Konto> kontoList;
 }

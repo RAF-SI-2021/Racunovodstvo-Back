@@ -50,6 +50,9 @@ public class TroskovniCentarController {
         if (optionalTroskovniCentar.isPresent()) {
             return ResponseEntity.ok(troskovniCentarService.updateTroskovniCentar(optionalTroskovniCentar.get()));
         }
+
+        System.out.println(troskovniCentar+"_--------------------------------------\n");
+        System.out.println(optionalTroskovniCentar.get().getId());
         throw new EntityNotFoundException();
     }
 

@@ -63,16 +63,21 @@ public class ProfitniCentarService implements IProfitniCentarService {
 
     @Override
     public ProfitniCentar updateProfitniCentar(ProfitniCentar profitniCentar) {
+
         double ukupanProfit = 0.0;
+        System.out.println(profitniCentar.getId() + "from service");
+        if(profitniCentar.getKontoList()!=null && !profitniCentar.getKontoList().isEmpty())
         for(Konto k: profitniCentar.getKontoList()){
             k.setBazniCentar(profitniCentar);
             ukupanProfit += k.getDuguje()-k.getPotrazuje();
         }
+        if(profitniCentar.getProfitniCentarList() != null)
         for(ProfitniCentar pc : profitniCentar.getProfitniCentarList()){
             ukupanProfit += pc.getUkupniTrosak();
         }
         profitniCentar.setUkupniTrosak(ukupanProfit);
         updateProfit(profitniCentar);
+
         return profitniCentarRepository.save(profitniCentar);
     }
 

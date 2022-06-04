@@ -17,6 +17,6 @@ public class TroskovniCentar extends BazniCentar {
     @JoinColumn(name = "parentId")
     private TroskovniCentar parentTroskovniCentar;
     @JsonIgnore
-    @OneToMany(mappedBy = "parentTroskovniCentar", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentTroskovniCentar", cascade = CascadeType.REMOVE)
     private List<TroskovniCentar> troskovniCentarList;
 }

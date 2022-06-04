@@ -61,10 +61,12 @@ public class TroskovniCentarService implements ITroskovniCentarService {
     @Override
     public TroskovniCentar updateTroskovniCentar(TroskovniCentar troskovniCentar) {
         double ukupanTrosak = 0.0;
+        if(troskovniCentar.getKontoList() != null)
         for(Konto k : troskovniCentar.getKontoList()){
             k.setBazniCentar(troskovniCentar);
             ukupanTrosak += k.getDuguje()-k.getPotrazuje();
         }
+        if(troskovniCentar.getTroskovniCentarList() != null)
         for(TroskovniCentar tc : troskovniCentar.getTroskovniCentarList()){
             ukupanTrosak += tc.getUkupniTrosak();
         }

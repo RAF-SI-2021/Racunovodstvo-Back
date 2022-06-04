@@ -46,8 +46,12 @@ public class ProfitniCentarController {
     public ResponseEntity<?> updateProfitniCentar(@RequestBody ProfitniCentar profitniCentar){
         Optional<ProfitniCentar> optionalProfitniCentar = profitniCentarService.findById(profitniCentar.getId());
         if (optionalProfitniCentar.isPresent()) {
+            System.out.println(profitniCentar+"_-------------------------------------- Controller succes\n");
+            System.out.println(optionalProfitniCentar.get().getId());
             return ResponseEntity.ok(profitniCentarService.updateProfitniCentar(profitniCentar));
         }
+        System.out.println(profitniCentar+"_-------------------------------------- Controller fail\n");
+        System.out.println(optionalProfitniCentar.get().getId());
         throw new EntityNotFoundException();
     }
 
