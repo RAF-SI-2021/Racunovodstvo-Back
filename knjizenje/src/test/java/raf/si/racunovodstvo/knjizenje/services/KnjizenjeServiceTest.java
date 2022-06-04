@@ -9,20 +9,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import raf.si.racunovodstvo.knjizenje.converter.KnjizenjeConverter;
+
+import raf.si.racunovodstvo.knjizenje.converter.impl.KnjizenjeConverter;
+import org.springframework.util.ReflectionUtils;
 import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
-import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
+
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecification;
 import raf.si.racunovodstvo.knjizenje.specifications.SearchCriteria;
 
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -86,6 +88,10 @@ class KnjizenjeServiceTest {
         knjizenje = new Knjizenje();
         knjizenje.setKnjizenjeId(1L);
         knjizenje.setKonto(List.of(konto1, konto2, konto3));
+
+        Field knjizenjeConverterField = ReflectionUtils.findField(KnjizenjeService.class, "knjizenjeConverter");
+        knjizenjeConverterField.setAccessible(true);
+        ReflectionUtils.setField(knjizenjeConverterField, knjizenjeService, knjizenjeConverter);
     }
 
     @Test

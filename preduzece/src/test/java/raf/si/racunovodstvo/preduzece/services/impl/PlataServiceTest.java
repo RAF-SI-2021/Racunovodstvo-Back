@@ -40,6 +40,7 @@ class PlataServiceTest {
     private ZaposleniService zaposleniService;
 
     private static final Long MOCK_ID = 1L;
+    private static final Date MOCK_DATE = new Date();
     private static final String MOCK_SEARCH_KEY = "MOCK_KEY";
     private static final String MOCK_SEARCH_VALUE = "MOCK_VALUE";
     private static final String MOCK_SEARCH_OPERATION = "MOCK_OPERATION";
@@ -152,5 +153,14 @@ class PlataServiceTest {
         given(plataRepository.findByZaposleniZaposleniId(MOCK_ID)).willReturn(plataList);
 
         assertEquals(plataList, plataService.findByZaposleniZaposleniId(MOCK_ID));
+    }
+
+    @Test
+    void findPlatabyDatumAndZaposleniTest() {
+        Plata plata = new Plata();
+        Zaposleni zaposleni = new Zaposleni();
+        given(plataRepository.findPlatabyDatumAndZaposleni(MOCK_DATE, zaposleni)).willReturn(plata);
+
+        assertEquals(plata, plataService.findPlatabyDatumAndZaposleni(MOCK_DATE, zaposleni));
     }
 }

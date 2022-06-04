@@ -35,4 +35,6 @@ public class Dokument {
     @JsonIgnore
     @OneToMany(mappedBy = "dokument")
     private List<Knjizenje> knjizenje;
+    @Column
+    private Long preduzeceId;
 }

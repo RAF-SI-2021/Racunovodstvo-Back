@@ -11,15 +11,26 @@ import raf.si.racunovodstvo.knjizenje.model.*;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.requests.KnjizenjeRequest;
+import raf.si.racunovodstvo.knjizenje.converter.IConverter;
+import raf.si.racunovodstvo.knjizenje.converter.impl.AnalitickaKarticaConverter;
+import raf.si.racunovodstvo.knjizenje.converter.impl.KnjizenjeConverter;
+import raf.si.racunovodstvo.knjizenje.model.Dokument;
+import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
+import raf.si.racunovodstvo.knjizenje.model.Konto;
+import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
+import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
+import raf.si.racunovodstvo.knjizenje.responses.AnalitickaKarticaResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -33,17 +44,23 @@ public class KnjizenjeService implements IKnjizenjeService {
 
     private final ITroskovniCentarService troskovniCentarService;
     private final KontoService kontoService;
+    private final IConverter<Knjizenje, AnalitickaKarticaResponse> analitickaKarticaConverter;
 
     @Lazy
     @Autowired
     private KnjizenjeConverter knjizenjeConverter;
 
     public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, IProfitniCentarService profitniCentarService, ITroskovniCentarService troskovniCentarService, KontoService kontoService) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository,
+                            DokumentRepository dokumentRepository,
+                            KontoService kontoService,
+                            AnalitickaKarticaConverter analitickaKarticaConverter) {
         this.knjizenjeRepository = knjizenjeRepository;
         this.dokumentRepository = dokumentRepository;
         this.profitniCentarService = profitniCentarService;
         this.troskovniCentarService = troskovniCentarService;
         this.kontoService = kontoService;
+        this.analitickaKarticaConverter = analitickaKarticaConverter;
     }
 
     public Knjizenje save(KnjizenjeRequest knjizenje){
@@ -93,7 +110,8 @@ public class KnjizenjeService implements IKnjizenjeService {
         Knjizenje newKnjizenje = new Knjizenje();
 
         Dokument dokument;
-        if(knjizenje.getDokument() != null && dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).isPresent()){
+        if (knjizenje.getDokument() != null && dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta())
+                                                                 .isPresent()) {
             dokument = dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).get();
         } else {
             dokument = dokumentRepository.save(knjizenje.getDokument());
@@ -106,8 +124,8 @@ public class KnjizenjeService implements IKnjizenjeService {
 
         newKnjizenje = knjizenjeRepository.save(newKnjizenje);
 
-        for(Konto konto : kontoList){
-            if(konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()){
+        for (Konto konto : kontoList) {
+            if (konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()) {
                 konto.setKnjizenje(newKnjizenje);
                 kontoService.save(konto);
             }
@@ -115,7 +133,7 @@ public class KnjizenjeService implements IKnjizenjeService {
 
         newKnjizenje.setKonto(kontoList);
 
-        return  knjizenjeRepository.save(newKnjizenje);
+        return knjizenjeRepository.save(newKnjizenje);
     }
 
     @Override
@@ -137,6 +155,19 @@ public class KnjizenjeService implements IKnjizenjeService {
     public List<Konto> findKontoByKnjizenjeId(Long knjizenjeId) {
         Optional<Knjizenje> k = knjizenjeRepository.findById(knjizenjeId);
         return k.get().getKonto();
+    public Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Pageable pageSort,
+                                                                            String brojKonta,
+                                                                            Date datumOd,
+                                                                            Date datumDo,
+                                                                            Long komitentId) {
+        Page<Knjizenje> page = knjizenjeRepository.findAllByBrojKontaAndKomitentId(pageSort, brojKonta, komitentId, datumOd, datumDo);
+        return page.map(knjizenje -> {
+            knjizenje.setKonto(knjizenje.getKonto()
+                                        .stream()
+                                        .filter(konto -> konto.getKontnaGrupa().getBrojKonta().equals(brojKonta))
+                                        .collect(Collectors.toList()));
+            return analitickaKarticaConverter.convert(knjizenje);
+        });
     }
 
     @Override

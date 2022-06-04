@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.knjizenje.responses.BilansResponse;
-import raf.si.racunovodstvo.knjizenje.services.BilansService;
+import raf.si.racunovodstvo.knjizenje.services.impl.IBilansService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,9 +19,9 @@ import java.util.List;
 @RequestMapping("/api/bilans")
 public class BilansRestController {
 
-    private final BilansService bilansService;
+    private final IBilansService bilansService;
 
-    public BilansRestController(BilansService bilansService) {
+    public BilansRestController(IBilansService bilansService) {
         this.bilansService = bilansService;
     }
 

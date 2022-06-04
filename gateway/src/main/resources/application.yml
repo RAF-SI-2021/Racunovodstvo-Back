@@ -8,7 +8,7 @@ spring:
       - id: preduzece
         uri: lb://preduzece
         predicates:
-          - Path=/api/preduzece/**, /api/koeficijenti/**, /api/zaposleni/**, /api/plata/**
+          - Path=/api/preduzece/**, /api/koeficijenti/**, /api/zaposleni/**, /api/plata/**, /api/obracun_zarade/**
 
       - id: knjizenje
         uri: lb://knjizenje

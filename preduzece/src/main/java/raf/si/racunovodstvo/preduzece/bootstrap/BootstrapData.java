@@ -2,27 +2,16 @@ package raf.si.racunovodstvo.preduzece.bootstrap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import raf.si.racunovodstvo.preduzece.model.Koeficijent;
-import raf.si.racunovodstvo.preduzece.model.Plata;
-import raf.si.racunovodstvo.preduzece.model.Preduzece;
-import raf.si.racunovodstvo.preduzece.model.Staz;
-import raf.si.racunovodstvo.preduzece.model.Zaposleni;
+import raf.si.racunovodstvo.preduzece.model.*;
 import raf.si.racunovodstvo.preduzece.model.enums.PolZaposlenog;
 import raf.si.racunovodstvo.preduzece.model.enums.RadnaPozicija;
 import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
-import raf.si.racunovodstvo.preduzece.repositories.KoeficijentRepository;
-import raf.si.racunovodstvo.preduzece.repositories.PlataRepository;
-import raf.si.racunovodstvo.preduzece.repositories.PreduzeceRepository;
-import raf.si.racunovodstvo.preduzece.repositories.StazRepository;
-import raf.si.racunovodstvo.preduzece.repositories.ZaposleniRepository;
+import raf.si.racunovodstvo.preduzece.repositories.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -35,17 +24,19 @@ public class BootstrapData implements CommandLineRunner {
     private final StazRepository stazRepository;
     private final PlataRepository plataRepository;
     private final KoeficijentRepository koeficijentRepository;
+    private final ObracunRepository obracunRepository;
 
     public BootstrapData(PreduzeceRepository preduzeceRepository,
                          ZaposleniRepository zaposleniRepository,
                          StazRepository stazRepository,
                          PlataRepository plataRepository,
-                         KoeficijentRepository koeficijentRepository) {
+                         KoeficijentRepository koeficijentRepository, ObracunRepository obracunRepository) {
         this.preduzeceRepository = preduzeceRepository;
         this.zaposleniRepository = zaposleniRepository;
         this.stazRepository = stazRepository;
         this.plataRepository = plataRepository;
         this.koeficijentRepository = koeficijentRepository;
+        this.obracunRepository = obracunRepository;
     }
 
     @Override
@@ -138,6 +129,11 @@ public class BootstrapData implements CommandLineRunner {
         koeficijent.setZdravstvenoOsiguranje2(5d);
         koeficijent.setPoreskoOslobadjanje(23.4);
         koeficijentRepository.save(koeficijent);
+
+        Obracun obracun = new Obracun();
+        obracun.setNaziv("Obracun 1");
+        obracun.setDatumObracuna(new Date());
+        obracunRepository.save(obracun);
 
         log.info("Data loaded!");
     }
