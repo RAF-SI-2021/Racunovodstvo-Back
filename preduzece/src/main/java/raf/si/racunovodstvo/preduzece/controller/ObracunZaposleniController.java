@@ -20,6 +20,7 @@ import raf.si.racunovodstvo.preduzece.validation.groups.OnUpdate;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Null;
 
 @CrossOrigin
 @RestController
@@ -68,8 +69,10 @@ public class ObracunZaposleniController {
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@Validated(OnUpdate.class) @RequestBody ObracunZaposleniRequest obracunZaposleniRequest){
-        return ResponseEntity.ok(iObracunZaposleniService.update(obracunZaposleniRequest));
+    public ResponseEntity<?> update(@Validated(OnUpdate.class) @RequestParam(required = false) Double ucinak,
+                                    @RequestParam(required = false) Double netoPlata,
+                                    @RequestParam Long idObracunZaposleni){
+        return ResponseEntity.ok(iObracunZaposleniService.update(ucinak, netoPlata, idObracunZaposleni));
     }
 
 
