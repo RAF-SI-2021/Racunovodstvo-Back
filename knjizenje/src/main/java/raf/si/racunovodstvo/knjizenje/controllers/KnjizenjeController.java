@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
-import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
-import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 import raf.si.racunovodstvo.knjizenje.requests.KnjizenjeRequest;
 import raf.si.racunovodstvo.knjizenje.responses.AnalitickaKarticaResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
@@ -105,8 +103,9 @@ public class KnjizenjeController {
     }
 
     @GetMapping(value = "/{id}/kontos", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getKontoByKnjizenjeId(@PathVariable Long knjizenjeId){
+    public ResponseEntity<?> getKontoByKnjizenjeId(@PathVariable Long knjizenjeId) {
         return ResponseEntity.ok(knjizenjaService.findKontoByKnjizenjeId(knjizenjeId));
+    }
 
     @GetMapping(value = "/analitickeKartice", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AnalitickaKarticaResponse>> getAnalitickeKartice(

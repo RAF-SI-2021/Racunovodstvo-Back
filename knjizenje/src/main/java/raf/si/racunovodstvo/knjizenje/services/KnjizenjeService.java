@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import raf.si.racunovodstvo.knjizenje.converter.KnjizenjeConverter;
 import raf.si.racunovodstvo.knjizenje.model.*;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
@@ -17,8 +16,6 @@ import raf.si.racunovodstvo.knjizenje.converter.impl.KnjizenjeConverter;
 import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
-import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
-import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.responses.AnalitickaKarticaResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
@@ -50,11 +47,7 @@ public class KnjizenjeService implements IKnjizenjeService {
     @Autowired
     private KnjizenjeConverter knjizenjeConverter;
 
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository, DokumentRepository dokumentRepository, IProfitniCentarService profitniCentarService, ITroskovniCentarService troskovniCentarService, KontoService kontoService) {
-    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository,
-                            DokumentRepository dokumentRepository,
-                            KontoService kontoService,
-                            AnalitickaKarticaConverter analitickaKarticaConverter) {
+    public KnjizenjeService(KnjizenjeRepository knjizenjeRepository,  AnalitickaKarticaConverter analitickaKarticaConverter,DokumentRepository dokumentRepository, IProfitniCentarService profitniCentarService, ITroskovniCentarService troskovniCentarService, KontoService kontoService) {
         this.knjizenjeRepository = knjizenjeRepository;
         this.dokumentRepository = dokumentRepository;
         this.profitniCentarService = profitniCentarService;
@@ -102,6 +95,7 @@ public class KnjizenjeService implements IKnjizenjeService {
 
         return  knjizenjeRepository.save(newKnjizenje);
     }
+
     @Override
     public Knjizenje save(Knjizenje knjizenje) {
 
@@ -155,6 +149,8 @@ public class KnjizenjeService implements IKnjizenjeService {
     public List<Konto> findKontoByKnjizenjeId(Long knjizenjeId) {
         Optional<Knjizenje> k = knjizenjeRepository.findById(knjizenjeId);
         return k.get().getKonto();
+    }
+    @Override
     public Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Pageable pageSort,
                                                                             String brojKonta,
                                                                             Date datumOd,
@@ -163,12 +159,13 @@ public class KnjizenjeService implements IKnjizenjeService {
         Page<Knjizenje> page = knjizenjeRepository.findAllByBrojKontaAndKomitentId(pageSort, brojKonta, komitentId, datumOd, datumDo);
         return page.map(knjizenje -> {
             knjizenje.setKonto(knjizenje.getKonto()
-                                        .stream()
-                                        .filter(konto -> konto.getKontnaGrupa().getBrojKonta().equals(brojKonta))
-                                        .collect(Collectors.toList()));
+                    .stream()
+                    .filter(konto -> konto.getKontnaGrupa().getBrojKonta().equals(brojKonta))
+                    .collect(Collectors.toList()));
             return analitickaKarticaConverter.convert(knjizenje);
         });
     }
+
 
     @Override
     public void deleteById(Long id) {

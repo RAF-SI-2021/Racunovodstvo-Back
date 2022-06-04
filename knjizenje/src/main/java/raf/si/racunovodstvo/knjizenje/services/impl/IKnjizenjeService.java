@@ -28,7 +28,7 @@ public interface IKnjizenjeService extends IService<Knjizenje, Long> {
     List<Konto> findKontoByKnjizenjeId(Long id);
 
     Knjizenje save(KnjizenjeRequest knjizenjeRequest);
-}
+
     Page<AnalitickaKarticaResponse> findAllAnalitickeKarticeResponse(Pageable pageSort,
                                                                      String brojKonta,
                                                                      Date datumOd,
