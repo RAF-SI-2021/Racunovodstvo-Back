@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import raf.si.racunovodstvo.knjizenje.model.BazniKonto;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.requests.BazniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.services.ProfitniCentarService;
@@ -88,4 +89,13 @@ public class ProfitniCentarController {
         return ResponseEntity.ok(profitniCentarService.findAllProfitniCentarResponse());
     }
 
+    @DeleteMapping(value = "bazniKonto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteKontoFromProfitniCentar(@PathVariable Long id){
+        Optional<BazniKonto> optionalBazniKonto = profitniCentarService.findBazniKontoById(id);
+        if (optionalBazniKonto.isPresent()) {
+            profitniCentarService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        throw new EntityNotFoundException();
+    }
 }

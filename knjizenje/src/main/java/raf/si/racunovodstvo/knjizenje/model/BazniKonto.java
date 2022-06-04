@@ -4,22 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Getter
 @Setter
-public class Konto {
+public class BazniKonto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long kontoId;
+    private Long bazniKontoId;
     @Column
     private Double potrazuje;
     @Column
@@ -29,6 +25,13 @@ public class Konto {
     private KontnaGrupa kontnaGrupa;
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "knjizenjeId", nullable = false)
-    private Knjizenje knjizenje;
+    @JoinColumn(name = "bazniCentarId", nullable = false)
+    private BazniCentar bazniCentar;
+    @Column(nullable = false)
+    private String brojNalogaKnjizenja;
+    @Column(nullable = false)
+    private Date datumKnjizenja;
+    @Column
+    private String komentarKnjizenja;
+
 }

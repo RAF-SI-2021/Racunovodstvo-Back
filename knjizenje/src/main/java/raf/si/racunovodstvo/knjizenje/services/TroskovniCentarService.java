@@ -3,15 +3,16 @@ package raf.si.racunovodstvo.knjizenje.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.knjizenje.converter.BazniKontoConverter;
 import raf.si.racunovodstvo.knjizenje.converter.TroskovniCentarConverter;
+import raf.si.racunovodstvo.knjizenje.model.BazniKonto;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
+import raf.si.racunovodstvo.knjizenje.repositories.BazniKontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
-import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.TroskovniCentarRepository;
-import raf.si.racunovodstvo.knjizenje.responses.BazniCentarResponse;
-import raf.si.racunovodstvo.knjizenje.responses.BilansResponse;
+import raf.si.racunovodstvo.knjizenje.responses.TroskovniCentarResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 
 import java.util.List;
@@ -21,16 +22,17 @@ import java.util.Optional;
 public class TroskovniCentarService implements ITroskovniCentarService {
 
     private final TroskovniCentarRepository troskovniCentarRepository;
-    private final KontoRepository kontoRepository;
+    private final BazniKontoRepository bazniKontoRepository;
     private final KnjizenjeRepository knjizenjeRepository;
-
     private TroskovniCentarConverter troskovniCentarConverter;
+    private BazniKontoConverter bazniKontoConverter;
 
-    public TroskovniCentarService(TroskovniCentarRepository troskovniCentarRepository, KontoRepository kontoRepository, KnjizenjeRepository knjizenjeRepository, TroskovniCentarConverter troskovniCentarConverter) {
+    public TroskovniCentarService(TroskovniCentarRepository troskovniCentarRepository, BazniKontoRepository bazniKontoRepository, KnjizenjeRepository knjizenjeRepository, TroskovniCentarConverter troskovniCentarConverter, BazniKontoConverter bazniKontoConverter) {
         this.troskovniCentarRepository = troskovniCentarRepository;
-        this.kontoRepository = kontoRepository;
+        this.bazniKontoRepository = bazniKontoRepository;
         this.knjizenjeRepository = knjizenjeRepository;
         this.troskovniCentarConverter = troskovniCentarConverter;
+        this.bazniKontoConverter = bazniKontoConverter;
     }
 
     @Override
@@ -62,8 +64,8 @@ public class TroskovniCentarService implements ITroskovniCentarService {
     public TroskovniCentar updateTroskovniCentar(TroskovniCentar troskovniCentar) {
         double ukupanTrosak = 0.0;
         if(troskovniCentar.getKontoList() != null)
-        for(Konto k : troskovniCentar.getKontoList()){
-            k.setBazniCentar(troskovniCentar);
+        for(BazniKonto k : troskovniCentar.getKontoList()){
+            bazniKontoRepository.save(k);
             ukupanTrosak += k.getDuguje()-k.getPotrazuje();
         }
         if(troskovniCentar.getTroskovniCentarList() != null)
@@ -79,10 +81,11 @@ public class TroskovniCentarService implements ITroskovniCentarService {
         Optional<Knjizenje> optionalKnjizenje = knjizenjeRepository.findById(knjizenje.getKnjizenjeId());
         double ukupanTrosak = troskovniCentar.getUkupniTrosak();
         for(Konto k : optionalKnjizenje.get().getKonto()){
-            k.setBazniCentar(troskovniCentar);
-            kontoRepository.save(k);
-            ukupanTrosak += k.getDuguje()-k.getPotrazuje();
-            troskovniCentar.getKontoList().add(k);
+            BazniKonto bazniKonto = bazniKontoConverter.convert(k);
+            bazniKonto.setBazniCentar(troskovniCentar);
+            bazniKontoRepository.save(bazniKonto);
+            ukupanTrosak += bazniKonto.getDuguje()-bazniKonto.getPotrazuje();
+            troskovniCentar.getKontoList().add(bazniKonto);
         }
         troskovniCentar.setUkupniTrosak(ukupanTrosak);
         updateTrosak(troskovniCentar);
@@ -90,8 +93,18 @@ public class TroskovniCentarService implements ITroskovniCentarService {
     }
 
     @Override
-    public List<BazniCentarResponse> findAllTroskovniCentriResponse() {
+    public List<TroskovniCentarResponse> findAllTroskovniCentriResponse() {
         return troskovniCentarConverter.convert(troskovniCentarRepository.findAll()).getContent();
+    }
+
+    @Override
+    public void deleteBazniKontoById(Long bazniKontoId) {
+        bazniKontoRepository.deleteById(bazniKontoId);
+    }
+
+    @Override
+    public Optional<BazniKonto> findBazniKontoById(Long bazniKontoId) {
+        return bazniKontoRepository.findById(bazniKontoId);
     }
 
     private void updateTrosak(TroskovniCentar tc){

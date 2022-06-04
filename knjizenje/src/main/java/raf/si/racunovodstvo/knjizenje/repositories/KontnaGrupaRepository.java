@@ -17,7 +17,6 @@ public interface KontnaGrupaRepository extends JpaRepository<KontnaGrupa, Long> 
             + "from KontnaGrupa kg join kg.konto k "
             + "where :brojKontaOd <= kg.brojKonta and "
             + "(:brojKontaDo >= kg.brojKonta or kg.brojKonta like :brojKontaDo%) and "
-            + "k.bazniCentar is null and k.knjizenje is not null and "
             + "k.knjizenje.datumKnjizenja between :datumOd and :datumDo "
             + "group by kg.brojKonta, kg.nazivKonta")
     List<BilansResponse> findAllForBilans(String brojKontaOd, String brojKontaDo, Date datumOd, Date datumDo);
@@ -26,7 +25,6 @@ public interface KontnaGrupaRepository extends JpaRepository<KontnaGrupa, Long> 
         "select new raf.si.racunovodstvo.knjizenje.responses.BilansResponse(sum(k.duguje), sum(k.potrazuje), count(k), kg.brojKonta , kg.nazivKonta) "
             + "from KontnaGrupa kg join kg.konto k where "
             + "substring(kg.brojKonta, 1, 1) in :startsWith and "
-            + "k.bazniCentar is null and k.knjizenje is not null and "
             + "k.knjizenje.datumKnjizenja between :datumOd and :datumDo "
             + "group by kg.brojKonta, kg.nazivKonta")
     List<BilansResponse> findAllStartingWith(List<String> startsWith, Date datumOd, Date datumDo);

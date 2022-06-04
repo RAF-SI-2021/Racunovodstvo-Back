@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import raf.si.racunovodstvo.knjizenje.model.Konto;
+import raf.si.racunovodstvo.knjizenje.model.BazniKonto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 import raf.si.racunovodstvo.knjizenje.requests.BazniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.services.TroskovniCentarService;
@@ -16,7 +16,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
@@ -88,4 +87,13 @@ public class TroskovniCentarController {
         return ResponseEntity.ok(troskovniCentarService.findAllTroskovniCentriResponse());
     }
 
+    @DeleteMapping(value = "bazniKonto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteKontoFromProfitniCentar(@PathVariable Long id){
+        Optional<BazniKonto> optionalBazniKonto = troskovniCentarService.findBazniKontoById(id);
+        if (optionalBazniKonto.isPresent()) {
+            troskovniCentarService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        throw new EntityNotFoundException();
+    }
 }

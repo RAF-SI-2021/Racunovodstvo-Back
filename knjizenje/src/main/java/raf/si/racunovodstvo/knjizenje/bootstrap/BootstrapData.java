@@ -23,20 +23,21 @@ public class BootstrapData implements CommandLineRunner {
     private final KnjizenjeRepository knjizenjeRepository;
     private final ProfitniCentarRepository profitniCentarRepository;
     private final TroskovniCentarRepository troskovniCentarRepository;
-
+    private final BazniKontoRepository bazniKontoRepository;
 
     @Autowired
     public BootstrapData(FakturaRepository fakturaRepository,
                          KontoRepository kontoRepository,
                          KontnaGrupaRepository kontnaGrupaRepository,
                          KnjizenjeRepository knjizenjeRepository,
-                         ProfitniCentarRepository profitniCentarRepository, TroskovniCentarRepository troskovniCentarRepository) {
+                         ProfitniCentarRepository profitniCentarRepository, TroskovniCentarRepository troskovniCentarRepository, BazniKontoRepository bazniKontoRepository) {
         this.fakturaRepository = fakturaRepository;
         this.kontoRepository = kontoRepository;
         this.knjizenjeRepository = knjizenjeRepository;
         this.kontnaGrupaRepository = kontnaGrupaRepository;
         this.profitniCentarRepository = profitniCentarRepository;
         this.troskovniCentarRepository = troskovniCentarRepository;
+        this.bazniKontoRepository = bazniKontoRepository;
     }
 
     private Faktura getDefaultFaktura() {
@@ -262,11 +263,17 @@ public class BootstrapData implements CommandLineRunner {
         troskovniCentar.setLokacijaId(1l);
         troskovniCentar.setSifra("12345");
         troskovniCentar.setOdgovornoLiceId(1l);
-        konto1.setBazniCentar(troskovniCentar);
-        konto3.setBazniCentar(troskovniCentar);
-        troskovniCentar.setKontoList(List.of(konto1));
+        BazniKonto bazniKonto = new BazniKonto();
+        bazniKonto.setDuguje(0.0);
+        bazniKonto.setBrojNalogaKnjizenja(knj1.getBrojNaloga());
+        bazniKonto.setDatumKnjizenja(knj1.getDatumKnjizenja());
+        bazniKonto.setKomentarKnjizenja(knj1.getKomentar());
+        bazniKonto.setKontnaGrupa(kg1);
+        bazniKonto.setPotrazuje(1000.0);
+        bazniKonto.setBazniCentar(troskovniCentar);
+        troskovniCentar.setKontoList(List.of(bazniKonto));
         troskovniCentarRepository.save(troskovniCentar);
-        kontoRepository.save(konto1);
+        bazniKontoRepository.save(bazniKonto);
 
 
 
