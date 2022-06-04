@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.requests.BazniCentarRequest;
 import raf.si.racunovodstvo.knjizenje.services.ProfitniCentarService;
@@ -16,7 +15,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
@@ -79,6 +77,11 @@ public class ProfitniCentarController {
             return ResponseEntity.ok(profitniCentarService.addKontosFromKnjizenje(bazniCentarRequest.getKnjizenje(),optionalProfitniCentar.get()));
         }
         throw new EntityNotFoundException();
+    }
+
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> findAll(){
+        return ResponseEntity.ok(profitniCentarService.findAllProfitniCentarResponse());
     }
 
 }

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
+import raf.si.racunovodstvo.knjizenje.responses.BazniCentarResponse;
 
 import java.util.List;
 
@@ -13,4 +14,5 @@ public interface IProfitniCentarService extends IService<ProfitniCentar,Long> {
     ProfitniCentar updateProfitniCentar(ProfitniCentar profitniCentar);
 
     ProfitniCentar addKontosFromKnjizenje(Knjizenje knjizenje, ProfitniCentar profitniCentar);
+    List<BazniCentarResponse> findAllProfitniCentarResponse();
 }

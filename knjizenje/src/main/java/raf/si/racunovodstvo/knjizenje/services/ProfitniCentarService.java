@@ -1,14 +1,17 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.knjizenje.converter.ProfitniCentarConverter;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.ProfitniCentar;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.ProfitniCentarRepository;
+import raf.si.racunovodstvo.knjizenje.responses.BazniCentarResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IProfitniCentarService;
 
 import java.util.List;
@@ -21,10 +24,14 @@ public class ProfitniCentarService implements IProfitniCentarService {
     private final KontoRepository kontoRepository;
     private final KnjizenjeRepository knjizenjeRepository;
 
-    public ProfitniCentarService(ProfitniCentarRepository profitniCentarRepository, KontoRepository kontoRepository, KnjizenjeRepository knjizenjeRepository) {
+    @Lazy
+    private ProfitniCentarConverter profitniCentarConverter;
+
+    public ProfitniCentarService(ProfitniCentarRepository profitniCentarRepository, KontoRepository kontoRepository, KnjizenjeRepository knjizenjeRepository, ProfitniCentarConverter profitniCentarConverter) {
         this.profitniCentarRepository = profitniCentarRepository;
         this.kontoRepository = kontoRepository;
         this.knjizenjeRepository = knjizenjeRepository;
+        this.profitniCentarConverter = profitniCentarConverter;
     }
 
     @Override
@@ -39,6 +46,7 @@ public class ProfitniCentarService implements IProfitniCentarService {
 
     @Override
     public List<ProfitniCentar> findAll() {
+
         return profitniCentarRepository.findAll();
     }
 
@@ -81,6 +89,11 @@ public class ProfitniCentarService implements IProfitniCentarService {
         profitniCentar.setUkupniTrosak(ukupanProfit);
         updateProfit(profitniCentar);
         return profitniCentarRepository.save(profitniCentar);
+    }
+
+    @Override
+    public List<BazniCentarResponse> findAllProfitniCentarResponse() {
+        return profitniCentarConverter.convert(profitniCentarRepository.findAll()).getContent();
     }
 
 

@@ -3,12 +3,15 @@ package raf.si.racunovodstvo.knjizenje.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.knjizenje.converter.TroskovniCentarConverter;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.TroskovniCentarRepository;
+import raf.si.racunovodstvo.knjizenje.responses.BazniCentarResponse;
+import raf.si.racunovodstvo.knjizenje.responses.BilansResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITroskovniCentarService;
 
 import java.util.List;
@@ -21,10 +24,13 @@ public class TroskovniCentarService implements ITroskovniCentarService {
     private final KontoRepository kontoRepository;
     private final KnjizenjeRepository knjizenjeRepository;
 
-    public TroskovniCentarService(TroskovniCentarRepository troskovniCentarRepository, KontoRepository kontoRepository, KnjizenjeRepository knjizenjeRepository) {
+    private TroskovniCentarConverter troskovniCentarConverter;
+
+    public TroskovniCentarService(TroskovniCentarRepository troskovniCentarRepository, KontoRepository kontoRepository, KnjizenjeRepository knjizenjeRepository, TroskovniCentarConverter troskovniCentarConverter) {
         this.troskovniCentarRepository = troskovniCentarRepository;
         this.kontoRepository = kontoRepository;
         this.knjizenjeRepository = knjizenjeRepository;
+        this.troskovniCentarConverter = troskovniCentarConverter;
     }
 
     @Override
@@ -79,6 +85,11 @@ public class TroskovniCentarService implements ITroskovniCentarService {
         troskovniCentar.setUkupniTrosak(ukupanTrosak);
         updateTrosak(troskovniCentar);
         return troskovniCentarRepository.save(troskovniCentar);
+    }
+
+    @Override
+    public List<BazniCentarResponse> findAllTroskovniCentriResponse() {
+        return troskovniCentarConverter.convert(troskovniCentarRepository.findAll()).getContent();
     }
 
     private void updateTrosak(TroskovniCentar tc){

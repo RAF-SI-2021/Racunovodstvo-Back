@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.model.TroskovniCentar;
+import raf.si.racunovodstvo.knjizenje.responses.BazniCentarResponse;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface ITroskovniCentarService extends IService<TroskovniCentar, Long>
     TroskovniCentar updateTroskovniCentar(TroskovniCentar troskovniCentar);
 
     TroskovniCentar addKontosFromKnjizenje(Knjizenje knjizenje, TroskovniCentar troskovniCentar);
+
+    List<BazniCentarResponse> findAllTroskovniCentriResponse();
 }

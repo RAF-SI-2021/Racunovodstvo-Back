@@ -81,4 +81,9 @@ public class TroskovniCentarController {
         throw new EntityNotFoundException();
     }
 
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> findAll(){
+        return ResponseEntity.ok(troskovniCentarService.findAllTroskovniCentriResponse());
+    }
+
 }
