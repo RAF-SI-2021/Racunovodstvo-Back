@@ -81,26 +81,31 @@ public class BootstrapData implements CommandLineRunner {
         konverzijaArtikal.setBaznaKonverzijaKalkulacija(konverzija);
         artikalRepository.save(konverzijaArtikal);
 
-        KalkulacijaArtikal kalkulacijaArtikal = new KalkulacijaArtikal();
-        kalkulacijaArtikal.setKolicina(1);
-        kalkulacijaArtikal.setNabavnaCena(1.0);
-        kalkulacijaArtikal.setSifraArtikla("SIFRA2");
-        kalkulacijaArtikal.setNazivArtikla("NAZIV2");
-        kalkulacijaArtikal.setJedinicaMere("MERA");
-        kalkulacijaArtikal.setRabat(2.0);
-        kalkulacijaArtikal.setRabatProcenat(10.0);
-        kalkulacijaArtikal.setUkupnaNabavnaVrednost(2.0);
-        kalkulacijaArtikal.setNabavnaCenaPosleRabata(1.0);
-        kalkulacijaArtikal.setMarza(3.0);
-        kalkulacijaArtikal.setMarzaProcenat(20.0);
-        kalkulacijaArtikal.setOsnovica(19.0);
-        kalkulacijaArtikal.setPorez(10.0);
-        kalkulacijaArtikal.setPorezProcenat(10.0);
-        kalkulacijaArtikal.setProdajnaCena(30.0);
-        kalkulacijaArtikal.setUkupnaProdajnaVrednost(45.0);
-        kalkulacijaArtikal.setProdajnaOsnovica(40.0);
-        kalkulacijaArtikal.setBaznaKonverzijaKalkulacija(k1);
-        artikalRepository.save(kalkulacijaArtikal);
+        KalkulacijaArtikal kalkulacijaArtikal1 = new KalkulacijaArtikal();
+        kalkulacijaArtikal1.setKolicina(1);
+        kalkulacijaArtikal1.setNabavnaCena(1.0);
+        kalkulacijaArtikal1.setSifraArtikla("SIFRA2");
+        kalkulacijaArtikal1.setNazivArtikla("NAZIV2");
+        kalkulacijaArtikal1.setJedinicaMere("MERA");
+        kalkulacijaArtikal1.setRabat(2.0);
+        kalkulacijaArtikal1.setRabatProcenat(10.0);
+        kalkulacijaArtikal1.setUkupnaNabavnaVrednost(2.0);
+        kalkulacijaArtikal1.setNabavnaCenaPosleRabata(1.0);
+        kalkulacijaArtikal1.setMarza(3.0);
+        kalkulacijaArtikal1.setMarzaProcenat(20.0);
+        kalkulacijaArtikal1.setOsnovica(19.0);
+        kalkulacijaArtikal1.setPorez(10.0);
+        kalkulacijaArtikal1.setPorezProcenat(10.0);
+        kalkulacijaArtikal1.setProdajnaCena(30.0);
+        kalkulacijaArtikal1.setUkupnaProdajnaVrednost(45.0);
+        kalkulacijaArtikal1.setProdajnaOsnovica(40.0);
+        kalkulacijaArtikal1.setBaznaKonverzijaKalkulacija(k1);
+        artikalRepository.save(kalkulacijaArtikal1);
+
+        napraviDefaultArtikal(k1, "SIFRA123", "KOMAD", 20);
+        napraviDefaultArtikal(k1, "SIFRA222", "KOMAD", 150);
+        napraviDefaultArtikal(k1, "SIFRA333", "LITAR", 10);
+
     }
 
     private Kalkulacija napraviDefaultKalkulaciju(String brojKalkulacije) {
@@ -122,5 +127,28 @@ public class BootstrapData implements CommandLineRunner {
         kalkulacija.setProdajnaCena(300D);
         kalkulacija.setValuta("RSD");
         return kalkulacija;
+    }
+
+    private void napraviDefaultArtikal(Kalkulacija k1, String sifra, String jedinicaMere, int kolicina) {
+        KalkulacijaArtikal kalkulacijaArtikal = new KalkulacijaArtikal();
+        kalkulacijaArtikal.setKolicina(kolicina);
+        kalkulacijaArtikal.setNabavnaCena(1.0);
+        kalkulacijaArtikal.setSifraArtikla(sifra);
+        kalkulacijaArtikal.setNazivArtikla(sifra);
+        kalkulacijaArtikal.setJedinicaMere(jedinicaMere);
+        kalkulacijaArtikal.setRabat(2.0);
+        kalkulacijaArtikal.setRabatProcenat(10.0);
+        kalkulacijaArtikal.setUkupnaNabavnaVrednost(2.0);
+        kalkulacijaArtikal.setNabavnaCenaPosleRabata(1.0);
+        kalkulacijaArtikal.setMarza(3.0);
+        kalkulacijaArtikal.setMarzaProcenat(20.0);
+        kalkulacijaArtikal.setOsnovica(19.0);
+        kalkulacijaArtikal.setPorez(10.0);
+        kalkulacijaArtikal.setPorezProcenat(10.0);
+        kalkulacijaArtikal.setProdajnaCena(30.0);
+        kalkulacijaArtikal.setUkupnaProdajnaVrednost(45.0);
+        kalkulacijaArtikal.setProdajnaOsnovica(40.0);
+        kalkulacijaArtikal.setBaznaKonverzijaKalkulacija(k1);
+        artikalRepository.save(kalkulacijaArtikal);
     }
 }
