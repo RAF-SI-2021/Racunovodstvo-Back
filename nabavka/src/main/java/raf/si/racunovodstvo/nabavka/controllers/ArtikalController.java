@@ -52,7 +52,7 @@ public class ArtikalController {
     ) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
 
-        if (search.isEmpty()) {
+        if (search == null) {
             return ResponseEntity.ok(this.iArtikalService.findAll(pageSort));
         }
 
