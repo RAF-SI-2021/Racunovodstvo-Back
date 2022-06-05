@@ -7,12 +7,17 @@ import raf.si.racunovodstvo.nabavka.converters.IConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.ArtikalConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.ArtikalReverseConverter;
 import raf.si.racunovodstvo.nabavka.model.Artikal;
+import raf.si.racunovodstvo.nabavka.model.IstorijaProdajneCene;
+import raf.si.racunovodstvo.nabavka.model.KalkulacijaArtikal;
 import raf.si.racunovodstvo.nabavka.repositories.ArtikalRepository;
 import raf.si.racunovodstvo.nabavka.requests.ArtikalRequest;
 import raf.si.racunovodstvo.nabavka.responses.ArtikalResponse;
 import raf.si.racunovodstvo.nabavka.services.IArtikalService;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -57,7 +62,39 @@ public class ArtikalService implements IArtikalService {
             throw new EntityNotFoundException();
         }
         Artikal converted = artikalConverter.convert(artikalRequest);
+        if (artikalRequest.isAktivanZaProdaju()) {
+            handleIstorijaProdaje((KalkulacijaArtikal) converted);
+        }
         return artikalReverseConverter.convert(artikalRepository.save(converted));
+    }
+
+    private void handleIstorijaProdaje(KalkulacijaArtikal artikal) {
+        if (!isKalkulacijaArtikalSaved(artikal)) {
+            return;
+        }
+
+        KalkulacijaArtikal savedKalkulacijaArtikal = (KalkulacijaArtikal)findById(artikal.getArtikalId()).get();
+        List<IstorijaProdajneCene> istorijaProdajneCene = savedKalkulacijaArtikal.getIstorijaProdajneCene();
+        if (isProdajnaCenaUpdated(artikal)) {
+            istorijaProdajneCene.add(new IstorijaProdajneCene(new Date(), savedKalkulacijaArtikal.getProdajnaCena()));
+            artikal.setIstorijaProdajneCene(new ArrayList<>(istorijaProdajneCene));
+        }
+        artikal.setIstorijaProdajneCene(new ArrayList<>(istorijaProdajneCene));
+    }
+
+    private boolean isProdajnaCenaUpdated(KalkulacijaArtikal artikal) {
+        Artikal savedArtikal = findById(artikal.getArtikalId()).get();
+        KalkulacijaArtikal savedKalkulacijaArtikal = (KalkulacijaArtikal) savedArtikal;
+        return !Objects.equals(savedKalkulacijaArtikal.getProdajnaCena(), artikal.getProdajnaCena());
+    }
+
+    private boolean isKalkulacijaArtikalSaved(KalkulacijaArtikal artikal) {
+        if (artikal.getArtikalId() == null || !findById(artikal.getArtikalId()).isPresent()) {
+            return false;
+        }
+
+        Artikal savedArtikal = findById(artikal.getArtikalId()).get();
+        return savedArtikal instanceof KalkulacijaArtikal;
     }
 
     @Override

@@ -3,7 +3,11 @@ package raf.si.racunovodstvo.nabavka.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 
 @Entity
@@ -27,4 +31,6 @@ public class KalkulacijaArtikal extends Artikal {
     private Double osnovica;
     @Column
     private Double ukupnaProdajnaVrednost;
+    @ElementCollection
+    private List<IstorijaProdajneCene> istorijaProdajneCene = new ArrayList<>();
 }
