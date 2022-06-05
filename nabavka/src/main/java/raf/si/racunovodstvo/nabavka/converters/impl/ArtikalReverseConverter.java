@@ -17,6 +17,8 @@ public class ArtikalReverseConverter implements IConverter<Artikal, ArtikalRespo
 
     @Override
     public ArtikalResponse convert(Artikal source) {
-        return modelMapper.map(source, ArtikalResponse.class);
+        ArtikalResponse artikalResponse = modelMapper.map(source, ArtikalResponse.class);
+        artikalResponse.setKonverzijaKalkulacijaId(source.getBaznaKonverzijaKalkulacija().getId());
+        return artikalResponse;
     }
 }

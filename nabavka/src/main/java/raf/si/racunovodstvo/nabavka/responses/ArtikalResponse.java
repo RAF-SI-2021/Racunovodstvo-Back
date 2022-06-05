@@ -27,4 +27,5 @@ public class ArtikalResponse {
     private Double osnovica;
     private Double ukupnaProdajnaVrednost;
     private List<IstorijaProdajneCene> istorijaProdajneCene;
+    private Long konverzijaKalkulacijaId;
 }
