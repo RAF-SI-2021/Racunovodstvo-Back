@@ -14,6 +14,10 @@ public class ArtikalValidator implements ConstraintValidator<ValidArtikal, Artik
 
     @Override
     public boolean isValid(ArtikalRequest artikalRequest, ConstraintValidatorContext constraintValidatorContext) {
+        // ako se radi update za artikal, onda nije potrebna validacija, samo je potrebna pri kreiranju artikla
+        if (artikalRequest.getArtikalId() != null) {
+            return true;
+        }
         if (!artikalRequest.isAktivanZaProdaju()) {
             return true;
         }
