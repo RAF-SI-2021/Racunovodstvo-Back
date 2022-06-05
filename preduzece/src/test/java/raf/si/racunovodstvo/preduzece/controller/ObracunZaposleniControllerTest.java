@@ -94,8 +94,7 @@ class ObracunZaposleniControllerTest {
     @Test
     void update(){
         ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
-        ObracunZaposleniRequest obracunZaposleniRequest = new ObracunZaposleniRequest();
-        given(obracunZaposleniService.update(obracunZaposleniRequest)).willReturn(obracunZaposleni);
-        assertEquals(obracunZaposleni, obracunZaposleniController.update(obracunZaposleniRequest).getBody());
+        given(obracunZaposleniService.update(0.5, null, 1L)).willReturn(obracunZaposleni);
+        assertEquals(obracunZaposleni, obracunZaposleniController.update(0.5, null, 1L).getBody());
     }
 }

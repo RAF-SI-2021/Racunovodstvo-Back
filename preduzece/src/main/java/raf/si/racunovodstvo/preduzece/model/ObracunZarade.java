@@ -1,28 +1,23 @@
 package raf.si.racunovodstvo.preduzece.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Getter
 @Setter
-public class ObracunZaposleni {
-
+public class ObracunZarade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long obracunZaposleniId;
-    @Column(nullable = false)
-    private Double ucinak;
+    private Long obracunZaradeId;
+    @Column
+    private String naziv;
+    @Column
+    private Date datumObracuna;
     @Column
     private Double porez;
     @Column
@@ -36,13 +31,15 @@ public class ObracunZaposleni {
     private Double brutoPlata;
     @Column
     private Double ukupanTrosakZarade;
+    @Column(nullable = false)
+    private Date datumOd;
+    @Column
+    private Date datumDo;
     @Column
     private String komentar;
+    @Column
+    private Double ucinak;
     @ManyToOne
     @JoinColumn(name = "zaposleniId")
     private Zaposleni zaposleni;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "obracunId")
-    private Obracun obracun;
 }

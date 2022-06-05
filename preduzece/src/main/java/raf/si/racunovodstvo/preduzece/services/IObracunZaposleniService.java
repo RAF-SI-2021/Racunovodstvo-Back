@@ -11,7 +11,7 @@ public interface IObracunZaposleniService extends IService<ObracunZaposleni, Lon
 
     ObracunZaposleni save(ObracunZaposleniRequest obracunZaposleniRequest);
 
-    ObracunZaposleni update(ObracunZaposleniRequest obracunZaposleniRequest);
+    ObracunZaposleni update(Double ucinak, Double netoPlata, Long idObracunZaposleni);
 
     Page<ObracunZaposleni> findAll(Specification<ObracunZaposleni> spec, Pageable pageSort);
 

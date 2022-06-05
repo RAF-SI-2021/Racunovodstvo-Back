@@ -35,4 +35,14 @@ public class ObracunService implements IObracunService {
     public void deleteById(Long var1) {
         obracunRepository.deleteById(var1);
     }
+
+
+    public void updateObracunZaradeNaziv(Long obracunZaradeId, String naziv) {
+        Optional<Obracun> obracunOptional = obracunRepository.findById(obracunZaradeId);
+        if (obracunOptional.isPresent()) {
+            Obracun obracun = obracunOptional.get();
+            obracun.setNaziv(naziv);
+            save(obracun);
+        }
+    }
 }

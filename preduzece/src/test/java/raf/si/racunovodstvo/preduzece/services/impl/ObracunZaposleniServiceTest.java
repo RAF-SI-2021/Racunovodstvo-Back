@@ -183,44 +183,73 @@ class ObracunZaposleniServiceTest {
         Zaposleni zaposleni = new Zaposleni();
         Obracun obracun = new Obracun();
         ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
-        ObracunZaposleniRequest obracunZaposleniRequest = new ObracunZaposleniRequest();
         obracunZaposleni.setObracun(obracun);
         obracunZaposleni.setZaposleni(zaposleni);
-        obracunZaposleni.setNetoPlata(MOCK_NETO_PLATA);
-        obracunZaposleni.setUcinak(MOCK_UCINAK);
-        obracunZaposleniRequest.setObracunZaposleniId(1L);
         koeficijent.setNajnizaOsnovica(MOCK_NAJNIZA_OSNOVICA);
         koeficijent.setNajvisaOsnovica(MOCK_NAJVISA_OSNOVCA);
 
 
         given(koeficijentService.getCurrentKoeficijent()).willReturn(koeficijent);
-        given(obracunZaposleniConverter.convert(obracunZaposleniRequest)).willReturn(obracunZaposleni);
         given(obracunZaposleniRepository.save(obracunZaposleni)).willReturn(obracunZaposleni);
         given(obracunZaposleniRepository.findById(1L)).willReturn(Optional.of(obracunZaposleni));
 
-        ObracunZaposleni result = obracunZaposleniService.update(obracunZaposleniRequest);
+        ObracunZaposleni result = obracunZaposleniService.update(MOCK_UCINAK, MOCK_NETO_PLATA, 1L);
         assertEquals(obracunZaposleni, result);
+        assertEquals(MOCK_UCINAK, result.getUcinak());
+        assertEquals(MOCK_NETO_PLATA, result.getNetoPlata());
 
     }
 
     @Test
-    void updateExceptionTest(){
+    void updateNetoPlataNullTest(){
         Zaposleni zaposleni = new Zaposleni();
         Obracun obracun = new Obracun();
         ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
-        ObracunZaposleniRequest obracunZaposleniRequest = new ObracunZaposleniRequest();
         obracunZaposleni.setObracun(obracun);
         obracunZaposleni.setZaposleni(zaposleni);
         obracunZaposleni.setNetoPlata(MOCK_NETO_PLATA);
-        obracunZaposleni.setUcinak(MOCK_UCINAK);
-        obracunZaposleniRequest.setObracunZaposleniId(1L);
         koeficijent.setNajnizaOsnovica(MOCK_NAJNIZA_OSNOVICA);
         koeficijent.setNajvisaOsnovica(MOCK_NAJVISA_OSNOVCA);
 
+
+        given(koeficijentService.getCurrentKoeficijent()).willReturn(koeficijent);
+        given(obracunZaposleniRepository.save(obracunZaposleni)).willReturn(obracunZaposleni);
+        given(obracunZaposleniRepository.findById(1L)).willReturn(Optional.of(obracunZaposleni));
+
+        ObracunZaposleni result = obracunZaposleniService.update(MOCK_UCINAK, null, 1L);
+        assertEquals(obracunZaposleni, result);
+        assertEquals(MOCK_UCINAK, result.getUcinak());
+        assertEquals(MOCK_NETO_PLATA, result.getNetoPlata());
+    }
+
+    @Test
+    void updateUcinakNullTest(){
+        Zaposleni zaposleni = new Zaposleni();
+        Obracun obracun = new Obracun();
+        ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
+        obracunZaposleni.setObracun(obracun);
+        obracunZaposleni.setZaposleni(zaposleni);
+        obracunZaposleni.setUcinak(MOCK_UCINAK);
+        koeficijent.setNajnizaOsnovica(MOCK_NAJNIZA_OSNOVICA);
+        koeficijent.setNajvisaOsnovica(MOCK_NAJVISA_OSNOVCA);
+
+
+        given(koeficijentService.getCurrentKoeficijent()).willReturn(koeficijent);
+        given(obracunZaposleniRepository.save(obracunZaposleni)).willReturn(obracunZaposleni);
+        given(obracunZaposleniRepository.findById(1L)).willReturn(Optional.of(obracunZaposleni));
+
+        ObracunZaposleni result = obracunZaposleniService.update(null, MOCK_NETO_PLATA, 1L);
+        assertEquals(obracunZaposleni, result);
+        assertEquals(MOCK_UCINAK, result.getUcinak());
+        assertEquals(MOCK_NETO_PLATA, result.getNetoPlata());
+    }
+
+
+    @Test
+    void updateExceptionTest(){
         given(obracunZaposleniRepository.findById(1L)).willReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> obracunZaposleniService.update(obracunZaposleniRequest));
-        then(obracunZaposleniRepository).should(never()).save(obracunZaposleni);
-
+        assertThrows(EntityNotFoundException.class, () -> obracunZaposleniService.update(0.5, null, 1L));
+        then(obracunZaposleniRepository).should(never()).save(any());
     }
 }
