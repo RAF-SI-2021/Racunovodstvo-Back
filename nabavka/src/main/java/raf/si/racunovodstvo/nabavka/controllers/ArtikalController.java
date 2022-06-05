@@ -3,6 +3,7 @@ package raf.si.racunovodstvo.nabavka.controllers;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import raf.si.racunovodstvo.nabavka.model.Artikal;
 import raf.si.racunovodstvo.nabavka.requests.ArtikalRequest;
 import raf.si.racunovodstvo.nabavka.responses.ArtikalResponse;
 import raf.si.racunovodstvo.nabavka.services.IArtikalService;
 import raf.si.racunovodstvo.nabavka.utils.ApiUtil;
+import raf.si.racunovodstvo.nabavka.utils.SearchUtil;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnCreate;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnUpdate;
 
@@ -33,19 +36,29 @@ import javax.validation.constraints.Min;
 public class ArtikalController {
 
     private final IArtikalService iArtikalService;
+    private final SearchUtil<Artikal> searchUtil;
 
     public ArtikalController(IArtikalService iArtikalService) {
         this.iArtikalService = iArtikalService;
+        this.searchUtil = new SearchUtil<>();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<ArtikalResponse>> findAll(
+        @RequestParam(name = "search") String search,
         @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
         @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
         @RequestParam(defaultValue = "sifraArtikla") String[] sort
     ) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
-        return ResponseEntity.ok(this.iArtikalService.findAll(pageSort));
+
+        if (search.isEmpty()) {
+            return ResponseEntity.ok(this.iArtikalService.findAll(pageSort));
+        }
+
+        Specification<Artikal> spec = searchUtil.getSpec(search);
+        Page<ArtikalResponse> result = iArtikalService.findAll(spec, pageSort);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping(value = "/{idKonverzijaKalkulacija}",produces = MediaType.APPLICATION_JSON_VALUE)

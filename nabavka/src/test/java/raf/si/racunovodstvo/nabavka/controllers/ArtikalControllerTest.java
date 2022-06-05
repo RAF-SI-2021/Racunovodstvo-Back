@@ -34,19 +34,19 @@ class ArtikalControllerTest {
         Page<ArtikalResponse> artikalResponsePage = new PageImpl<>(new ArrayList<>());
         given(iArtikalService.findAll(any())).willReturn(artikalResponsePage);
 
-        ResponseEntity<Page<ArtikalResponse>> response = artikalController.findAll(0, 1, new String[]{});
+        ResponseEntity<Page<ArtikalResponse>> response = artikalController.findAll(null, 0, 1, new String[]{});
 
         assertEquals(artikalResponsePage, response.getBody());
     }
 
     @Test
     void findAllSizeOutOfBoundsTest() {
-        assertThrows(IllegalArgumentException.class, () -> artikalController.findAll(0, 0, new String[]{}));
+        assertThrows(IllegalArgumentException.class, () -> artikalController.findAll(null, 0, 0, new String[]{}));
     }
 
     @Test
     void findAllPageOutOfBoundsTest() {
-        assertThrows(IllegalArgumentException.class, () -> artikalController.findAll(-1, 1, new String[]{}));
+        assertThrows(IllegalArgumentException.class, () -> artikalController.findAll(null, -1, 1, new String[]{}));
     }
 
     @Test

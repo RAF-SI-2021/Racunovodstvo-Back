@@ -2,6 +2,7 @@ package raf.si.racunovodstvo.nabavka.services.impl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.nabavka.converters.IConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.ArtikalConverter;
@@ -66,6 +67,11 @@ public class ArtikalService implements IArtikalService {
             handleIstorijaProdaje((KalkulacijaArtikal) converted);
         }
         return artikalReverseConverter.convert(artikalRepository.save(converted));
+    }
+
+    @Override
+    public Page<ArtikalResponse> findAll(Specification<Artikal> spec, Pageable pageSort) {
+        return artikalRepository.findAll(spec, pageSort).map(artikalReverseConverter::convert);
     }
 
     private void handleIstorijaProdaje(KalkulacijaArtikal artikal) {
