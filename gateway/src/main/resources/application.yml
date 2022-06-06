@@ -13,7 +13,7 @@ spring:
       - id: knjizenje
         uri: lb://knjizenje
         predicates:
-          - Path=/api/konto/**, /api/bilans/**, /api/glavna-knjiga/**, /api/faktura/**, /api/knjizenje/**, /api/izvestaji/**
+          - Path=/api/konto/**, /api/bilans/**, /api/glavna-knjiga/**, /api/faktura/**, /api/knjizenje/**, /api/izvestaji/**, /api/povracaji/**
 
       - id: user
         uri: lb://user
