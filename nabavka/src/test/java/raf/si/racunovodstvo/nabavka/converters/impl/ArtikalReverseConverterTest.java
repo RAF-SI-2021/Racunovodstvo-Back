@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import raf.si.racunovodstvo.nabavka.model.Artikal;
+import raf.si.racunovodstvo.nabavka.model.BaznaKonverzijaKalkulacija;
 import raf.si.racunovodstvo.nabavka.responses.ArtikalResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +28,7 @@ class ArtikalReverseConverterTest {
         Artikal source = Mockito.mock(Artikal.class);
         ArtikalResponse expectedResponse = new ArtikalResponse();
         given(modelMapper.map(source, ArtikalResponse.class)).willReturn(expectedResponse);
+        given(source.getBaznaKonverzijaKalkulacija()).willReturn(new BaznaKonverzijaKalkulacija());
 
         ArtikalResponse actualResponse = artikalReverseConverter.convert(source);
 
