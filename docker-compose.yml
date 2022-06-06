@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   eureka:
-    image: racunovodstvo/repo:eureka
+    image: ghcr.io/raf-si-2021/racunovodstvo-eureka:latest
     restart: always
     container_name: eureka
     hostname: eureka
@@ -11,7 +11,7 @@ services:
       - racunovodstvo
 
   gateway:
-    image: racunovodstvo/repo:gateway
+    image: ghcr.io/raf-si-2021/racunovodstvo-gateway:latest
     hostname: gateway
     restart: always
     ports:
@@ -26,31 +26,55 @@ services:
       - eureka
 
   mysql_db:
-    image: mysql:8.0.28
+    image: docker.io/bitnami/mysql:8.0
     hostname: mysql_db
-    command: --default-authentication-plugin=mysql_native_password --init-file /data/application/init-db.sql
+    container_name: mysql_db
     env_file: .env
-    environment:
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
-      MYSQL_DATABASE: $MYSQL_NAME
     ports:
-      - "33006:3306"
+      - "3306"
     volumes:
-      - db:/var/lib/mysql
-      - ./init-db.sql:/data/application/init-db.sql
+      - db:/bitnami/mysql/data
+    environment:
+      MYSQL_REPLICATION_MODE: master
+      MYSQL_REPLICATION_USER: repl_user
+      MYSQL_REPLICATION_PASSWORD: $MYSQL_REPLICATION_PASSWORD
+      MYSQL_DATABASE: $MYSQL_NAME
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+    networks:
+      - racunovodstvo
+
+  mysql_slave:
+    image: docker.io/bitnami/mysql:8.0
+    hostname: mysql_slave
+    container_name: mysql_slave
+    env_file: .env
+    ports:
+      - "3306"
+    depends_on:
+      - mysql_db
+    environment:
+      MYSQL_REPLICATION_MODE: slave
+      MYSQL_REPLICATION_USER: repl_user
+      MYSQL_REPLICATION_PASSWORD: $MYSQL_REPLICATION_PASSWORD
+      MYSQL_DATABASE: $MYSQL_NAME
+      MYSQL_MASTER_HOST: mysql_db
+      MYSQL_MASTER_PORT_NUMBER: 3306
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
     networks:
       - racunovodstvo
 
   user_service:
-    image: racunovodstvo/repo:user
+    image: ghcr.io/raf-si-2021/racunovodstvo-user:latest
     hostname: user
     container_name: user
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_HOST: mysql_db
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
+      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REGISTRY_HOST: eureka
     ports:
       - "8082:8080"
@@ -58,18 +82,21 @@ services:
       - racunovodstvo
     depends_on:
       - mysql_db
+      - mysql_slave
       - eureka
       - gateway
 
   knjizenje_service:
-    image: racunovodstvo/repo:knjizenje
+    image: ghcr.io/raf-si-2021/racunovodstvo-knjizenje:latest
     hostname: knjizenje
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
-      MYSQL_HOST: mysql_db
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
+      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REGISTRY_HOST: eureka
     ports:
       - "8081:8080"
@@ -81,14 +108,16 @@ services:
       - gateway
 
   preduzece_service:
-    image: racunovodstvo/repo:preduzece
+    image: ghcr.io/raf-si-2021/racunovodstvo-preduzece:latest
     hostname: preduzece
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
-      MYSQL_HOST: mysql_db
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
+      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REGISTRY_HOST: eureka
     ports:
       - "8083:8080"
@@ -100,7 +129,7 @@ services:
       - gateway
 
   front:
-    image: racunovodstvo/repo:front
+    image: ghcr.io/raf-si-2021/racunovodstvo-front:latest
     restart: always
     ports:
       - "4200:80"
