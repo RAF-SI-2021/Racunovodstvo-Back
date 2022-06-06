@@ -4,7 +4,8 @@ public enum PermissionType {
     ADMIN("admin"),
     FINANSIJSKA_OPERATIVA("finop"),
     FINANSIJSKO_KNJIGOVODSTVO("finknj"),
-    OBRACUN_ZARADE("obrza");
+    OBRACUN_ZARADE("obrza"),
+    PRODAJA("prodaja");
 
     public final String label;
 
