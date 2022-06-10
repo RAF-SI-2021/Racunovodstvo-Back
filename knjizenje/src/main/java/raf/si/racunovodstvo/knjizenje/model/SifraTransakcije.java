@@ -17,8 +17,8 @@ public class SifraTransakcije {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sifraTransakcijeId;
-    @Column(nullable = false)
-    @NotNull(message = "Sifra transakcije je obavezna!")
+    @Column(nullable = false, unique = true)
+    @NotNull(message = "Sifra transakcije je obavezna i jedinstvena!")
     private Long sifra;
     @Column(nullable = false)
     @NotBlank(message = "Naziv transakcije je obavezan!")

@@ -16,7 +16,7 @@ public interface ITransakcijaService extends IService<Transakcija, Long> {
 
     Page<TransakcijaResponse> search(Specification<Transakcija> specification, Pageable pageable, String token);
 
-    TransakcijaResponse save(TransakcijaRequest artikalRequest);
+    TransakcijaResponse save(TransakcijaRequest transakcijaRequest);
 
     TransakcijaResponse update(TransakcijaRequest artikalRequest);
 

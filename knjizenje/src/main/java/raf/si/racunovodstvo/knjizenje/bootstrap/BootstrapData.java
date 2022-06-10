@@ -284,6 +284,19 @@ public class BootstrapData implements CommandLineRunner {
         transakcijaRepository.save(tr2);
         transakcijaRepository.save(tr3);
 
+        SifraTransakcije st1 = new SifraTransakcije();
+        st1.setSifra(1121L);
+        st1.setNazivTransakcije("banana");
+        SifraTransakcije st2 = new SifraTransakcije();
+        st2.setSifra(3121L);
+        st2.setNazivTransakcije("ananas");
+        SifraTransakcije st3 = new SifraTransakcije();
+        st3.setSifra(4121L);
+        st3.setNazivTransakcije("kajsija");
+        sifraTransakcijeRepository.save(st1);
+        sifraTransakcijeRepository.save(st2);
+        sifraTransakcijeRepository.save(st3);
+
         log.info("Data loaded!");
     }
 }
