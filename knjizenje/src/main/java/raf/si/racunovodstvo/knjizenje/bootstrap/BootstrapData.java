@@ -20,6 +20,9 @@ public class BootstrapData implements CommandLineRunner {
     private final KontnaGrupaRepository kontnaGrupaRepository;
     private final KontoRepository kontoRepository;
     private final KnjizenjeRepository knjizenjeRepository;
+    private final ProfitniCentarRepository profitniCentarRepository;
+    private final TroskovniCentarRepository troskovniCentarRepository;
+    private final BazniKontoRepository bazniKontoRepository;
     private final PovracajRepository povracajRepository;
 
 
@@ -28,12 +31,17 @@ public class BootstrapData implements CommandLineRunner {
                          KontoRepository kontoRepository,
                          KontnaGrupaRepository kontnaGrupaRepository,
                          KnjizenjeRepository knjizenjeRepository,
+                         ProfitniCentarRepository profitniCentarRepository, TroskovniCentarRepository troskovniCentarRepository, BazniKontoRepository bazniKontoRepository) {
+                         KnjizenjeRepository knjizenjeRepository,
                          PovracajRepository povracajRepository
     ) {
         this.fakturaRepository = fakturaRepository;
         this.kontoRepository = kontoRepository;
         this.knjizenjeRepository = knjizenjeRepository;
         this.kontnaGrupaRepository = kontnaGrupaRepository;
+        this.profitniCentarRepository = profitniCentarRepository;
+        this.troskovniCentarRepository = troskovniCentarRepository;
+        this.bazniKontoRepository = bazniKontoRepository;
         this.povracajRepository = povracajRepository;
     }
 
@@ -114,23 +122,11 @@ public class BootstrapData implements CommandLineRunner {
         f5.setPreduzeceId(2L);
         f5.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
 
-        Faktura f6 = getDefaultFaktura();
-        f6.setIznos(15000.00);
-        f6.setPreduzeceId(2L);
-        f6.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
-
-        Faktura f7 = getDefaultFaktura();
-        f7.setIznos(20000.00);
-        f7.setPreduzeceId(2L);
-        f7.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
-
         this.fakturaRepository.save(f1);
         this.fakturaRepository.save(f2);
         this.fakturaRepository.save(f3);
         this.fakturaRepository.save(f4);
         this.fakturaRepository.save(f5);
-        this.fakturaRepository.save(f6);
-        this.fakturaRepository.save(f7);
 
         KontnaGrupa kg1 = new KontnaGrupa();
         kg1.setBrojKonta("0");
@@ -259,6 +255,61 @@ public class BootstrapData implements CommandLineRunner {
         konto2.setKnjizenje(knjizenje);
         konto3.setKnjizenje(knjizenje);
         kontoRepository.save(konto1);
+
+        ProfitniCentar profitniCentar = new ProfitniCentar();
+        profitniCentar.setUkupniTrosak(100.00);
+        profitniCentar.setNaziv("Profitni centar 1");
+        profitniCentar.setLokacijaId(1l);
+        profitniCentar.setSifra("1");
+        profitniCentar.setOdgovornoLiceId(1l);
+        profitniCentarRepository.save(profitniCentar);
+
+        ProfitniCentar profitniCentar2 = new ProfitniCentar();
+        profitniCentar2.setUkupniTrosak(100.00);
+        profitniCentar2.setNaziv("Profitni centar 2");
+        profitniCentar2.setLokacijaId(1l);
+        profitniCentar2.setSifra("12");
+        profitniCentar2.setOdgovornoLiceId(1l);
+        profitniCentar2.setParentProfitniCentar(profitniCentar);
+        profitniCentarRepository.save(profitniCentar2);
+
+        ProfitniCentar profitniCentar3 = new ProfitniCentar();
+        profitniCentar3.setUkupniTrosak(500.00);
+        profitniCentar3.setNaziv("Profitni centar 3");
+        profitniCentar3.setLokacijaId(1l);
+        profitniCentar3.setSifra("123");
+        profitniCentar3.setOdgovornoLiceId(1l);
+        profitniCentar3.setParentProfitniCentar(profitniCentar);
+        profitniCentarRepository.save(profitniCentar3);
+
+        ProfitniCentar profitniCentar4 = new ProfitniCentar();
+        profitniCentar4.setUkupniTrosak(100.00);
+        profitniCentar4.setNaziv("Profitni centar 4");
+        profitniCentar4.setLokacijaId(1l);
+        profitniCentar4.setSifra("1234");
+        profitniCentar4.setOdgovornoLiceId(1l);
+        profitniCentar4.setParentProfitniCentar(profitniCentar3);
+        profitniCentarRepository.save(profitniCentar4);
+
+        TroskovniCentar troskovniCentar = new TroskovniCentar();
+        troskovniCentar.setUkupniTrosak(500.00);
+        troskovniCentar.setNaziv("Troskovni centar 1");
+        troskovniCentar.setLokacijaId(1l);
+        troskovniCentar.setSifra("12345");
+        troskovniCentar.setOdgovornoLiceId(1l);
+        BazniKonto bazniKonto = new BazniKonto();
+        bazniKonto.setDuguje(0.0);
+        bazniKonto.setBrojNalogaKnjizenja(knj1.getBrojNaloga());
+        bazniKonto.setDatumKnjizenja(knj1.getDatumKnjizenja());
+        bazniKonto.setKomentarKnjizenja(knj1.getKomentar());
+        bazniKonto.setKontnaGrupa(kg1);
+        bazniKonto.setPotrazuje(1000.0);
+        bazniKonto.setBazniCentar(troskovniCentar);
+        troskovniCentar.setKontoList(List.of(bazniKonto));
+        troskovniCentarRepository.save(troskovniCentar);
+        bazniKontoRepository.save(bazniKonto);
+
+
 
         Povracaj povracaj1 = this.createPovracaj("123", new Date(), 2000.00);
         povracajRepository.save(povracaj1);

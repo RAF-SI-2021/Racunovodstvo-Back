@@ -8,12 +8,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import raf.si.racunovodstvo.knjizenje.repositories.KontnaGrupaRepository;
 import raf.si.racunovodstvo.knjizenje.responses.BilansResponse;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static raf.si.racunovodstvo.knjizenje.utils.Utils.periodToString;
 
 @ExtendWith(MockitoExtension.class)
 class BilansServiceTest {
@@ -27,33 +26,38 @@ class BilansServiceTest {
     @Test
     void findBilans(){
 
-        List<BilansResponse> bilansResponseList = new ArrayList<>();
+        Map<String, ArrayList<BilansResponse>> bilansResponseListMap = new HashMap<>();
 
         List<String> startsWith = new ArrayList<>();
         List<Date> datumiOd = new ArrayList<>();
         List<Date> datumiDo = new ArrayList<>();
 
-        assertEquals(bilansResponseList, bilansService.findBilans(startsWith, datumiOd, datumiDo));
+        assertEquals(bilansResponseListMap, bilansService.findBilans(startsWith, datumiOd, datumiDo));
     }
 
     @Test
     void findBilansWithDates(){
 
-        List<BilansResponse> bilansResponseList = new ArrayList<>();
+        ArrayList<BilansResponse> bilansResponseList = new ArrayList<>();
+        Map<String, ArrayList<BilansResponse>> bilansResponseListMap = new HashMap<>();
 
         List<String> startsWith = new ArrayList<>();
         List<Date> datumiOd = new ArrayList<>();
         List<Date> datumiDo = new ArrayList<>();
-        Date date1 = new Date();
-        Date date2 = new Date();
+        Date datumOd = new Date();
+        Date datuiDo = new Date();
 
-        datumiOd.add(date1);
-        datumiDo.add(date2);
+        datumiOd.add(datumOd);
+        datumiDo.add(datuiDo);
 
-        given(kontnaGrupaRepository.findAllStartingWith(startsWith, date1, date2))
+        bilansResponseListMap.put(periodToString(datumOd,datuiDo), bilansResponseList);
+
+
+
+        given(kontnaGrupaRepository.findAllStartingWith(startsWith, datumOd, datuiDo))
                 .willReturn(bilansResponseList);
 
-        assertEquals(bilansResponseList, bilansService.findBilans(startsWith, datumiOd, datumiDo));
+        assertEquals(bilansResponseListMap, bilansService.findBilans(startsWith, datumiOd, datumiDo));
     }
 
     @Test

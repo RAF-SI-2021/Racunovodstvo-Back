@@ -28,9 +28,6 @@ public class Konto {
     @JoinColumn(name = "kontnaGrupaId", nullable = false)
     private KontnaGrupa kontnaGrupa;
     @ManyToOne
-    @JoinColumn(name = "bazniCentarId")
-    private BazniCentar bazniCentar;
-    @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "knjizenjeId", nullable = false)
     private Knjizenje knjizenje;

@@ -1,4 +1,4 @@
-package raf.si.racunovodstvo.knjizenje.configuration;
+package raf.si.racunovodstvo.knjizenje.controllers.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;

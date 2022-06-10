@@ -129,6 +129,25 @@ services:
       - eureka
       - gateway
 
+  nabavka_service:
+    image: racunovodstvo/repo:nabavka
+    hostname: nabavka
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_HOST: mysql_db
+      REGISTRY_HOST: eureka
+    ports:
+      - "8084:8080"
+    networks:
+      - racunovodstvo
+    depends_on:
+      - mysql_db
+      - eureka
+      - gateway
+
   front:
     image: ghcr.io/raf-si-2021/racunovodstvo-front:latest
     restart: always

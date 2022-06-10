@@ -1,4 +1,4 @@
-package raf.si.racunovodstvo.knjizenje.configuration;
+package raf.si.racunovodstvo.knjizenje.controllers.configuration;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;

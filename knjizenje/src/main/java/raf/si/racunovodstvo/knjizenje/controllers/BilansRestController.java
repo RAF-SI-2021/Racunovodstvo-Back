@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.knjizenje.responses.BilansResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IBilansService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -29,7 +26,7 @@ public class BilansRestController {
     public ResponseEntity<?> getBilansStanja(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiOd,
                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiDo) {
         List<String> brojKontaStartsWith = new ArrayList<>(Arrays.asList("0", "1", "2", "3", "4"));
-        List<BilansResponse> response = bilansService.findBilans(brojKontaStartsWith, datumiOd, datumiDo);
+        Map<String,List<BilansResponse>> response = bilansService.findBilans(brojKontaStartsWith, datumiOd, datumiDo);
         return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 
@@ -37,7 +34,7 @@ public class BilansRestController {
     public ResponseEntity<?> getBilansUspeha(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiOd,
                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiDo) {
         List<String> brojKontaStartsWith = new ArrayList<>(Arrays.asList("5", "6"));
-        List<BilansResponse> response = bilansService.findBilans(brojKontaStartsWith, datumiOd, datumiDo);
+        Map<String,List<BilansResponse>> response = bilansService.findBilans(brojKontaStartsWith, datumiOd, datumiDo);
         return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 

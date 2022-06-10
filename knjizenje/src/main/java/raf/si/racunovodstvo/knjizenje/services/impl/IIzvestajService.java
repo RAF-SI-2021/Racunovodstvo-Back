@@ -14,5 +14,5 @@ public interface IIzvestajService {
                                   String title,
                                   List<Date> datumiOd,
                                   List<Date> datumiDo,
-                                  List<String> brojKontaStartsWith);
+                                  List<String> brojKontaStartsWith, boolean isBilansUspeha);
 }
