@@ -30,8 +30,9 @@ public class BootstrapData implements CommandLineRunner {
     public BootstrapData(FakturaRepository fakturaRepository,
                          KontoRepository kontoRepository,
                          KontnaGrupaRepository kontnaGrupaRepository,
-                         KnjizenjeRepository knjizenjeRepository,
-                         ProfitniCentarRepository profitniCentarRepository, TroskovniCentarRepository troskovniCentarRepository, BazniKontoRepository bazniKontoRepository) {
+                         ProfitniCentarRepository profitniCentarRepository,
+                         TroskovniCentarRepository troskovniCentarRepository,
+                         BazniKontoRepository bazniKontoRepository,
                          KnjizenjeRepository knjizenjeRepository,
                          PovracajRepository povracajRepository
     ) {
