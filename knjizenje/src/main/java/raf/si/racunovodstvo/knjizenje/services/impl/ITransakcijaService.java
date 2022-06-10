@@ -18,7 +18,7 @@ public interface ITransakcijaService extends IService<Transakcija, Long> {
 
     TransakcijaResponse save(TransakcijaRequest transakcijaRequest);
 
-    TransakcijaResponse update(TransakcijaRequest artikalRequest);
+    TransakcijaResponse update(TransakcijaRequest transakcijaRequest);
 
     List<Transakcija> obracunZaradeTransakcije(List<ObracunTransakcijeRequest> obracunTransakcijeRequests);
 }
