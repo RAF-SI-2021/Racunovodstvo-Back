@@ -67,7 +67,6 @@ public class TransakcijaController {
 
     @PostMapping(value = "/obracun_plata")
     public ResponseEntity<?> obracunPlata(@RequestBody List<ObracunTransakcijeRequest> obracunTransakcijeRequestList){
-        /**Thread.sleep(obracunTransakcijeRequestList.get(0).getDatum().getTime() - (new Date().getTime()));*/
         return ResponseEntity.ok(transakcijaService.obracunZaradeTransakcije(obracunTransakcijeRequestList));
     }
 
