@@ -13,7 +13,6 @@ import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KontnaGrupaRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 
-
 import java.util.*;
 
 @Component
@@ -148,18 +147,34 @@ public class BootstrapData implements CommandLineRunner {
         KontnaGrupa kg12 = new KontnaGrupa();
         kg12.setBrojKonta("120");
         kg12.setNazivKonta("Naziv kontne grupe 120");
-        this.kontnaGrupaRepository.saveAll(Arrays.asList(kg1, kg2, kg3, kg4, kg5, kg6, kg7, kg8, kg9, kg10, kg11, kg12));
+        KontnaGrupa kg13 = new KontnaGrupa();
+        kg13.setBrojKonta("00");
+        kg13.setNazivKonta("Naziv kontne grupe 00");
+        KontnaGrupa kg14 = new KontnaGrupa();
+        kg14.setBrojKonta("000");
+        kg14.setNazivKonta("Naziv kontne grupe 000");
+        KontnaGrupa kg15 = new KontnaGrupa();
+        kg15.setBrojKonta("0001");
+        kg15.setNazivKonta("Naziv kontne grupe 0001");
+        KontnaGrupa kg16 = new KontnaGrupa();
+        kg16.setBrojKonta("0001");
+        kg16.setNazivKonta("Naziv kontne grupe 0001");
+        this.kontnaGrupaRepository.saveAll(Arrays.asList(kg1, kg2, kg3, kg4, kg5, kg6, kg7, kg8, kg9, kg10, kg11, kg12, kg13, kg14, kg15, kg16));
 
         Knjizenje knj1 = new Knjizenje();
-        knj1.setDatumKnjizenja(new Date());
-        Knjizenje knj2 = new Knjizenje();
         knj1.setBrojNaloga("N123S3");
+        knj1.setDatumKnjizenja(new Date());
+        knj1.setDokument(f1);
+        Knjizenje knj2 = new Knjizenje();
         knj2.setDatumKnjizenja(new Date());
         knj2.setBrojNaloga("N123FF3");
+        knj2.setDokument(f1);
         Knjizenje knj3 = new Knjizenje();
         knj3.setDatumKnjizenja(new Date());
+        knj3.setDokument(f2);
         Knjizenje knj4 = new Knjizenje();
         knj4.setDatumKnjizenja(new Date());
+        knj4.setDokument(f2);
         knj3.setBrojNaloga("N13S3");
         knj4.setBrojNaloga("N23FF3");
         this.knjizenjeRepository.save(knj1);
@@ -183,8 +198,12 @@ public class BootstrapData implements CommandLineRunner {
         Konto k14 = createKonto(kg1, knj4, 1200.0, 1504.0);
         Konto k15 = createKonto(kg11, knj4, 1430.0, 1594.0);
         Konto k16 = createKonto(kg8, knj4, 1000.0, 504.0);
+        Konto k17 = createKonto(kg13, knj4, 1090.0, 1004.0);
+        Konto k18 = createKonto(kg14, knj4, 1200.0, 1504.0);
+        Konto k19 = createKonto(kg15, knj4, 1430.0, 1594.0);
+        Konto k20 = createKonto(kg16, knj4, 1000.0, 504.0);
 
-        this.kontoRepository.saveAll(Arrays.asList(k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, k13, k14, k15, k16));
+        this.kontoRepository.saveAll(Arrays.asList(k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k20));
 
         Konto konto1 = new Konto();
         konto1.setDuguje(1000.0);

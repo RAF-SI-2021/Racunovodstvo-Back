@@ -13,11 +13,11 @@ import java.util.Optional;
 @Repository
 public interface FakturaRepository extends JpaRepository<Faktura, Long> {
 
-    public List<Faktura> findAll();
+    List<Faktura> findAll();
 
     List<Faktura> findAll(Specification<Faktura> spec);
 
-    public Optional<Faktura> findByDokumentId(Long dokumentId);
+    Optional<Faktura> findByDokumentId(Long dokumentId);
 
     @Query("select f.prodajnaVrednost from Faktura f where f.tipFakture = :tipFakture")
     List<Double> findProdajnaVrednostForTipFakture(TipFakture tipFakture);

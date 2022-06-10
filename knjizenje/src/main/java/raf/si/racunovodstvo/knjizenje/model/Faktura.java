@@ -49,7 +49,4 @@ public class Faktura extends Dokument {
     @Column
     @Enumerated(EnumType.STRING)
     private TipFakture tipFakture;
-    @Column
-    private Long preduzeceId;
-
 }

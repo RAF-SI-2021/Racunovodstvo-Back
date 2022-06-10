@@ -8,17 +8,22 @@ spring:
       - id: preduzece
         uri: lb://preduzece
         predicates:
-          - Path=/api/preduzece/**, /api/koeficijenti/**, /api/zaposleni/**, /api/plata/**
+          - Path=/api/preduzece/**, /api/koeficijenti/**, /api/zaposleni/**, /api/plata/**, /api/obracun_zarade/**, /api/obracun/**
 
       - id: knjizenje
         uri: lb://knjizenje
         predicates:
-          - Path=/api/konto/**, /api/bilans/**, /api/glavna-knjiga/**, /api/faktura/**, /api/knjizenje/**
+          - Path=/api/konto/**, /api/bilans/**, /api/glavna-knjiga/**, /api/faktura/**, /api/knjizenje/**, /api/izvestaji/**
 
       - id: user
         uri: lb://user
         predicates:
           - Path=/api/permissions/**, /api/users/**, /auth/**
+
+      - id: nabavka
+        uri: lb://nabavka
+        predicates:
+          - Path=/api/artikli/**, /api/kalkulacije/**, /api/konverzije/**
   application:
     name: gateway
   main:

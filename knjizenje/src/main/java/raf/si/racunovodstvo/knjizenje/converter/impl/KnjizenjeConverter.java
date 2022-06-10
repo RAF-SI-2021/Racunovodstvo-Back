@@ -1,22 +1,29 @@
-package raf.si.racunovodstvo.knjizenje.converter;
+package raf.si.racunovodstvo.knjizenje.converter.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
+import raf.si.racunovodstvo.knjizenje.converter.IConverter;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
+import raf.si.racunovodstvo.knjizenje.model.Konto;
+import raf.si.racunovodstvo.knjizenje.responses.AnalitickaKarticaResponse;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IKnjizenjeService;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Component
-public class KnjizenjeConverter {
+public class KnjizenjeConverter implements IConverter<List<Knjizenje>, Page<KnjizenjeResponse>> {
 
     @Autowired
     private IKnjizenjeService knjizenjeService;
 
+    @Override
     public Page<KnjizenjeResponse> convert(List<Knjizenje> knjizenja) {
         List<KnjizenjeResponse> responses = new ArrayList<>();
         for (Knjizenje currKnjizenje : knjizenja) {
