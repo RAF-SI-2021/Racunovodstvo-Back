@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SifraTransakcijeServiceTest {
@@ -57,6 +58,8 @@ class SifraTransakcijeServiceTest {
 
     @Test
     void deleteByIdTest() {
+        when(sifraTransakcijeRepository.findById(1L)).thenReturn(Optional.of(new SifraTransakcije()));
+
         sifraTransakcijeService.deleteById(1L);
 
         then(sifraTransakcijeRepository).should(times(1)).deleteById(1L);
