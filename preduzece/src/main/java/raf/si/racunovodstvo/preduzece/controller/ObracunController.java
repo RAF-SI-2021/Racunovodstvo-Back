@@ -15,7 +15,7 @@ import javax.validation.Valid;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/obracun")
 public class ObracunController {
-    private ObracunService obracunService;
+    private final ObracunService obracunService;
 
     public ObracunController(ObracunService obracunService) {
         this.obracunService = obracunService;
@@ -31,4 +31,11 @@ public class ObracunController {
         obracunService.updateObracunZaradeNaziv(obracunZaradeRequest.getObracunZaradeId(), obracunZaradeRequest.getNaziv());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping(value = "/obradi/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> obradiObracun(@PathVariable("id") Long id, @RequestHeader(name="Authorization") String token) {
+         obracunService.obradiObracun(id,token);
+        return ResponseEntity.ok(obracunService.findAll());
+    }
+
 }

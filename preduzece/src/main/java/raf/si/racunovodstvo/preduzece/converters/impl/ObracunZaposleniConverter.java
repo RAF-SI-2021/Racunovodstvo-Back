@@ -1,6 +1,8 @@
 package raf.si.racunovodstvo.preduzece.converters.impl;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import raf.si.racunovodstvo.preduzece.converters.IConverter;
 import raf.si.racunovodstvo.preduzece.model.Obracun;
@@ -19,14 +21,15 @@ public class ObracunZaposleniConverter implements IConverter<ObracunZaposleniReq
 
     private final ModelMapper modelMapper;
     private final IZaposleniService zaposleniService;
-    private final IObracunService iObracunService;
+    @Lazy
+    @Autowired
+    private IObracunService iObracunService;
 
 
-    public ObracunZaposleniConverter(ModelMapper modelMapper, IZaposleniService zaposleniService, IObracunService iObracunService){
+    public ObracunZaposleniConverter(ModelMapper modelMapper, IZaposleniService zaposleniService){
         this.modelMapper=modelMapper;
 
         this.zaposleniService = zaposleniService;
-        this.iObracunService = iObracunService;
     }
 
     @Override

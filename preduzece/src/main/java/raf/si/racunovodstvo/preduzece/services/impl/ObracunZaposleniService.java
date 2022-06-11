@@ -68,6 +68,7 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
     public ObracunZaposleni save(ObracunZaposleniRequest obracunZaposleniRequest) {
 
         ObracunZaposleni obracunZaposleni = obracunZaposleniConverter.convert(obracunZaposleniRequest);
+
         if (obracunZaposleniRepository.findByZaposleniAndObracun(obracunZaposleni.getZaposleni(), obracunZaposleni.getObracun()).isPresent()) {
             throw new EntityExistsException();
         }
@@ -86,11 +87,11 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
 
         ObracunZaposleni obracunZaposleni = optionalObracunZaposleni.get();
 
-        if(ucinak != null){
+        if (ucinak != null) {
             obracunZaposleni.setUcinak(ucinak);
         }
 
-        if(netoPlata != null){
+        if (netoPlata != null) {
             obracunZaposleni.setNetoPlata(netoPlata);
         }
 
@@ -126,10 +127,12 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
         obracunZaposleni.setUkupanTrosakZarade(obracunZaposleni.getBrutoPlata() + obracunZaposleni.getDoprinos2());
     }
 
-    public void makeObracun(Date dateTime) {
+    public Obracun makeObracun(Date dateTime, long sifraTransakcijeId) {
         Obracun obracun = new Obracun();
         obracun.setDatumObracuna(dateTime);
         obracun.setNaziv(new SimpleDateFormat("MM/yy").format(dateTime));
+        obracun.setObradjen(false);
+        obracun.setSifraTransakcije(sifraTransakcijeId);
         obracun = obracunRepository.save(obracun);
         List<Plata> plate = plataRepository.findPlataByDatumAndStatusZaposlenog(dateTime, StatusZaposlenog.ZAPOSLEN);
         List<ObracunZaposleni> obracunZaposleniList = new ArrayList<>();
@@ -138,7 +141,9 @@ public class ObracunZaposleniService implements IObracunZaposleniService {
             obracunZaposleniList.add(obracunZaposleni);
         }
         obracun.setObracunZaposleniList(obracunZaposleniList);
-        obracunRepository.save(obracun);
+        obracun = obracunRepository.save(obracun);
+
+        return obracun;
     }
 
     private ObracunZaposleniRequest makeObracunZaradeObject(Plata plata, Long obracunId) {

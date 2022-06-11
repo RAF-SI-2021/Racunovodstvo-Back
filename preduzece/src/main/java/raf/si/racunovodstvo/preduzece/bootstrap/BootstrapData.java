@@ -9,6 +9,8 @@ import raf.si.racunovodstvo.preduzece.model.enums.PolZaposlenog;
 import raf.si.racunovodstvo.preduzece.model.enums.RadnaPozicija;
 import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
 import raf.si.racunovodstvo.preduzece.repositories.*;
+import raf.si.racunovodstvo.preduzece.requests.ObracunZaposleniRequest;
+import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,11 +29,13 @@ public class BootstrapData implements CommandLineRunner {
     private final ObracunRepository obracunRepository;
     private final ObracunZaposleniRepository obracunZaposleniRepository;
 
+    private final ObracunZaposleniService obracunZaposleniService;
+
     public BootstrapData(PreduzeceRepository preduzeceRepository,
                          ZaposleniRepository zaposleniRepository,
                          StazRepository stazRepository,
                          PlataRepository plataRepository,
-                         KoeficijentRepository koeficijentRepository, ObracunRepository obracunRepository, ObracunZaposleniRepository obracunZaposleniRepository) {
+                         KoeficijentRepository koeficijentRepository, ObracunRepository obracunRepository, ObracunZaposleniRepository obracunZaposleniRepository, ObracunZaposleniService obracunZaposleniService) {
         this.preduzeceRepository = preduzeceRepository;
         this.zaposleniRepository = zaposleniRepository;
         this.stazRepository = stazRepository;
@@ -39,6 +43,7 @@ public class BootstrapData implements CommandLineRunner {
         this.koeficijentRepository = koeficijentRepository;
         this.obracunRepository = obracunRepository;
         this.obracunZaposleniRepository = obracunZaposleniRepository;
+        this.obracunZaposleniService = obracunZaposleniService;
     }
 
     @Override
@@ -89,6 +94,7 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni.setDatumRodjenja(new Date());
         zaposleni.setRadnaPozicija(RadnaPozicija.DIREKTOR);
         zaposleni.setStaz(stazevi);
+        zaposleni.setPreduzece(p1);
         zaposleniRepository.save(zaposleni);
 
         Zaposleni zaposleni2 = new Zaposleni();
@@ -103,6 +109,7 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni2.setDatumRodjenja(new Date());
         zaposleni2.setRadnaPozicija(RadnaPozicija.MENADZER);
         zaposleni2.setStaz(List.of(staz2));
+        zaposleni2.setPreduzece(p1);
         zaposleniRepository.save(zaposleni2);
 
         Plata plata = new Plata();
@@ -110,6 +117,12 @@ public class BootstrapData implements CommandLineRunner {
         plata.setZaposleni(zaposleni);
         plata.setDatumOd(new Date());
         plata.setDatumDo(null);
+        plata.setBrutoPlata(150000.0);
+        plata.setDoprinos1(1.2);
+        plata.setDoprinos2(1.2);
+        plata.setPorez(0.2);
+
+
         plataRepository.save(plata);
 
         Plata plata2 = new Plata();
@@ -117,6 +130,11 @@ public class BootstrapData implements CommandLineRunner {
         plata2.setZaposleni(zaposleni2);
         plata2.setDatumOd(new Date());
         plata2.setDatumDo(null);
+        plata.setBrutoPlata(150000.0);
+        plata.setDoprinos1(1.2);
+        plata.setDoprinos2(1.2);
+        plata.setPorez(0.2);
+
         plataRepository.save(plata2);
 
         Koeficijent koeficijent = new Koeficijent();
@@ -132,17 +150,16 @@ public class BootstrapData implements CommandLineRunner {
         koeficijent.setPoreskoOslobadjanje(23.4);
         koeficijentRepository.save(koeficijent);
 
-        Obracun obracun = new Obracun();
-        obracun.setNaziv("Obracun 1");
-        obracun.setDatumObracuna(new Date());
-        obracunRepository.save(obracun);
 
-        ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
-        obracunZaposleni.setObracun(obracun);
-        obracunZaposleni.setZaposleni(zaposleni);
-        obracunZaposleni.setNetoPlata(plata2.getNetoPlata());
-        obracunZaposleni.setUcinak(0.5);
-        obracunZaposleniRepository.save(obracunZaposleni);
+        Obracun obracun = obracunZaposleniService.makeObracun(new Date(), 1);
+
+        ObracunZaposleniRequest obracunZaposleniRequest = new ObracunZaposleniRequest();
+        obracunZaposleniRequest.setObracunId(obracun.getObracunId());
+        obracunZaposleniRequest.setZaposleniId(zaposleni.getZaposleniId());
+        obracunZaposleniRequest.setNetoPlata(plata2.getNetoPlata());
+        obracunZaposleniRequest.setUcinak(0.5);
+
+        obracunZaposleniService.save(obracunZaposleniRequest);
 
         log.info("Data loaded!");
     }

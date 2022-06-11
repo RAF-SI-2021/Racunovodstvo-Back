@@ -22,7 +22,7 @@ import javax.persistence.OneToMany;
 @Getter
 @Setter
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Dokument {
+public class  Dokument {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
