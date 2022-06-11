@@ -123,23 +123,11 @@ public class BootstrapData implements CommandLineRunner {
         f5.setPreduzeceId(2L);
         f5.setTipFakture(TipFakture.IZLAZNA_FAKTURA);
 
-        Faktura f6 = getDefaultFaktura();
-        f6.setIznos(15000.00);
-        f6.setPreduzeceId(2L);
-        f6.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
-
-        Faktura f7 = getDefaultFaktura();
-        f7.setIznos(20000.00);
-        f7.setPreduzeceId(2L);
-        f7.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
-
         this.fakturaRepository.save(f1);
         this.fakturaRepository.save(f2);
         this.fakturaRepository.save(f3);
         this.fakturaRepository.save(f4);
         this.fakturaRepository.save(f5);
-        this.fakturaRepository.save(f6);
-        this.fakturaRepository.save(f7);
 
         KontnaGrupa kg1 = new KontnaGrupa();
         kg1.setBrojKonta("0");
@@ -321,6 +309,8 @@ public class BootstrapData implements CommandLineRunner {
         troskovniCentar.setKontoList(List.of(bazniKonto));
         troskovniCentarRepository.save(troskovniCentar);
         bazniKontoRepository.save(bazniKonto);
+
+
 
         Povracaj povracaj1 = this.createPovracaj("123", new Date(), 2000.00);
         povracajRepository.save(povracaj1);
