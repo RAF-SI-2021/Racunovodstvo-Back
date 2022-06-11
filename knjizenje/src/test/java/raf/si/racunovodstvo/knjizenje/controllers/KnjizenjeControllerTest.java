@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.knjizenje.exceptions.OperationNotSupportedException;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
+import raf.si.racunovodstvo.knjizenje.requests.KnjizenjeRequest;
 import raf.si.racunovodstvo.knjizenje.services.KnjizenjeService;
 
 import javax.persistence.EntityNotFoundException;

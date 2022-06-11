@@ -6,15 +6,7 @@ import raf.si.racunovodstvo.preduzece.exceptions.OperationNotSupportedException;
 import raf.si.racunovodstvo.preduzece.model.Preduzece;
 import raf.si.racunovodstvo.preduzece.model.enums.RadnaPozicija;
 import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
-import raf.si.racunovodstvo.preduzece.relations.BooleanRelations;
-import raf.si.racunovodstvo.preduzece.relations.DateRelations;
-import raf.si.racunovodstvo.preduzece.relations.DoubleRelations;
-import raf.si.racunovodstvo.preduzece.relations.LongRelations;
-import raf.si.racunovodstvo.preduzece.relations.PreduzeceRelations;
-import raf.si.racunovodstvo.preduzece.relations.RacunRelations;
-import raf.si.racunovodstvo.preduzece.relations.RadnaPozicijaRelations;
-import raf.si.racunovodstvo.preduzece.relations.StatusZaposlenogRelations;
-import raf.si.racunovodstvo.preduzece.relations.StringRelations;
+import raf.si.racunovodstvo.preduzece.relations.*;
 
 import java.util.Date;
 import java.util.Objects;

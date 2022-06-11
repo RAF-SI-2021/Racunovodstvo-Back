@@ -74,7 +74,7 @@ class IzvestajiControllerTest {
                                                     MOCK_TITLE,
                                                     datumiOd,
                                                     datumiDo,
-                                                    startsWith)).willReturn(reports);
+                                                    startsWith,false)).willReturn(reports);
         given(reports.getReport()).willReturn(expected);
 
         byte[] result =
@@ -95,7 +95,7 @@ class IzvestajiControllerTest {
                                                     MOCK_TITLE,
                                                     datumiOd,
                                                     datumiDo,
-                                                    startsWith)).willReturn(reports);
+                                                    startsWith,true)).willReturn(reports);
         given(reports.getReport()).willReturn(expected);
 
         byte[] result =
@@ -113,7 +113,7 @@ class IzvestajiControllerTest {
         List<String> brojKontaStartsWith = List.of("0", "1", "2", "3", "4");
 
         byte[] pdf =
-            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, brojKontaStartsWith).getReport();
+            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, brojKontaStartsWith,true).getReport();
         return ResponseEntity.ok(pdf);
     }
 }

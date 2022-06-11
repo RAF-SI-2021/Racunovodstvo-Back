@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.knjizenje.responses.BilansResponse;
 import raf.si.racunovodstvo.knjizenje.services.BilansService;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,11 +33,12 @@ class BilansRestControllerTest {
         String brojKontaOd = "1";
         String brojKontaDo = "2";
 
-        List<BilansResponse> bilansResponseList = new ArrayList<>();
-        bilansResponseList.add(new BilansResponse(500.0, 500.0, 1L, "001", ""));
+        Map<String,List<BilansResponse>> bilansResponseListMap = new HashMap<>();
+        bilansResponseListMap.put("",new ArrayList<>());
+        bilansResponseListMap.get("").add(new BilansResponse(500.0, 500.0, 1L, "001", ""));
 
-        given(bilansService.findBilans(any(List.class), any(List.class), any(List.class))).willReturn(bilansResponseList);
-        given(bilansService.findBrutoBilans(any(String.class), any(String.class), any(Date.class), any(Date.class))).willReturn(bilansResponseList);
+        given(bilansService.findBilans(any(List.class), any(List.class), any(List.class))).willReturn(bilansResponseListMap);
+        given(bilansService.findBrutoBilans(any(String.class), any(String.class), any(Date.class), any(Date.class))).willReturn(bilansResponseListMap.get(""));
 
         ResponseEntity<?> responseEntity1 = bilansRestController.getBilansStanja(datumiOd, datumiDo);
         assertEquals(200, responseEntity1.getStatusCodeValue());

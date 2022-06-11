@@ -13,12 +13,17 @@ spring:
       - id: knjizenje
         uri: lb://knjizenje
         predicates:
-          - Path=/api/konto/**, /api/bilans/**, /api/glavna-knjiga/**, /api/faktura/**, /api/knjizenje/**, /api/izvestaji/**, /api/povracaji/**
+          - Path=/api/konto/**, /api/bilans/**, /api/glavna-knjiga/**, /api/faktura/**, /api/knjizenje/**, /api/troskovni-centri/** , /api/profitni-centri/**, /api/izvestaji/**, /api/povracaji/**
 
       - id: user
         uri: lb://user
         predicates:
           - Path=/api/permissions/**, /api/users/**, /auth/**
+
+      - id: nabavka
+        uri: lb://nabavka
+        predicates:
+          - Path=/api/artikli/**, /api/kalkulacije/**, /api/konverzije/**
   application:
     name: gateway
   main:

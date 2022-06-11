@@ -53,16 +53,6 @@ class KontoServiceTest {
     }
 
     @Test
-    void testFindAllSpecification() {
-        List<Konto> kontoList = new ArrayList<>();
-        Specification<Konto> kontoSpecification =
-                new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_OPERATION, MOCK_SEARCH_VALUE));
-        given(kontoRepository.findAll(kontoSpecification)).willReturn(kontoList);
-
-        assertEquals(kontoList, kontoService.findAll(kontoSpecification));
-    }
-
-    @Test
     void testFindByKontnaGrupa() {
         List<Konto> kontoList = new ArrayList<>();
         given(kontoRepository.findKontoByKontnaGrupaBrojKonta(MOCK_BROJ_KONTA)).willReturn(kontoList);

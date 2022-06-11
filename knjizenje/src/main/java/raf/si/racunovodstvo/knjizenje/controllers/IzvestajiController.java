@@ -48,7 +48,7 @@ public class IzvestajiController {
                                              @RequestHeader("Authorization") String token) throws DocumentException {
         List<String> brojKontaStartsWith = List.of("5", "6");
         byte[] pdf =
-            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, brojKontaStartsWith).getReport();
+            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, brojKontaStartsWith,false).getReport();
         return ResponseEntity.ok(pdf);
     }
 
@@ -61,7 +61,7 @@ public class IzvestajiController {
         List<String> brojKontaStartsWith = List.of("0", "1", "2", "3", "4");
 
         byte[] pdf =
-            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, brojKontaStartsWith).getReport();
+            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, brojKontaStartsWith,true).getReport();
         return ResponseEntity.ok(pdf);
     }
 }

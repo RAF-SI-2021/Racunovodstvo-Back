@@ -18,7 +18,6 @@ import java.util.Optional;
 @Service
 public class KontoService implements IService<Konto, Long> {
 
-    @Lazy
     private KontoConverter kontoConverter;
 
     private final KontoRepository kontoRepository;

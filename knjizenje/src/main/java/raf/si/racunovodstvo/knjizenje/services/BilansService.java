@@ -6,12 +6,17 @@ import raf.si.racunovodstvo.knjizenje.repositories.KontnaGrupaRepository;
 import raf.si.racunovodstvo.knjizenje.responses.BilansResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IBilansService;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static raf.si.racunovodstvo.knjizenje.utils.Utils.periodToString;
 
 @Service
 public class BilansService implements IBilansService {
 
     private final KontnaGrupaRepository kontnaGrupaRepository;
+
 
     @Autowired
     public BilansService(KontnaGrupaRepository kontnaGrupaRepository) {
@@ -19,16 +24,26 @@ public class BilansService implements IBilansService {
     }
 
     @Override
-    public List<BilansResponse> findBilans(List<String> startsWith, List<Date> datumiOd, List<Date> datumiDo) {
-        Set<BilansResponse> bilansSet = new HashSet<>();
+    public Map<String,List<BilansResponse>> findBilans(List<String> startsWith, List<Date> datumiOd, List<Date> datumiDo) {
+        Map<String,List<BilansResponse>> bilansLists = new HashMap<>();
+
+
+
         for (int i = 0; i < datumiDo.size() && i < datumiOd.size(); i++) {
+            Set<BilansResponse> bilansSet = new HashSet<>();
+
+            String period = periodToString(datumiOd.get(i),datumiDo.get(i));
+
             bilansSet.addAll(kontnaGrupaRepository.findAllStartingWith(startsWith, datumiOd.get(i), datumiDo.get(i)));
+            bilansLists.put(period,new ArrayList<>(bilansSet));
         }
-        List<BilansResponse> bilansList = new ArrayList<>(bilansSet);
-        bilansList.sort(Comparator.comparing(BilansResponse::getBrojKonta).reversed());
-        sumBilans(bilansList);
-        sortBilans(bilansList);
-        return bilansList;
+        bilansLists.forEach((key,list) -> {
+            list.sort(Comparator.comparing(BilansResponse::getBrojKonta).reversed());
+            sumBilans(list);
+            sortBilans(list);
+        });
+
+        return bilansLists;
     }
 
     @Override

@@ -31,7 +31,7 @@ class GlavnaKnjigaControllerTest {
         String[] sort = new String[1];
         sort[0] = "1";
 
-        ResponseEntity<?> responseEntity = glavnaKnjigaController.getPreduzeceById(search, page, size, sort);
+        ResponseEntity<?> responseEntity = glavnaKnjigaController.getGlavnaKnjiga(search, page, size, sort);
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
@@ -43,7 +43,7 @@ class GlavnaKnjigaControllerTest {
         String[] sort = new String[1];
         sort[0] = "1";
 
-        assertThrows(OperationNotSupportedException.class, () -> glavnaKnjigaController.getPreduzeceById(search, page, size, sort));
+        assertThrows(OperationNotSupportedException.class, () -> glavnaKnjigaController.getGlavnaKnjiga(search, page, size, sort));
     }
 
     @Test
