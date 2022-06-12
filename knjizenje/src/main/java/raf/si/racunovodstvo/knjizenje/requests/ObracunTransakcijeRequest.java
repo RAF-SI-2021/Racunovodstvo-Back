@@ -20,7 +20,7 @@ public class ObracunTransakcijeRequest {
     @NotNull
     private Date datum;
     @NotNull
-    private Long sifraTransakcije;
+    private Long sifraTransakcijeId;
     @NotNull
     private Long preduzeceId;
 

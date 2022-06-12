@@ -13,7 +13,7 @@ import java.util.List;
 @FeignClient(value = "knjizenje/api")
 public interface TransakcijeFeignClient {
 
-    @PostMapping("/transakcije")
+    @PostMapping("/transakcije/obracun_plata")
     ResponseEntity<List<Transakcija>> obracunZaradeTransakcije(List<ObracunTransakcijeRequest> obracunTransakcijeRequests, @RequestHeader("Authorization") String token);
 
     @GetMapping(value = "/sifraTransakcije/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

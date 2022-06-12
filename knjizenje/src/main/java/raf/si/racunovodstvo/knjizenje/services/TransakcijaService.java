@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.knjizenje.model.Preduzece;
 import raf.si.racunovodstvo.knjizenje.model.Transakcija;
+import raf.si.racunovodstvo.knjizenje.model.enums.TipDokumenta;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipTransakcije;
 import raf.si.racunovodstvo.knjizenje.repositories.SifraTransakcijeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.TransakcijaRepository;
@@ -19,9 +20,9 @@ import raf.si.racunovodstvo.knjizenje.converters.IConverter;
 import raf.si.racunovodstvo.knjizenje.converters.impl.TransakcijaConverter;
 import raf.si.racunovodstvo.knjizenje.converters.impl.TransakcijaReverseConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -82,15 +83,17 @@ public class TransakcijaService implements ITransakcijaService {
 
     @Override
     public List<Transakcija> obracunZaradeTransakcije(List<ObracunTransakcijeRequest> obracunTransakcijeRequests) {
-        List<Transakcija> transakcijeList = new CopyOnWriteArrayList<>();
+        List<Transakcija> transakcijeList = new ArrayList<>();
         for(ObracunTransakcijeRequest o : obracunTransakcijeRequests){
             Transakcija t = new Transakcija();
             t.setBrojTransakcije("OZ " + o.getDatum().getMonth()+ "/" + o.getDatum().getYear() + "-" + o.getSifraZaposlenog());
             t.setTipTransakcije(TipTransakcije.ISPLATA);
             t.setDatumTransakcije(o.getDatum());
             t.setIznos(o.getIznos());
+            t.setTipDokumenta(TipDokumenta.TRANSAKCIJA);
+            t.setBrojDokumenta("OZ " + o.getDatum().getMonth()+ "/" + o.getDatum().getYear() + "-" + o.getSifraZaposlenog());
             t.setPreduzeceId(o.getPreduzeceId());
-            t.setSifraTransakcije(sifraTransakcijeRepository.getById(o.getSifraTransakcije()));
+            t.setSifraTransakcije(sifraTransakcijeRepository.findById(o.getSifraTransakcijeId()).get());
             transakcijeList.add(t);
         }
         return transakcijaRepository.saveAll(transakcijeList);
