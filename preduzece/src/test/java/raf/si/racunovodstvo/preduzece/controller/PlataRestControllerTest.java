@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.preduzece.exceptions.OperationNotSupportedException;
 import raf.si.racunovodstvo.preduzece.model.Plata;
 import raf.si.racunovodstvo.preduzece.requests.PlataRequest;
+import raf.si.racunovodstvo.preduzece.responses.PlataResponse;
 import raf.si.racunovodstvo.preduzece.services.impl.PlataService;
 
 import javax.persistence.EntityNotFoundException;
@@ -53,15 +54,15 @@ class PlataRestControllerTest {
 
     @Test
     void getPlataById() {
-        Plata plata = new Plata();
-        given(plataService.findById(MOCK_ID)).willReturn(Optional.of(plata));
+        PlataResponse plata = new PlataResponse();
+        given(plataService.customFindById(MOCK_ID)).willReturn(Optional.of(plata));
         ResponseEntity<?> responseEntity = plataRestController.getPlataById(MOCK_ID);
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
     void getPlataByIdException() {
-        given(plataService.findById(MOCK_ID)).willReturn(Optional.empty());
+        given(plataService.customFindById(MOCK_ID)).willReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> plataRestController.getPlataById(MOCK_ID));
     }
 
@@ -76,15 +77,15 @@ class PlataRestControllerTest {
     @Test
     void newPlataException() {
         PlataRequest plataRequest = new PlataRequest(MOCK_ID, 500.0, new Date(), MOCK_ID);
-        given(plataService.save(plataRequest)).willThrow(EntityNotFoundException.class);
+        given(plataService.customSave(plataRequest)).willThrow(EntityNotFoundException.class);
         assertThrows(EntityNotFoundException.class, () -> plataRestController.newPlata(plataRequest));
     }
 
     @Test
     void editPlata() {
-        Plata plata = new Plata();
+        PlataResponse plata = new PlataResponse();
         PlataRequest plataRequest = new PlataRequest(MOCK_ID, 500.0, new Date(), MOCK_ID);
-        given(plataService.findById(MOCK_ID)).willReturn(Optional.of(plata));
+        given(plataService.customFindById(MOCK_ID)).willReturn(Optional.of(plata));
 
         ResponseEntity<?> responseEntity = plataRestController.editPlata(plataRequest);
 
@@ -93,10 +94,10 @@ class PlataRestControllerTest {
 
     @Test
     void editPlataException1() {
-        Plata plata = new Plata();
+        PlataResponse plata = new PlataResponse();
         PlataRequest plataRequest = new PlataRequest(MOCK_ID, 500.0, new Date(), MOCK_ID);
-        given(plataService.findById(MOCK_ID)).willReturn(Optional.of(plata));
-        given(plataService.save(plataRequest)).willThrow(EntityNotFoundException.class);
+        given(plataService.customFindById(MOCK_ID)).willReturn(Optional.of(plata));
+        given(plataService.customSave(plataRequest)).willThrow(EntityNotFoundException.class);
 
         assertThrows(EntityNotFoundException.class, () -> plataRestController.editPlata(plataRequest));
     }
@@ -104,15 +105,15 @@ class PlataRestControllerTest {
     @Test
     void editPlataException2() {
         PlataRequest plataRequest = new PlataRequest(MOCK_ID, 500.0, new Date(), MOCK_ID);
-        given(plataService.findById(MOCK_ID)).willReturn(Optional.empty());
+        given(plataService.customFindById(MOCK_ID)).willReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> plataRestController.editPlata(plataRequest));
     }
 
     @Test
     void deletePlata() {
-        Plata plata = new Plata();
-        given(plataService.findById(MOCK_ID)).willReturn(Optional.of(plata));
+        PlataResponse plata = new PlataResponse();
+        given(plataService.customFindById(MOCK_ID)).willReturn(Optional.of(plata));
 
         ResponseEntity<?> responseEntity = plataRestController.deletePlata(MOCK_ID);
 
@@ -121,7 +122,7 @@ class PlataRestControllerTest {
 
     @Test
     void deletePlataException() {
-        given(plataService.findById(MOCK_ID)).willReturn(Optional.empty());
+        given(plataService.customFindById(MOCK_ID)).willReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> plataRestController.deletePlata(MOCK_ID));
     }
 }

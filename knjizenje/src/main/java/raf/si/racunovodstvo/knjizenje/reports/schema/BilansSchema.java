@@ -2,7 +2,10 @@ package raf.si.racunovodstvo.knjizenje.reports.schema;
 
 import lombok.Getter;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @Getter
@@ -40,6 +43,26 @@ public class BilansSchema implements Comparable<BilansSchema> {
         BilansSchema that = (BilansSchema) o;
 
         return Objects.equals(konto, that.konto);
+    }
+
+
+    public List<String> getFields( List<String> fieldNames){
+
+        List<String> fieldValues = new ArrayList<>();
+
+        fieldNames.forEach(fieldName -> {
+            try {
+                Field field = BilansSchema.class.getDeclaredField(fieldName.toLowerCase());
+                
+               fieldValues.add(field.get(this).toString());
+
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return fieldValues;
     }
 
     @Override

@@ -6,17 +6,10 @@ import lombok.Setter;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@Entity
+@Entity(name = "bazni_centar")
 @Getter
 @Setter
 public abstract class BazniCentar {
@@ -35,6 +28,6 @@ public abstract class BazniCentar {
     @Column(nullable = false)
     private Long odgovornoLiceId;
     @JsonIgnore
-    @OneToMany(mappedBy = "bazniCentar")
-    private List<Konto> kontoList;
+    @OneToMany(mappedBy = "bazniCentar", cascade = CascadeType.REMOVE)
+    private List<BazniKonto> kontoList;
 }

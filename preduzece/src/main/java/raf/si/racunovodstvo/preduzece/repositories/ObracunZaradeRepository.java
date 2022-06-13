@@ -8,6 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 public interface ObracunZaradeRepository extends JpaRepository<ObracunZarade, Long> {
-    @Query("select oz from ObracunZarade oz where oz.datumOd < :date and oz.datumDo > :date")
+    @Query("select oz from obracun_zarade oz where oz.datumOd < :date and oz.datumDo > :date")
      List<ObracunZarade> findAllByDate(Date date);
 }

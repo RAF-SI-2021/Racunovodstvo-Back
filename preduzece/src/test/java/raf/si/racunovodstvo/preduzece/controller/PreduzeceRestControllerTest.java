@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.preduzece.model.Preduzece;
+import raf.si.racunovodstvo.preduzece.responses.PreduzeceResponse;
 import raf.si.racunovodstvo.preduzece.services.impl.PreduzeceService;
 
 import javax.persistence.EntityNotFoundException;
@@ -34,15 +35,15 @@ class PreduzeceRestControllerTest {
 
     @Test
     void getPreduzeceById() {
-        Preduzece preduzece = new Preduzece();
-        given(preduzeceService.findById(MOCK_ID)).willReturn(Optional.of(preduzece));
+        PreduzeceResponse preduzeceResponse = new PreduzeceResponse();
+        given(preduzeceService.findPreduzeceById(MOCK_ID)).willReturn(Optional.of(preduzeceResponse));
         ResponseEntity<?> responseEntity = preduzeceRestController.getPreduzeceById(MOCK_ID);
         assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
     void getPreduzeceByIdException() {
-        given(preduzeceService.findById(MOCK_ID)).willReturn(Optional.empty());
+        given(preduzeceService.findPreduzeceById(MOCK_ID)).willReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> preduzeceRestController.getPreduzeceById(MOCK_ID));
     }
 
@@ -57,8 +58,9 @@ class PreduzeceRestControllerTest {
     @Test
     void updatePreduzece() {
         Preduzece preduzece = new Preduzece();
+        PreduzeceResponse preduzeceResponse = new PreduzeceResponse();
         preduzece.setPreduzeceId(MOCK_ID);
-        given(preduzeceService.findById(MOCK_ID)).willReturn(Optional.of(preduzece));
+        given(preduzeceService.findPreduzeceById(MOCK_ID)).willReturn(Optional.of(preduzeceResponse));
 
         ResponseEntity<?> responseEntity = preduzeceRestController.updatePreduzece(preduzece);
 
@@ -69,14 +71,14 @@ class PreduzeceRestControllerTest {
     void updatePreduzeceException() {
         Preduzece preduzece = new Preduzece();
         preduzece.setPreduzeceId(MOCK_ID);
-        given(preduzeceService.findById(MOCK_ID)).willReturn(Optional.empty());
+        given(preduzeceService.findPreduzeceById(MOCK_ID)).willReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> preduzeceRestController.updatePreduzece(preduzece));
     }
 
     @Test
     void deletePreduzece() {
-        Preduzece preduzece = new Preduzece();
-        given(preduzeceService.findById(MOCK_ID)).willReturn(Optional.of(preduzece));
+        PreduzeceResponse preduzeceResponse = new PreduzeceResponse();
+        given(preduzeceService.findPreduzeceById(MOCK_ID)).willReturn(Optional.of(preduzeceResponse));
 
         ResponseEntity<?> responseEntity = preduzeceRestController.deletePreduzece(MOCK_ID);
 
@@ -85,7 +87,7 @@ class PreduzeceRestControllerTest {
 
     @Test
     void deletePreduzeceException() {
-        given(preduzeceService.findById(MOCK_ID)).willReturn(Optional.empty());
+        given(preduzeceService.findPreduzeceById(MOCK_ID)).willReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> preduzeceRestController.deletePreduzece(MOCK_ID));
     }
 }

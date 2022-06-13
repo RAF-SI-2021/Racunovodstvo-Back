@@ -45,7 +45,7 @@ class KonverzijaServiceTest {
     KonverzijaRepository konverzijaRepository;
 
     @Mock
-    LokacijaRepository lokacijaRepository;
+    LokacijaService lokacijaService;
 
     @Mock
     KonverzijaConverter konverzijaConverter;

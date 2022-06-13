@@ -17,11 +17,8 @@ import raf.si.racunovodstvo.nabavka.utils.SearchUtil;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnCreate;
 import raf.si.racunovodstvo.nabavka.validation.groups.OnUpdate;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-
-import static org.mockito.ArgumentMatchers.any;
 
 @CrossOrigin
 @RestController

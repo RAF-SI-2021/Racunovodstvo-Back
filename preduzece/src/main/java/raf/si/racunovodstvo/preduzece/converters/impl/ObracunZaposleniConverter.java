@@ -21,7 +21,6 @@ public class ObracunZaposleniConverter implements IConverter<ObracunZaposleniReq
     private final IZaposleniService zaposleniService;
     private final IObracunService iObracunService;
 
-
     public ObracunZaposleniConverter(ModelMapper modelMapper, IZaposleniService zaposleniService, IObracunService iObracunService){
         this.modelMapper=modelMapper;
 

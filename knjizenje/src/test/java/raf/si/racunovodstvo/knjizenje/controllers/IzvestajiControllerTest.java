@@ -68,13 +68,13 @@ class IzvestajiControllerTest {
         Reports reports = Mockito.mock(Reports.class);
         List<Date> datumiOd = List.of(MOCK_DATUM_OD);
         List<Date> datumiDo = List.of(MOCK_DATUM_DO);
-        List<String> startsWith = List.of("5", "6");
+        List<String> startsWith = List.of("0", "1", "2", "3", "4");
         given(izvestajService.makeBilansTableReport(MOCK_PREDUZECE_ID,
                                                     MOCK_TOKEN,
                                                     MOCK_TITLE,
                                                     datumiOd,
                                                     datumiDo,
-                                                    startsWith)).willReturn(reports);
+                                                    startsWith,false)).willReturn(reports);
         given(reports.getReport()).willReturn(expected);
 
         byte[] result =
@@ -89,13 +89,14 @@ class IzvestajiControllerTest {
         Reports reports = Mockito.mock(Reports.class);
         List<Date> datumiOd = List.of(MOCK_DATUM_OD);
         List<Date> datumiDo = List.of(MOCK_DATUM_DO);
-        List<String> startsWith = List.of("0", "1", "2", "3", "4");
+
+        List<String> startsWith = List.of("5", "6");
         given(izvestajService.makeBilansTableReport(MOCK_PREDUZECE_ID,
                                                     MOCK_TOKEN,
                                                     MOCK_TITLE,
                                                     datumiOd,
                                                     datumiDo,
-                                                    startsWith)).willReturn(reports);
+                                                    startsWith,true)).willReturn(reports);
         given(reports.getReport()).willReturn(expected);
 
         byte[] result =
@@ -104,16 +105,4 @@ class IzvestajiControllerTest {
         assertEquals(expected, result);
     }
 
-    @GetMapping(path = "/uspeh", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<?> getBilansUspeha(@RequestParam Long preduzece,
-                                             @RequestParam String title,
-                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiOd,
-                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiDo,
-                                             @RequestHeader("Authorization") String token) throws DocumentException {
-        List<String> brojKontaStartsWith = List.of("0", "1", "2", "3", "4");
-
-        byte[] pdf =
-            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, brojKontaStartsWith).getReport();
-        return ResponseEntity.ok(pdf);
-    }
 }

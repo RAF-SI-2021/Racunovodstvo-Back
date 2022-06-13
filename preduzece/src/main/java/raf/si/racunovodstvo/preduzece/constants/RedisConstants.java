@@ -6,7 +6,7 @@ public final class RedisConstants {
     }
 
     public static final String PLATA_CACHE = "plataCache";
-    public static final String STAZ_CACHE = "stazKache";
+    public static final String STAZ_CACHE = "stazCache";
     public static final String ZAPOSLENI_CACHE = "zaposleniCache";
     public static final String PREDUZECE_CACHE = "preduzeceCache";
 }

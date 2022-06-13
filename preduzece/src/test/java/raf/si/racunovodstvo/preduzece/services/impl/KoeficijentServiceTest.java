@@ -60,7 +60,7 @@ class KoeficijentServiceTest {
     @Test
     void getCurrentKoeficijent() {
         Koeficijent koeficijent = new Koeficijent();
-        given(koeficijentRepository.findTopByOrderByDateDesc()).willReturn(koeficijent);
+        given(koeficijentRepository.findFirstByOrderByDateDesc()).willReturn(koeficijent);
 
         assertEquals(koeficijent, koeficijentService.getCurrentKoeficijent());
     }

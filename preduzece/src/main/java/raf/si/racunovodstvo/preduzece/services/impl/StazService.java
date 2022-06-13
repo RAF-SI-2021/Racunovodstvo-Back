@@ -22,7 +22,7 @@ public class StazService implements IStazService {
     }
 
     @Override
-    @CachePut(value = RedisConstants.STAZ_CACHE, key = "#staz.stazId")
+    @CachePut(value = RedisConstants.STAZ_CACHE, key = "#result.stazId")
     public <S extends Staz> S save(S staz) {
         return stazRepository.save(staz);
     }

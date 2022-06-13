@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.preduzece.model.Zaposleni;
+import raf.si.racunovodstvo.preduzece.responses.ZaposleniResponse;
 import raf.si.racunovodstvo.preduzece.services.impl.ZaposleniService;
 
 import javax.persistence.EntityNotFoundException;
@@ -40,8 +41,9 @@ class ZaposleniRestControllerTest {
 
     @Test
     void updateZaposleni() {
+        ZaposleniResponse zaposleniResponse = new ZaposleniResponse();
         Zaposleni zaposleni = new Zaposleni();
-        given(zaposleniService.findById(MOCK_ID)).willReturn(Optional.of(zaposleni));
+        given(zaposleniService.findZaposleniById(MOCK_ID)).willReturn(Optional.of(zaposleniResponse));
         ResponseEntity<?> responseEntity = zaposleniRestController.updateZaposleni(zaposleni, MOCK_ID);
 
         assertEquals(200, responseEntity.getStatusCodeValue());
@@ -50,7 +52,7 @@ class ZaposleniRestControllerTest {
     @Test
     void updateZaposleniException() {
         Zaposleni zaposleni = new Zaposleni();
-        given(zaposleniService.findById(MOCK_ID)).willReturn(Optional.empty());
+        given(zaposleniService.findZaposleniById(MOCK_ID)).willReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> zaposleniRestController.updateZaposleni(zaposleni, MOCK_ID));
     }
@@ -73,8 +75,8 @@ class ZaposleniRestControllerTest {
 
     @Test
     void getZaposleniId() {
-        Zaposleni zaposleni = new Zaposleni();
-        given(zaposleniService.findById(MOCK_ID)).willReturn(Optional.of(zaposleni));
+        ZaposleniResponse zaposleniResponse = new ZaposleniResponse();
+        given(zaposleniService.findZaposleniById(MOCK_ID)).willReturn(Optional.of(zaposleniResponse));
 
         ResponseEntity<?> responseEntity = zaposleniRestController.getZaposleniId(MOCK_ID);
 
@@ -83,7 +85,7 @@ class ZaposleniRestControllerTest {
 
     @Test
     void getZaposleniIdException() {
-        given(zaposleniService.findById(MOCK_ID)).willReturn(Optional.empty());
+        given(zaposleniService.findZaposleniById(MOCK_ID)).willReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> zaposleniRestController.getZaposleniId(MOCK_ID));
     }
 
@@ -97,8 +99,8 @@ class ZaposleniRestControllerTest {
 
     @Test
     void search2() {
-        List<Zaposleni> zaposleniList = new ArrayList<>();
-        zaposleniList.add(new Zaposleni());
+        List<ZaposleniResponse> zaposleniList = new ArrayList<>();
+        zaposleniList.add(new ZaposleniResponse());
         String search = "abc";
         given(zaposleniService.findAll(null)).willReturn(zaposleniList);
         ResponseEntity<?> responseEntity = zaposleniRestController.search(search);
@@ -108,8 +110,8 @@ class ZaposleniRestControllerTest {
 
     @Test
     void search3() {
-        List<Zaposleni> zaposleniList = new ArrayList<>();
-        zaposleniList.add(new Zaposleni());
+        List<ZaposleniResponse> zaposleniList = new ArrayList<>();
+        zaposleniList.add(new ZaposleniResponse());
         String search = "abc";
         Matcher mock = mock(Matcher.class);
         lenient().when(mock.find()).thenReturn(true);

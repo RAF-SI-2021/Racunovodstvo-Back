@@ -17,6 +17,8 @@ public class KalkulacijaReverseConverter implements IConverter<Kalkulacija, Kalk
 
     @Override
     public KalkulacijaResponse convert(Kalkulacija source) {
-        return modelMapper.map(source, KalkulacijaResponse.class);
+        KalkulacijaResponse kalkulacija = modelMapper.map(source, KalkulacijaResponse.class);
+        kalkulacija.setProdajnaVrednost(source.getProdajnaCena());
+        return kalkulacija;
     }
 }

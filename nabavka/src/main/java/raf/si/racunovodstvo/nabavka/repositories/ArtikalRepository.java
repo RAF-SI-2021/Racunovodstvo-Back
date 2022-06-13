@@ -9,7 +9,7 @@ import raf.si.racunovodstvo.nabavka.model.Artikal;
 
 public interface ArtikalRepository extends JpaRepository<Artikal, Long> {
 
-    @Query("select ar from Artikal ar where ar.baznaKonverzijaKalkulacija.id = :id")
+    @Query("select ar from artikal ar where ar.baznaKonverzijaKalkulacija.id = :id")
     Page<Artikal> findAllByBaznaKonverzijaKalkulacijaId(Pageable pageable, Long id);
 
     Page<Artikal> findAll(Specification<Artikal> spec, Pageable pageSort);

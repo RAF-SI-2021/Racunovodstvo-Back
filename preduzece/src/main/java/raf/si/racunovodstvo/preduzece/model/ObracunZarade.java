@@ -5,12 +5,15 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
+import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@Entity(name = "obracun_zarade")
 @Getter
 @Setter
-public class ObracunZarade {
+public class ObracunZarade implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long obracunZaradeId;

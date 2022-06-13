@@ -21,9 +21,9 @@ public interface PlataRepository extends JpaRepository<Plata, Long> {
 
     List<Plata> findAll(Specification<Plata> spec);
 
-    @Query("select p from Plata p where p.zaposleni = :zaposleni and (:datum >= p.datumOd and (p.datumDo is null or :datum <= p.datumDo))")
+    @Query("select p from plata p where p.zaposleni = :zaposleni and (:datum >= p.datumOd and (p.datumDo is null or :datum <= p.datumDo))")
     Plata findPlatabyDatumAndZaposleni(Date datum, Zaposleni zaposleni);
 
-    @Query("select p from Plata p where p.zaposleni.statusZaposlenog = :statusZaposlenog and (:datum >= p.datumOd and (p.datumDo is null or :datum <= p.datumDo))")
+    @Query("select p from plata p where p.zaposleni.statusZaposlenog = :statusZaposlenog and (:datum >= p.datumOd and (p.datumDo is null or :datum <= p.datumDo))")
     List<Plata> findPlataByDatumAndStatusZaposlenog(Date datum, StatusZaposlenog statusZaposlenog);
 }

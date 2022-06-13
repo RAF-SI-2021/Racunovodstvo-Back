@@ -3,6 +3,8 @@ package raf.si.racunovodstvo.knjizenje.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import java.util.List;
 
@@ -15,7 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 
-@Entity
+@Entity(name = "kontna_grupa")
 @Getter
 @Setter
 public class KontnaGrupa {
@@ -30,8 +32,13 @@ public class KontnaGrupa {
     @NotBlank(message = "Naziv konta je obavezan")
     private String nazivKonta;
     @JsonIgnore
-    @OneToMany(mappedBy = "kontnaGrupa", fetch =  FetchType.EAGER)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "kontnaGrupa")
     private List<Konto> konto;
+    @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "kontnaGrupa")
+    private List<BazniKonto> bazniKonto;
 
 
 }

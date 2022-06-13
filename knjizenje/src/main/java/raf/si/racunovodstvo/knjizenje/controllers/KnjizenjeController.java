@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -52,6 +53,15 @@ public class KnjizenjeController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createDnevnikKnjizenja(@Valid @RequestBody Knjizenje dnevnikKnjizenja) {
+
+        boolean invalidKonto =
+            dnevnikKnjizenja.getKonto() != null && dnevnikKnjizenja.getKonto()
+                                                                   .stream()
+                                                                   .anyMatch(konto -> konto.getKontnaGrupa().getBrojKonta().length() < 3);
+
+        if (invalidKonto) {
+            throw new PersistenceException("Moguće je vršiti knjiženje samo na konta sa 3 ili više cifre.");
+        }
         return ResponseEntity.ok(knjizenjaService.save(dnevnikKnjizenja));
     }
 
@@ -101,6 +111,10 @@ public class KnjizenjeController {
         return ResponseEntity.ok(knjizenjaService.findAllKnjizenjeResponse());
     }
 
+    @GetMapping(value = "/{id}/kontos", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getKontoByKnjizenjeId(@PathVariable Long knjizenjeId) {
+        return ResponseEntity.ok(knjizenjaService.findKontoByKnjizenjeId(knjizenjeId));
+    }
 
     @GetMapping(value = "/analitickeKartice", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AnalitickaKarticaResponse>> getAnalitickeKartice(

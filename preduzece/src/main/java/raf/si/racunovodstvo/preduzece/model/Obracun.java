@@ -6,13 +6,15 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-@Entity
+@Entity(name = "obracun")
 @Getter
 @Setter
-public class Obracun {
+public class Obracun implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +22,12 @@ public class Obracun {
     @Column(nullable = false)
     private String naziv;
     @Column
-    private String sifraTransakcije;
+    private Long sifraTransakcije;
     @Column(nullable = false)
     private Date datumObracuna;
     @OneToMany(mappedBy = "obracun")
     @Cascade(CascadeType.ALL)
     private List<ObracunZaposleni> obracunZaposleniList;
+    @Column
+    boolean obradjen;
 }

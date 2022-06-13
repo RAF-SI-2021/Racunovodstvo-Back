@@ -37,6 +37,6 @@ public class KoeficijentService implements IService<Koeficijent, Long> {
     }
 
     public Koeficijent getCurrentKoeficijent() {
-        return this.koeficijentRepository.findTopByOrderByDateDesc();
+        return this.koeficijentRepository.findFirstByOrderByDateDesc();
     }
 }

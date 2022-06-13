@@ -3,6 +3,7 @@ package raf.si.racunovodstvo.preduzece.jobs;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.preduzece.model.ObracunZaposleni;
 import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
 
 import java.time.DateTimeException;
@@ -15,8 +16,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class ObracunZaradeJob {
+public class  ObracunZaradeJob {
     final ObracunZaposleniService obracunZaposleniService;
+
     private ZonedDateTime nextDate;
 
     /**
@@ -26,6 +28,19 @@ public class ObracunZaradeJob {
     private int dayOfMonth = JobConstants.DEFAULT_DAY_OF_MONTH;
 
     public void setDayOfMonth(int dayOfMonth) throws DateTimeException {
+
+        if(nextDate == null){
+
+            ZonedDateTime now = ZonedDateTime.now();
+
+            if (now.getDayOfMonth() >= dayOfMonth){
+                nextDate = now.plusMonths(1).withDayOfMonth(dayOfMonth);
+            }
+            else{
+                nextDate = now.withDayOfMonth(dayOfMonth);
+            }
+
+        }
         YearMonth yearMonth = YearMonth.of(nextDate.getYear(), nextDate.getMonthValue());
         if (yearMonth.lengthOfMonth() >= dayOfMonth)
             this.dayOfMonth = dayOfMonth;
@@ -34,6 +49,12 @@ public class ObracunZaradeJob {
                         + " nije validan za mesec koji ima ["
                         + yearMonth.lengthOfMonth()
                         + "] u sledecoj iteraciji job-a.");
+    }
+    @Getter
+    private long sifraTransakcijeId;
+
+    public void setSifraTransakcijeId(long sifraTransakcijeId) {
+        this.sifraTransakcijeId = sifraTransakcijeId;
     }
 
     @Autowired
@@ -51,7 +72,7 @@ public class ObracunZaradeJob {
                 nextDate = now.plusMonths(1).withDayOfMonth(dayOfMonth);
                 long delay = now.until(nextDate, ChronoUnit.MILLIS);
                 try {
-                    obracunZaposleniService.makeObracun(Date.from(now.toInstant()));
+                    obracunZaposleniService.makeObracun(Date.from(now.toInstant()), sifraTransakcijeId);
                 } finally {
                     executor.schedule(this, delay, TimeUnit.MILLISECONDS);
                 }

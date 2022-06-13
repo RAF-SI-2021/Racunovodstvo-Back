@@ -6,15 +6,17 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.util.List;
 
-@Entity
+@Entity(name = "permission")
 @Getter
 @Setter
-public class Permission implements GrantedAuthority {
+public class Permission implements GrantedAuthority, Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -24,6 +26,7 @@ public class Permission implements GrantedAuthority {
     private List<User> users;
 
     @Override
+    @JsonIgnore
     public String getAuthority() {
         return null;
     }

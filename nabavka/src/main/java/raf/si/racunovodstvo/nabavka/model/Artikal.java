@@ -14,7 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Inheritance
-@Entity
+@Entity(name = "artikal")
 @Getter
 @Setter
 public abstract class Artikal {

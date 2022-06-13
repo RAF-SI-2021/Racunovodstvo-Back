@@ -32,9 +32,8 @@ public class ArtikalConverter implements IConverter<ArtikalRequest, Artikal> {
             calculateCommonFields(kalkulacijaArtikal);
             calculateKalkulacijaFields(kalkulacijaArtikal);
 
-            Kalkulacija kalkulacija = iKalkulacijaService.increaseNabavnaAndProdajnaCena(source.getKonverzijaKalkulacijaId(),
-                                                                                         kalkulacijaArtikal.getUkupnaNabavnaVrednost(),
-                                                                                         kalkulacijaArtikal.getUkupnaProdajnaVrednost());
+            Kalkulacija kalkulacija =
+                iKalkulacijaService.increaseNabavnaAndProdajnaCena(source.getKonverzijaKalkulacijaId(), kalkulacijaArtikal);
 
             kalkulacijaArtikal.setBaznaKonverzijaKalkulacija(kalkulacija);
             return kalkulacijaArtikal;
@@ -42,7 +41,7 @@ public class ArtikalConverter implements IConverter<ArtikalRequest, Artikal> {
             KonverzijaArtikal konverzijaArtikal = modelMapper.map(source, KonverzijaArtikal.class);
             calculateCommonFields(konverzijaArtikal);
 
-            Konverzija konverzija = iKonverzijaService.increaseNabavnaCena(source.getKonverzijaKalkulacijaId(), konverzijaArtikal.getUkupnaNabavnaVrednost());
+            Konverzija konverzija = iKonverzijaService.increaseNabavnaCena(source.getKonverzijaKalkulacijaId(), konverzijaArtikal);
             konverzijaArtikal.setBaznaKonverzijaKalkulacija(konverzija);
 
             return konverzijaArtikal;
@@ -58,7 +57,7 @@ public class ArtikalConverter implements IConverter<ArtikalRequest, Artikal> {
     }
 
     private void calculateCommonFields(Artikal artikal) {
-        artikal.setRabat(artikal.getNabavnaCena() * (artikal.getRabatProcenat()/100));
+        artikal.setRabat(artikal.getNabavnaCena() * (artikal.getRabatProcenat() / 100));
         artikal.setNabavnaCenaPosleRabata(artikal.getNabavnaCena() - artikal.getRabat());
         artikal.setUkupnaNabavnaVrednost(artikal.getNabavnaCenaPosleRabata() * artikal.getKolicina());
     }

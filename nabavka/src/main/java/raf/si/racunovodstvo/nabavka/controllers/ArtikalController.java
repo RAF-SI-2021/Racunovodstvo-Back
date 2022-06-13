@@ -43,6 +43,24 @@ public class ArtikalController {
         this.searchUtil = new SearchUtil<>();
     }
 
+    @GetMapping(value = "/kalkulacija", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<ArtikalResponse>> findAllKalkulacijaArtikal(
+        @RequestParam(name = "search", required = false) String search,
+        @RequestParam(defaultValue = ApiUtil.DEFAULT_PAGE) @Min(ApiUtil.MIN_PAGE) Integer page,
+        @RequestParam(defaultValue = ApiUtil.DEFAULT_SIZE) @Min(ApiUtil.MIN_SIZE) @Max(ApiUtil.MAX_SIZE) Integer size,
+        @RequestParam(defaultValue = "sifraArtikla") String[] sort
+    ) {
+        Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
+
+        if (search == null) {
+            return ResponseEntity.ok(this.iArtikalService.findAllKalkulacijaArtikli(pageSort));
+        }
+
+        Specification<Artikal> spec = searchUtil.getSpec(search);
+        Page<ArtikalResponse> result = iArtikalService.findAllKalkulacijaArtikli(spec, pageSort);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<ArtikalResponse>> findAll(
         @RequestParam(name = "search", required = false) String search,

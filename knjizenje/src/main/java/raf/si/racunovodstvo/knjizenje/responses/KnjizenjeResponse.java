@@ -6,6 +6,7 @@ import java.util.Date;
 
 @Data
 public class KnjizenjeResponse {
+
     Long knjizenjeId;
     String brojNaloga;
     Date datumKnjizenja;

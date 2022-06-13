@@ -3,10 +3,11 @@ package raf.si.racunovodstvo.nabavka.responses;
 import lombok.Data;
 import raf.si.racunovodstvo.nabavka.model.IstorijaProdajneCene;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class ArtikalResponse {
+public class ArtikalResponse implements Serializable {
 
     private Long artikalId;
     private String sifraArtikla;

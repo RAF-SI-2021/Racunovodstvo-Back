@@ -11,7 +11,7 @@ services:
       - racunovodstvo
 
   gateway:
-    image: ghcr.io/raf-si-2021/racunovodstvo-gateway:latest
+    image: gateway-test
     hostname: gateway
     restart: always
     ports:
@@ -153,14 +153,18 @@ services:
       - gateway
 
   nabavka_service:
-    image: racunovodstvo/repo:nabavka
+    image: nabavka-test
     hostname: nabavka
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
-      MYSQL_HOST: mysql_db
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
+      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
+      REDIS_HOST: redis_db
+      REDIS_PORT: 6379
       REGISTRY_HOST: eureka
     ports:
       - "8084:8080"

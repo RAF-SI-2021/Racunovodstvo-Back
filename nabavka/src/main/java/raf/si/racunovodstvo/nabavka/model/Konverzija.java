@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
-@Entity
+@Entity(name = "konverzija")
 @Getter
 @Setter
 public class Konverzija extends BaznaKonverzijaKalkulacija {

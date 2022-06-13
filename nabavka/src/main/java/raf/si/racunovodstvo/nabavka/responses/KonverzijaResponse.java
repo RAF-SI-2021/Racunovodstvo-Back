@@ -2,11 +2,12 @@ package raf.si.racunovodstvo.nabavka.responses;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Data
-public class KonverzijaResponse {
+public class KonverzijaResponse implements Serializable {
 
     private Long konverzijaId;
     private String brojKonverzije;

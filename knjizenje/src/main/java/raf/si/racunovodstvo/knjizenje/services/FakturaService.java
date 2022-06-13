@@ -1,5 +1,6 @@
 package raf.si.racunovodstvo.knjizenje.services;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -13,6 +14,7 @@ import raf.si.racunovodstvo.knjizenje.model.Faktura;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipDokumenta;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
 import raf.si.racunovodstvo.knjizenje.repositories.FakturaRepository;
+import raf.si.racunovodstvo.knjizenje.responses.FakturaResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.IFakturaService;
 import raf.si.racunovodstvo.knjizenje.utils.FakturaUtil;
 import raf.si.racunovodstvo.knjizenje.utils.Utils;
@@ -26,17 +28,19 @@ import java.util.Optional;
 public class FakturaService implements IFakturaService {
 
     private final FakturaRepository fakturaRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public FakturaService(FakturaRepository fakturaRepository) {
+    public FakturaService(FakturaRepository fakturaRepository, ModelMapper modelMapper) {
         this.fakturaRepository = fakturaRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public List<Faktura> findAll(){
+    public List<Faktura> findAll() {
         return fakturaRepository.findAll();
     }
 
-    public List<Faktura> findAll(Specification<Faktura> spec){
+    public List<Faktura> findAll(Specification<Faktura> spec) {
         return fakturaRepository.findAll(spec);
     }
 
@@ -61,6 +65,18 @@ public class FakturaService implements IFakturaService {
         return sume;
     }
 
+    @Override
+    @Cacheable(value = RedisConstants.FAKTURA_CACHE, key = "#id")
+    public Optional<FakturaResponse> findFakturaById(Long id) {
+        return findById(id).map(faktura -> modelMapper.map(faktura, FakturaResponse.class));
+    }
+
+    @Override
+    @CachePut(value = RedisConstants.FAKTURA_CACHE, key = "#result.dokumentId")
+    public FakturaResponse saveFaktura(Faktura faktura) {
+        return modelMapper.map(save(faktura), FakturaResponse.class);
+    }
+
     private Double calculateSumPorez(TipFakture tipFakture) {
         List<Double> fakture = fakturaRepository.findPorezForTipFakture(tipFakture);
         return Utils.sum(fakture);
@@ -81,28 +97,24 @@ public class FakturaService implements IFakturaService {
         return Utils.sum(fakture);
     }
 
-    @Cacheable(value = RedisConstants.FAKTURA_CACHE, key = "#id")
-    public Optional<Faktura> findById(Long id){
+    public Optional<Faktura> findById(Long id) {
         return fakturaRepository.findByDokumentId(id);
     }
 
-    @CachePut(value = RedisConstants.FAKTURA_CACHE, key = "#faktura.dokumentId")
-    public Faktura save(Faktura faktura){
+    public Faktura save(Faktura faktura) {
         Double prodajnaVrednost = faktura.getProdajnaVrednost();
         Double rabatProcenat = faktura.getRabatProcenat();
 
         Double porezProcenat = faktura.getPorezProcenat();
 
-
-
         Double rabat = 0.0;
-        if(rabatProcenat != null){
+        if (rabatProcenat != null) {
             rabat = FakturaUtil.calculateRabat(prodajnaVrednost, rabatProcenat);
 
         }
 
         Double porez = 0.0;
-        if(porezProcenat != null){
+        if (porezProcenat != null) {
             porez = FakturaUtil.calculatePorez(prodajnaVrednost, rabat, porezProcenat);
         }
 

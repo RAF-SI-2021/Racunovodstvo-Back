@@ -17,7 +17,6 @@ public class KalkulacijaConverter implements IConverter<KalkulacijaRequest, Kalk
 
     @Override
     public Kalkulacija convert(KalkulacijaRequest source) {
-        // TODO izvuci Lokaciju iz source.getLokacijaId()
         return modelMapper.map(source, Kalkulacija.class);
     }
 }

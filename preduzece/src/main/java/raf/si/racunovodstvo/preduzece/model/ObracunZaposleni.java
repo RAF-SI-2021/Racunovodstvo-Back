@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,10 +15,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity(name = "obracun_zaposleni")
 @Getter
 @Setter
-public class ObracunZaposleni {
+public class ObracunZaposleni implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

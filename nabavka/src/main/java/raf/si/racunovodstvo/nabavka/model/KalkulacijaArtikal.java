@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 @Entity
 @Getter
@@ -31,6 +32,6 @@ public class KalkulacijaArtikal extends Artikal {
     private Double osnovica;
     @Column
     private Double ukupnaProdajnaVrednost;
-    @ElementCollection
-    private List<IstorijaProdajneCene> istorijaProdajneCene = new ArrayList<>();
+    @OneToMany
+    private List<IstorijaProdajneCene> istorijaProdajneCene;
 }

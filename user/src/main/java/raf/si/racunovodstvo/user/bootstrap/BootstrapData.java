@@ -52,12 +52,16 @@ public class BootstrapData implements CommandLineRunner {
         user1.setPassword(this.passwordEncoder.encode("user1"));
         user1.setFirstName("Petar");
         user1.setLastName("Petrovic");
+        user1.setEmail("ppetrovic@raf.rs");
+        user1.setPreduzeceId(1L);
 
         User user2 = new User();
         user2.setUsername("user2");
         user2.setPassword(this.passwordEncoder.encode("user2"));
         user2.setFirstName("Marko");
         user2.setLastName("Markovic");
+        user2.setEmail("mmarkovic@raf.rs");
+        user2.setPreduzeceId(2L);
 
         user1.setPermissions(user1Permissions);
 

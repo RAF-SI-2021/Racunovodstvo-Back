@@ -20,6 +20,6 @@ public interface ObracunZaposleniRepository extends JpaRepository<ObracunZaposle
 
     Page<ObracunZaposleni> findAll(Specification<ObracunZaposleni> spec, Pageable pageSort);
 
-    @Query("select oz from ObracunZaposleni oz where oz.zaposleni.statusZaposlenog = :statusZaposlenog")
+    @Query("select oz from obracun_zaposleni oz where oz.zaposleni.statusZaposlenog = :statusZaposlenog")
     List<ObracunZaposleni> findByStatusZaposlenog(StatusZaposlenog statusZaposlenog);
 }

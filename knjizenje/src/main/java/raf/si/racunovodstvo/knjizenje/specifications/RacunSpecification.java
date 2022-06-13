@@ -5,15 +5,19 @@ import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.knjizenje.exceptions.OperationNotSupportedException;
 import raf.si.racunovodstvo.knjizenje.model.Dokument;
 import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
+import raf.si.racunovodstvo.knjizenje.model.SifraTransakcije;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
+import raf.si.racunovodstvo.knjizenje.model.enums.TipTransakcije;
 import raf.si.racunovodstvo.knjizenje.relations.DateRelations;
 import raf.si.racunovodstvo.knjizenje.relations.DokumentRelations;
 import raf.si.racunovodstvo.knjizenje.relations.DoubleRelations;
 import raf.si.racunovodstvo.knjizenje.relations.KontnaGrupaRelations;
 import raf.si.racunovodstvo.knjizenje.relations.LongRelations;
 import raf.si.racunovodstvo.knjizenje.relations.RacunRelations;
+import raf.si.racunovodstvo.knjizenje.relations.SifraTransakcijeRelations;
 import raf.si.racunovodstvo.knjizenje.relations.StringRelations;
 import raf.si.racunovodstvo.knjizenje.relations.TipFaktureRelations;
+import raf.si.racunovodstvo.knjizenje.relations.TipTransakcijeRelations;
 
 import java.util.Date;
 import java.util.Objects;
@@ -51,6 +55,12 @@ public class RacunSpecification<T> implements Specification<T> {
         }
         if (TipFakture.class == keyType) {
             return new TipFaktureRelations<>(root, builder, key, val);
+        }
+        if (TipTransakcije.class == keyType) {
+            return new TipTransakcijeRelations<>(root, builder, key, val);
+        }
+        if (SifraTransakcije.class == keyType) {
+            return new SifraTransakcijeRelations<>(root, builder, key, val);
         }
         if (KontnaGrupa.class == keyType) {
             return new KontnaGrupaRelations<>(root, builder, key, val);

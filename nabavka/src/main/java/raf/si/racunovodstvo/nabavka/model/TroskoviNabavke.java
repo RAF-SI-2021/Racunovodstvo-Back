@@ -1,7 +1,10 @@
 package raf.si.racunovodstvo.nabavka.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,10 +15,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity(name = "troskovi_nabavke")
 @Getter
 @Setter
-public class TroskoviNabavke {
+public class TroskoviNabavke implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

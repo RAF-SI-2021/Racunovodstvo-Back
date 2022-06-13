@@ -27,7 +27,7 @@ public class KontnaGrupaService implements IKontnaGrupaService {
     }
 
     @Override
-    @CachePut(value = RedisConstants.KONTNA_GRUPA_CACHE, key = "#kontnaGrupa.kontnaGrupaId")
+    @CachePut(value = RedisConstants.KONTNA_GRUPA_CACHE, key = "#result.kontnaGrupaId")
     public KontnaGrupa save(KontnaGrupa kontnaGrupa) {
         return kontnaGrupaRepository.save(kontnaGrupa);
     }

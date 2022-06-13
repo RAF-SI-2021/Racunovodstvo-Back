@@ -6,20 +6,17 @@ import lombok.Setter;
 
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
-@Entity
+@Entity(name = "troskovni_centar")
 @Getter
 @Setter
 public class TroskovniCentar extends BazniCentar {
 
     @ManyToOne
-    @JoinColumn(name = "parentId", nullable = false)
+    @JoinColumn(name = "parentId")
     private TroskovniCentar parentTroskovniCentar;
     @JsonIgnore
-    @OneToMany(mappedBy = "parentTroskovniCentar")
+    @OneToMany(mappedBy = "parentTroskovniCentar", cascade = CascadeType.REMOVE)
     private List<TroskovniCentar> troskovniCentarList;
 }

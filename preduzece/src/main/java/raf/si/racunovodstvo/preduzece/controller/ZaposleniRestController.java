@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.preduzece.model.Zaposleni;
+import raf.si.racunovodstvo.preduzece.responses.ZaposleniResponse;
 import raf.si.racunovodstvo.preduzece.services.IZaposleniService;
 import raf.si.racunovodstvo.preduzece.specifications.RacunSpecificationsBuilder;
 
@@ -32,12 +33,12 @@ public class ZaposleniRestController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createZaposleni(@Valid @RequestBody Zaposleni zaposleni) {
-        return ResponseEntity.ok(iZaposleniService.save(zaposleni));
+        return ResponseEntity.ok(iZaposleniService.saveZaposleni(zaposleni));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateZaposleni(@Valid @RequestBody Zaposleni zaposleni,  @PathVariable Long id) {
-        if (iZaposleniService.findById(id).isPresent())
+        if (iZaposleniService.findZaposleniById(id).isPresent())
             return ResponseEntity.ok(iZaposleniService.updateZaposleni(zaposleni));
         throw new EntityNotFoundException();
     }
@@ -53,9 +54,9 @@ public class ZaposleniRestController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getZaposleniId(@PathVariable("id") Long id) {
-        Optional<Zaposleni> optionalZaposleni = iZaposleniService.findById(id);
+        Optional<ZaposleniResponse> optionalZaposleni = iZaposleniService.findZaposleniById(id);
         if (optionalZaposleni.isPresent()) {
-            return ResponseEntity.ok(iZaposleniService.findById(id));
+            return ResponseEntity.ok(optionalZaposleni.get());
         }
         throw new EntityNotFoundException();
     }
@@ -72,7 +73,7 @@ public class ZaposleniRestController {
 
         Specification<Zaposleni> spec = builder.build();
 
-        List<Zaposleni> result = iZaposleniService.findAll(spec);
+        List<ZaposleniResponse> result = iZaposleniService.findAll(spec);
 
         if (result.isEmpty()) {
             throw new EntityNotFoundException();

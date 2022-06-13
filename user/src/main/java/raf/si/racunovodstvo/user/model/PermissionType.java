@@ -1,11 +1,15 @@
 package raf.si.racunovodstvo.user.model;
 
 public enum PermissionType {
-    ADMIN("admin"),
+    PROFIL("profil"),
+    EVIDENCIJE("evidencije"),
+    NABAVKE("nabavke"),
+    IZVEŠTAJI("izvestaji"),
+    PRODAJA("prodaja"),
     FINANSIJSKA_OPERATIVA("finop"),
     FINANSIJSKO_KNJIGOVODSTVO("finknj"),
-    NABAVKA("nabavka"),
-    OBRACUN_ZARADE("obrza");
+    OBRACUN_ZARADE("obrza"),
+    ADMIN("admin");
 
     public final String label;
 

@@ -2,6 +2,7 @@ package raf.si.racunovodstvo.preduzece.services;
 
 import raf.si.racunovodstvo.preduzece.model.Obracun;
 
-public interface IObracunService extends IService<Obracun, Long>{
+public interface IObracunService extends IService<Obracun, Long> {
     void updateObracunZaradeNaziv(Long obracunZaradeId, String naziv);
+    Obracun obradiObracun(Long obracunId, String token);
 }

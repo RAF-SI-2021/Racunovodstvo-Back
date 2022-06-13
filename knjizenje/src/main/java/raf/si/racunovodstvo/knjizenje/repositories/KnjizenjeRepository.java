@@ -16,7 +16,7 @@ public interface KnjizenjeRepository extends JpaRepository<Knjizenje, Long> {
 
     Page<Knjizenje> findAll(Specification<Knjizenje> spec, Pageable pageSort);
 
-    @Query("select k from Knjizenje k"
+    @Query("select k from knjizenje k"
         + " join k.dokument d"
         + " join k.konto ko"
         + " join ko.kontnaGrupa kg"

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.preduzece.exceptions.OperationNotSupportedException;
 import raf.si.racunovodstvo.preduzece.model.Preduzece;
@@ -12,6 +13,7 @@ import raf.si.racunovodstvo.preduzece.model.Staz;
 import raf.si.racunovodstvo.preduzece.model.Zaposleni;
 import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
 import raf.si.racunovodstvo.preduzece.repositories.ZaposleniRepository;
+import raf.si.racunovodstvo.preduzece.responses.ZaposleniResponse;
 import raf.si.racunovodstvo.preduzece.specifications.RacunSpecification;
 import raf.si.racunovodstvo.preduzece.specifications.SearchCriteria;
 
@@ -36,6 +38,8 @@ class ZaposleniServiceTest {
     private ZaposleniRepository zaposleniRepository;
     @Mock
     private StazService stazService;
+    @Mock
+    private ModelMapper modelMapper;
 
     private static final Long MOCK_ID = 1L;
 
@@ -76,13 +80,17 @@ class ZaposleniServiceTest {
 
     @Test
     void testFindAll() {
-        List<Zaposleni> zaposleniList = new ArrayList<>();
+        Zaposleni zaposleni = new Zaposleni();
+        ZaposleniResponse zaposleniResponse = new ZaposleniResponse();
+        zaposleni.setZaposleniId(MOCK_ID);
+        List<Zaposleni> zaposleniList = new ArrayList<>(List.of(zaposleni));
         Specification<Zaposleni> specification =
                 new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_VALUE, MOCK_SEARCH_OPERATION));
 
         given(zaposleniRepository.findAll(specification)).willReturn(zaposleniList);
+        given(modelMapper.map(zaposleni, ZaposleniResponse.class)).willReturn(zaposleniResponse);
 
-        assertEquals(zaposleniList, zaposleniService.findAll(specification));
+        assertTrue(zaposleniService.findAll(specification).contains(zaposleniResponse));
     }
 
     @Test
@@ -94,12 +102,20 @@ class ZaposleniServiceTest {
         stazList.add(staz);
         zaposleni.setZaposleniId(MOCK_ID);
 
+        ZaposleniResponse expectedResponse = new ZaposleniResponse();
+        expectedResponse.setZaposleniId(MOCK_ID);
+        expectedResponse.setStatusZaposlenog(StatusZaposlenog.NEZAPOSLEN);
+
         zaposleni.setStaz(stazList);
         given(zaposleniRepository.findById(MOCK_ID)).willReturn(Optional.of(zaposleni));
         given(stazService.save(staz)).willReturn(staz);
         given(zaposleniRepository.save(zaposleni)).willReturn(zaposleni);
+        given(modelMapper.map(zaposleni, ZaposleniResponse.class)).willReturn(expectedResponse);
 
-        assertEquals(zaposleni, zaposleniService.otkazZaposleni(zaposleni));
+        ZaposleniResponse actualResponse = zaposleniService.otkazZaposleni(zaposleni);
+
+        assertEquals(expectedResponse.getZaposleniId(), actualResponse.getZaposleniId());
+        assertEquals(expectedResponse.getStatusZaposlenog(), actualResponse.getStatusZaposlenog());
     }
 
     @Test
@@ -145,17 +161,22 @@ class ZaposleniServiceTest {
         Zaposleni zaposlen = new Zaposleni();
         zaposlen.setZaposleniId(MOCK_ID);
         zaposlen.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
-
         Zaposleni nezaposlen = new Zaposleni();
         nezaposlen.setZaposleniId(MOCK_ID);
         nezaposlen.setStaz(new ArrayList<>());
         nezaposlen.setStatusZaposlenog(StatusZaposlenog.NEZAPOSLEN);
-
+        ZaposleniResponse expectedResponse = new ZaposleniResponse();
+        expectedResponse.setZaposleniId(MOCK_ID);
+        expectedResponse.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         given(zaposleniRepository.findById(MOCK_ID)).willReturn(Optional.of(nezaposlen));
         given(stazService.save(any(Staz.class))).willReturn(new Staz());
         given(zaposleniRepository.save(zaposlen)).willReturn(zaposlen);
+        given(modelMapper.map(zaposlen, ZaposleniResponse.class)).willReturn(expectedResponse);
 
-        assertEquals(zaposlen, zaposleniService.updateZaposleni(zaposlen));
+        ZaposleniResponse actualResponse = zaposleniService.updateZaposleni(zaposlen);
+
+        assertEquals(expectedResponse.getZaposleniId(), actualResponse.getZaposleniId());
+        assertEquals(expectedResponse.getStatusZaposlenog(), actualResponse.getStatusZaposlenog());
     }
 
     @Test
@@ -169,10 +190,18 @@ class ZaposleniServiceTest {
         zaposlen2.setStaz(new ArrayList<>());
         zaposlen2.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
 
+        ZaposleniResponse expectedResponse = new ZaposleniResponse();
+        expectedResponse.setZaposleniId(MOCK_ID);
+        expectedResponse.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
+
         lenient().when(zaposleniRepository.findById(MOCK_ID)).thenReturn(Optional.of(zaposlen2));
         lenient().when(stazService.save(any(Staz.class))).thenReturn(new Staz());
         lenient().when(zaposleniRepository.save(zaposlen)).thenReturn(zaposlen);
+        given(modelMapper.map(zaposlen, ZaposleniResponse.class)).willReturn(expectedResponse);
 
-        assertEquals(zaposlen, zaposleniService.updateZaposleni(zaposlen));
+        ZaposleniResponse actualResponse = zaposleniService.updateZaposleni(zaposlen);
+
+        assertEquals(expectedResponse.getZaposleniId(), actualResponse.getZaposleniId());
+        assertEquals(expectedResponse.getStatusZaposlenog(), actualResponse.getStatusZaposlenog());
     }
 }

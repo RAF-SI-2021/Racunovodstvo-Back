@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-@Entity
+@Entity(name = "konto")
 @Getter
 @Setter
 public class Konto {
@@ -25,7 +25,7 @@ public class Konto {
     @Column
     private Double duguje;
     @ManyToOne
-    @JoinColumn(name = "kontnaGrupaId", nullable = false)
+    @JoinColumn(name = "kontnaGrupaId", nullable = false, updatable = false)
     private KontnaGrupa kontnaGrupa;
     @ManyToOne
     @JoinColumn(name = "bazniCentarId")

@@ -24,9 +24,9 @@ public class DokumentService implements IService<Dokument, Long> {
     }
 
     @Override
-    @CachePut(value = RedisConstants.DOKUMENT_CACHE, key = "#id.dokumentId")
-    public Dokument save(Dokument id) {
-        return dokumentRepository.save(id);
+    @CachePut(value = RedisConstants.DOKUMENT_CACHE, key = "#result.dokumentId")
+    public Dokument save(Dokument dokument) {
+        return dokumentRepository.save(dokument);
     }
 
     @Override

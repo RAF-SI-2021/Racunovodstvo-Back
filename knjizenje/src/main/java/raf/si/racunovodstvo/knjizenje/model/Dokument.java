@@ -18,7 +18,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
-@Entity
+@Entity(name = "dokument")
 @Getter
 @Setter
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -27,7 +27,7 @@ public class Dokument {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long dokumentId;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String brojDokumenta;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import raf.si.racunovodstvo.nabavka.model.enums.TipKalkulacije;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class KalkulacijaResponse {
+public class KalkulacijaResponse implements Serializable {
 
     private Long id;
     private Date datum;
@@ -23,5 +24,8 @@ public class KalkulacijaResponse {
     private Long dobavljacId;
     private LokacijaResponse lokacija;
     private String komentar;
+    private Double fakturnaCena;
+    private Double nabavnaVrednost;
+    private Double prodajnaVrednost;
     private List<TroskoviNabavkeResponse> troskoviNabavke;
 }

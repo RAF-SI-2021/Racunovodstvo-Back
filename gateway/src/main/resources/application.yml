@@ -5,25 +5,22 @@ spring:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
         - SetResponseHeader=Access-Control-Allow-Origin,${cors.config.origins}
       routes:
-      - id: preduzece
-        uri: lb://preduzece
-        predicates:
-          - Path=/api/preduzece/**, /api/koeficijenti/**, /api/zaposleni/**, /api/plata/**, /api/obracun_zarade/**, /api/obracun/**
-
-      - id: knjizenje
-        uri: lb://knjizenje
-        predicates:
-          - Path=/api/konto/**, /api/bilans/**, /api/glavna-knjiga/**, /api/faktura/**, /api/knjizenje/**, /api/izvestaji/**
-
-      - id: user
-        uri: lb://user
-        predicates:
-          - Path=/api/permissions/**, /api/users/**, /auth/**
-
-      - id: nabavka
-        uri: lb://nabavka
-        predicates:
-          - Path=/api/artikli/**, /api/kalkulacije/**, /api/konverzije/**
+        - id: preduzece
+          uri: lb://preduzece
+          predicates:
+            - Path=/api/preduzece/**, /api/koeficijenti/**, /api/zaposleni/**, /api/plata/**, /api/obracun_zarade/**, /api/obracun/**, /api/obracun_zarade_config/**, /api/obracun_zaposleni/**
+        - id: knjizenje
+          uri: lb://knjizenje
+          predicates:
+            - Path=/api/konto/**, /api/bilans/**, /api/glavna-knjiga/**, /api/faktura/**, /api/knjizenje/**, /api/izvestaji/**, /api/transakcije/**, /api/sifraTransakcije/**, /api/troskovni-centri/** , /api/profitni-centri/**, /api/povracaji/**
+        - id: user
+          uri: lb://user
+          predicates:
+            - Path=/api/permissions/**, /api/users/**, /auth/**
+        - id: nabavka
+          uri: lb://nabavka
+          predicates:
+            - Path=/api/artikli/**, /api/kalkulacije/**, /api/konverzije/**, /api/lokacije/**, /api/troskovi/**
   application:
     name: gateway
   main:

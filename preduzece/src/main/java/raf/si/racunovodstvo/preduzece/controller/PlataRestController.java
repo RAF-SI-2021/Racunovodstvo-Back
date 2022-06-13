@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import raf.si.racunovodstvo.preduzece.model.Plata;
 import raf.si.racunovodstvo.preduzece.requests.PlataRequest;
+import raf.si.racunovodstvo.preduzece.responses.PlataResponse;
 import raf.si.racunovodstvo.preduzece.services.impl.PlataService;
 import raf.si.racunovodstvo.preduzece.utils.SearchUtil;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+
 import java.util.Optional;
 
 @CrossOrigin
@@ -19,6 +21,7 @@ import java.util.Optional;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api")
 public class PlataRestController {
+
     private final PlataService plataService;
     private final SearchUtil<Plata> searchUtil;
 
@@ -35,37 +38,34 @@ public class PlataRestController {
     @GetMapping(value = "/plata", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPlata(@RequestParam(name = "search", required = false, defaultValue = "") String search) {
         Specification<Plata> spec = this.searchUtil.getSpec(search);
-        return ResponseEntity.ok(this.plataService.findAll(spec));
+        return ResponseEntity.ok(this.plataService.customFindAll(spec));
     }
 
     @GetMapping(value = "/plata/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllPlata() {
-        return ResponseEntity.ok(this.plataService.findAll());
+        return ResponseEntity.ok(this.plataService.customFindAll());
     }
 
     @GetMapping(value = "/plata/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPlataById(@PathVariable("id") Long plataId) {
-        Optional<Plata> optionalPlata = this.plataService.findById(plataId);
-        if (optionalPlata.isPresent())
+        Optional<PlataResponse> optionalPlata = this.plataService.customFindById(plataId);
+        if (optionalPlata.isPresent()) {
             return ResponseEntity.ok(optionalPlata.get());
+        }
         throw new EntityNotFoundException();
     }
 
     @PostMapping(value = "/plata", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> newPlata(@Valid @RequestBody PlataRequest plata) {
-        try {
-            return ResponseEntity.ok(this.plataService.save(plata));
-        } catch (Exception e) {
-            throw new EntityNotFoundException();
-        }
+        return ResponseEntity.ok(this.plataService.customSave(plata));
     }
 
     @PutMapping(value = "/plata", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> editPlata(@Valid @RequestBody PlataRequest plata) {
-        Optional<Plata> optionalPlata = this.plataService.findById(plata.getPlataId());
+        Optional<PlataResponse> optionalPlata = this.plataService.customFindById(plata.getPlataId());
         if (optionalPlata.isPresent()) {
             try {
-                return ResponseEntity.ok(this.plataService.save(plata));
+                return ResponseEntity.ok(this.plataService.customSave(plata));
             } catch (Exception e) {
                 throw new EntityNotFoundException();
             }
@@ -75,7 +75,7 @@ public class PlataRestController {
 
     @DeleteMapping(value = "/plata/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deletePlata(@PathVariable("id") Long plataId) {
-        Optional<Plata> optionalPlata = this.plataService.findById(plataId);
+        Optional<PlataResponse> optionalPlata = this.plataService.customFindById(plataId);
         if (optionalPlata.isPresent()) {
             this.plataService.deleteById(plataId);
             return ResponseEntity.ok().build();

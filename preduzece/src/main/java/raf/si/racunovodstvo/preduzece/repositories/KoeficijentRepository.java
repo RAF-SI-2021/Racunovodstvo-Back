@@ -6,5 +6,5 @@ import raf.si.racunovodstvo.preduzece.model.Koeficijent;
 
 @Repository
 public interface KoeficijentRepository extends JpaRepository<Koeficijent, Long> {
-    public Koeficijent findTopByOrderByDateDesc();
+    Koeficijent findFirstByOrderByDateDesc();
 }

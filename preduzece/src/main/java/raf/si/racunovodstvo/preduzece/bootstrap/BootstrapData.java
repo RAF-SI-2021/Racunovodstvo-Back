@@ -9,9 +9,10 @@ import raf.si.racunovodstvo.preduzece.model.enums.PolZaposlenog;
 import raf.si.racunovodstvo.preduzece.model.enums.RadnaPozicija;
 import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
 import raf.si.racunovodstvo.preduzece.repositories.*;
+import raf.si.racunovodstvo.preduzece.requests.ObracunZaposleniRequest;
+import raf.si.racunovodstvo.preduzece.services.impl.ObracunZaposleniService;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,21 +25,19 @@ public class BootstrapData implements CommandLineRunner {
     private final StazRepository stazRepository;
     private final PlataRepository plataRepository;
     private final KoeficijentRepository koeficijentRepository;
-    private final ObracunRepository obracunRepository;
-    private final ObracunZaposleniRepository obracunZaposleniRepository;
+    private final ObracunZaposleniService obracunZaposleniService;
 
     public BootstrapData(PreduzeceRepository preduzeceRepository,
                          ZaposleniRepository zaposleniRepository,
                          StazRepository stazRepository,
                          PlataRepository plataRepository,
-                         KoeficijentRepository koeficijentRepository, ObracunRepository obracunRepository, ObracunZaposleniRepository obracunZaposleniRepository) {
+                         KoeficijentRepository koeficijentRepository, ObracunZaposleniService obracunZaposleniService) {
         this.preduzeceRepository = preduzeceRepository;
         this.zaposleniRepository = zaposleniRepository;
         this.stazRepository = stazRepository;
         this.plataRepository = plataRepository;
         this.koeficijentRepository = koeficijentRepository;
-        this.obracunRepository = obracunRepository;
-        this.obracunZaposleniRepository = obracunZaposleniRepository;
+        this.obracunZaposleniService = obracunZaposleniService;
     }
 
     @Override
@@ -64,22 +63,11 @@ public class BootstrapData implements CommandLineRunner {
         this.preduzeceRepository.save(p2);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Staz staz = new Staz();
-        staz.setPocetakRada(simpleDateFormat.parse("08-08-2010"));
-        staz.setKrajRada(null);
-        stazRepository.save(staz);
-
-        Staz staz2 = new Staz();
-        staz2.setPocetakRada(new Date());
-        staz2.setKrajRada(null);
-        stazRepository.save(staz2);
-
-        List<Staz> stazevi = new ArrayList<>();
-        stazevi.add(staz);
 
         Zaposleni zaposleni = new Zaposleni();
         zaposleni.setIme("Marko");
         zaposleni.setPrezime("Markovic");
+        zaposleni.setPreduzece(p1);
         zaposleni.setPocetakRadnogOdnosa(new Date());
         zaposleni.setJmbg("1234567890123");
         zaposleni.setGrad("Beograd");
@@ -88,10 +76,11 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         zaposleni.setDatumRodjenja(new Date());
         zaposleni.setRadnaPozicija(RadnaPozicija.DIREKTOR);
-        zaposleni.setStaz(stazevi);
+        zaposleni.setPreduzece(p1);
         zaposleniRepository.save(zaposleni);
 
         Zaposleni zaposleni2 = new Zaposleni();
+        zaposleni2.setPreduzece(p1);
         zaposleni2.setIme("Petar");
         zaposleni2.setPrezime("Peric");
         zaposleni2.setPocetakRadnogOdnosa(new Date());
@@ -102,14 +91,32 @@ public class BootstrapData implements CommandLineRunner {
         zaposleni2.setStatusZaposlenog(StatusZaposlenog.ZAPOSLEN);
         zaposleni2.setDatumRodjenja(new Date());
         zaposleni2.setRadnaPozicija(RadnaPozicija.MENADZER);
-        zaposleni2.setStaz(List.of(staz2));
+        zaposleni2.setPreduzece(p1);
         zaposleniRepository.save(zaposleni2);
+
+        Staz staz = new Staz();
+        staz.setPocetakRada(simpleDateFormat.parse("08-08-2010"));
+        staz.setKrajRada(null);
+        staz.setZaposleni(zaposleni);
+        stazRepository.save(staz);
+
+        Staz staz2 = new Staz();
+        staz2.setPocetakRada(new Date());
+        staz2.setKrajRada(null);
+        staz2.setZaposleni(zaposleni2);
+        stazRepository.save(staz2);
 
         Plata plata = new Plata();
         plata.setNetoPlata(100000.0);
         plata.setZaposleni(zaposleni);
         plata.setDatumOd(new Date());
         plata.setDatumDo(null);
+        plata.setBrutoPlata(150000.0);
+        plata.setDoprinos1(1.2);
+        plata.setDoprinos2(1.2);
+        plata.setPorez(0.2);
+
+
         plataRepository.save(plata);
 
         Plata plata2 = new Plata();
@@ -117,6 +124,11 @@ public class BootstrapData implements CommandLineRunner {
         plata2.setZaposleni(zaposleni2);
         plata2.setDatumOd(new Date());
         plata2.setDatumDo(null);
+        plata.setBrutoPlata(150000.0);
+        plata.setDoprinos1(1.2);
+        plata.setDoprinos2(1.2);
+        plata.setPorez(0.2);
+
         plataRepository.save(plata2);
 
         Koeficijent koeficijent = new Koeficijent();
@@ -132,17 +144,7 @@ public class BootstrapData implements CommandLineRunner {
         koeficijent.setPoreskoOslobadjanje(23.4);
         koeficijentRepository.save(koeficijent);
 
-        Obracun obracun = new Obracun();
-        obracun.setNaziv("Obracun 1");
-        obracun.setDatumObracuna(new Date());
-        obracunRepository.save(obracun);
-
-        ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
-        obracunZaposleni.setObracun(obracun);
-        obracunZaposleni.setZaposleni(zaposleni);
-        obracunZaposleni.setNetoPlata(plata2.getNetoPlata());
-        obracunZaposleni.setUcinak(0.5);
-        obracunZaposleniRepository.save(obracunZaposleni);
+       obracunZaposleniService.makeObracun(new Date(), 1);
 
         log.info("Data loaded!");
     }

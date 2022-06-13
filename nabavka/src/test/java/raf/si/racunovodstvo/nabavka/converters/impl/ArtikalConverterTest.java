@@ -63,7 +63,7 @@ class ArtikalConverterTest {
         kalkulacijaArtikal.setPorezProcenat(20.0);
         kalkulacijaArtikal.setMarzaProcenat(20.0);
         source.setAktivanZaProdaju(true);
-        given(iKalkulacijaService.increaseNabavnaAndProdajnaCena(any(), any(), any())).willReturn(kalkulacija);
+        given(iKalkulacijaService.increaseNabavnaAndProdajnaCena(any(), any())).willReturn(kalkulacija);
         given(modelMapper.map(source, KalkulacijaArtikal.class)).willReturn(kalkulacijaArtikal);
 
         Artikal result = artikalConverter.convert(source);

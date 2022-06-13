@@ -1,9 +1,13 @@
 package raf.si.racunovodstvo.nabavka.services.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import raf.si.racunovodstvo.nabavka.constants.RedisConstants;
 import raf.si.racunovodstvo.nabavka.converters.IConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.KalkulacijaConverter;
 import raf.si.racunovodstvo.nabavka.converters.impl.KalkulacijaReverseConverter;
@@ -11,6 +15,7 @@ import raf.si.racunovodstvo.nabavka.model.Artikal;
 import raf.si.racunovodstvo.nabavka.model.Kalkulacija;
 import raf.si.racunovodstvo.nabavka.model.TroskoviNabavke;
 import raf.si.racunovodstvo.nabavka.model.KalkulacijaArtikal;
+import raf.si.racunovodstvo.nabavka.repositories.ArtikalRepository;
 import raf.si.racunovodstvo.nabavka.repositories.KalkulacijaRepository;
 import raf.si.racunovodstvo.nabavka.requests.KalkulacijaRequest;
 import raf.si.racunovodstvo.nabavka.responses.KalkulacijaResponse;
@@ -30,13 +35,16 @@ public class KalkulacijaService implements IKalkulacijaService {
     private final KalkulacijaRepository kalkulacijaRepository;
     private final IConverter<KalkulacijaRequest, Kalkulacija> kalkulacijaConverter;
     private final IConverter<Kalkulacija, KalkulacijaResponse> kalkulacijaReverseConverter;
+    private final ArtikalRepository artikalRepository;
 
     public KalkulacijaService(KalkulacijaRepository kalkulacijaRepository,
                               KalkulacijaConverter kalkulacijaConverter,
-                              KalkulacijaReverseConverter kalkulacijaReverseConverter) {
+                              KalkulacijaReverseConverter kalkulacijaReverseConverter,
+                              ArtikalRepository artikalRepository) {
         this.kalkulacijaRepository = kalkulacijaRepository;
         this.kalkulacijaConverter = kalkulacijaConverter;
         this.kalkulacijaReverseConverter = kalkulacijaReverseConverter;
+        this.artikalRepository = artikalRepository;
     }
 
     @Override
@@ -50,15 +58,23 @@ public class KalkulacijaService implements IKalkulacijaService {
     }
 
     @Override
-    public Kalkulacija increaseNabavnaAndProdajnaCena(Long kalkulacijaId, Double nabavnaCena, Double prodajnaCena) {
+    public Kalkulacija increaseNabavnaAndProdajnaCena(Long kalkulacijaId, KalkulacijaArtikal artikal) {
         Optional<Kalkulacija> optionalKalkulacija = findById(kalkulacijaId);
         if (optionalKalkulacija.isEmpty()) {
             throw new EntityNotFoundException();
         }
         Kalkulacija kalkulacija = optionalKalkulacija.get();
-
-        kalkulacija.setProdajnaCena(kalkulacija.getProdajnaCena() + prodajnaCena);
-        Double ukupnaFakturnaCena = kalkulacija.getFakturnaCena() + nabavnaCena;
+        Optional<Artikal> optionalArtikal =
+            artikal.getArtikalId() != null ? artikalRepository.findById(artikal.getArtikalId()) : Optional.empty();
+        double oldFakturnaCena = 0.0;
+        double oldProdajnaCena = 0.0;
+        if (optionalArtikal.isPresent()) {
+            KalkulacijaArtikal kalkulacijaArtikal = (KalkulacijaArtikal) optionalArtikal.get();
+            oldFakturnaCena = kalkulacijaArtikal.getUkupnaNabavnaVrednost();
+            oldProdajnaCena = kalkulacijaArtikal.getProdajnaCena();
+        }
+        kalkulacija.setProdajnaCena(kalkulacija.getProdajnaCena() - oldProdajnaCena + artikal.getProdajnaCena());
+        Double ukupnaFakturnaCena = kalkulacija.getFakturnaCena() - oldFakturnaCena + artikal.getUkupnaProdajnaVrednost();
         kalkulacija.setFakturnaCena(ukupnaFakturnaCena);
         Double ukupniTroskoviNabavke = kalkulacija.getTroskoviNabavke().stream().mapToDouble(TroskoviNabavke::getCena).sum();
         kalkulacija.setNabavnaVrednost(ukupniTroskoviNabavke + ukupnaFakturnaCena);
@@ -70,18 +86,28 @@ public class KalkulacijaService implements IKalkulacijaService {
         return kalkulacijaRepository.save(var1);
     }
 
+    @Override
+    @CachePut(value = RedisConstants.KALKULACIJA_CACHE, key = "#result.id")
     public KalkulacijaResponse save(KalkulacijaRequest kalkulacijaRequest) {
         Kalkulacija kalkulacija = kalkulacijaConverter.convert(kalkulacijaRequest);
         kalkulacija.calculateCene();
         return kalkulacijaReverseConverter.convert(kalkulacijaRepository.save(kalkulacija));
     }
 
+    @Override
+    @CachePut(value = RedisConstants.KALKULACIJA_CACHE, key = "#result.id")
     public KalkulacijaResponse update(KalkulacijaRequest kalkulacijaRequest) {
-        Optional<Kalkulacija> optionalKalkulacija = this.kalkulacijaRepository.findById(kalkulacijaRequest.getId());
+        Optional<KalkulacijaResponse> optionalKalkulacija = findKalkulacijaById(kalkulacijaRequest.getId());
         if (optionalKalkulacija.isEmpty()) {
             throw new EntityNotFoundException();
         }
         return this.save(kalkulacijaRequest);
+    }
+
+    @Override
+    @Cacheable(value = RedisConstants.KALKULACIJA_CACHE, key = "#id")
+    public Optional<KalkulacijaResponse> findKalkulacijaById(Long id) {
+        return kalkulacijaRepository.findById(id).map(kalkulacijaReverseConverter::convert);
     }
 
     @Override
@@ -99,8 +125,9 @@ public class KalkulacijaService implements IKalkulacijaService {
     }
 
     @Override
+    @CacheEvict(value = RedisConstants.KALKULACIJA_CACHE, key = "#var1")
     public void deleteById(Long var1) {
-        Optional<Kalkulacija> optionalKalkulacija = kalkulacijaRepository.findById(var1);
+        Optional<KalkulacijaResponse> optionalKalkulacija = findKalkulacijaById(var1);
         if (optionalKalkulacija.isEmpty()) {
             throw new EntityNotFoundException();
         }

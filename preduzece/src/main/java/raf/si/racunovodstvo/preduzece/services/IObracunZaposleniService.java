@@ -7,7 +7,7 @@ import raf.si.racunovodstvo.preduzece.model.ObracunZaposleni;
 import raf.si.racunovodstvo.preduzece.requests.ObracunZaposleniRequest;
 
 
-public interface IObracunZaposleniService extends IService<ObracunZaposleni, Long>{
+public interface IObracunZaposleniService extends IService<ObracunZaposleni, Long> {
 
     ObracunZaposleni save(ObracunZaposleniRequest obracunZaposleniRequest);
 

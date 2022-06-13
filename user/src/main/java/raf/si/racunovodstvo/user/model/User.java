@@ -5,12 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-public class User {
+public class User implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -18,18 +21,22 @@ public class User {
     private String firstName;
     @Column
     private String lastName;
-    @Column(unique = true)
+    @Column(unique=true)
     private String username;
+    @Column(unique=true)
+    private String email;
     @Column
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    @Column
+    private Long preduzeceId;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "users_permissions",
-            joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "userId"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "permission_id", referencedColumnName = "id"))
+        name = "users_permissions",
+        joinColumns = @JoinColumn(
+            name = "user_id", referencedColumnName = "userId"),
+        inverseJoinColumns = @JoinColumn(
+            name = "permission_id", referencedColumnName = "id"))
     private List<Permission> permissions;
 }

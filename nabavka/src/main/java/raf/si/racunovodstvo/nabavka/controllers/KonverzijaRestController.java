@@ -60,12 +60,14 @@ public class KonverzijaRestController {
                                     @RequestParam(defaultValue = "-id") String[] sort,
                                     @RequestHeader(name = "Authorization") String token) {
         Pageable pageSort = ApiUtil.resolveSortingAndPagination(page, size, sort);
-        Specification<Konverzija> spec = null;
+        /*
         if (!search.isBlank()) {
-            spec = searchUtil.getSpec(search);
+            Specification<Konverzija> spec = searchUtil.getSpec(search);
+            return ResponseEntity.ok(iKonverzijaService.findAll(spec, pageSort));
         }
-        Page<KonverzijaResponse> result = iKonverzijaService.findAll(spec, pageSort);
-        return ResponseEntity.ok(result);
+
+         */
+        return ResponseEntity.ok(iKonverzijaService.findAll(pageSort));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

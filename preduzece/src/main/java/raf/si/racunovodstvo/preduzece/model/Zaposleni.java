@@ -1,11 +1,13 @@
 package raf.si.racunovodstvo.preduzece.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import raf.si.racunovodstvo.preduzece.model.enums.PolZaposlenog;
 import raf.si.racunovodstvo.preduzece.model.enums.RadnaPozicija;
 import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -24,10 +26,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@Entity
+@Entity(name = "zaposleni")
 @Getter
 @Setter
-public class Zaposleni {
+public class Zaposleni implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +47,7 @@ public class Zaposleni {
     @Column(nullable = false)
     @NotBlank(message = "JMBG je obavezan")
     @Size(min = 13, max = 13)
-    @Pattern(regexp="^(0|[1-9][0-9]*)$")
+    @Pattern(regexp = "^(0|[1-9][0-9]*)$")
     private String jmbg;
     @Column(nullable = false)
     @NotNull(message = "Pol je obavezan")
@@ -63,8 +65,11 @@ public class Zaposleni {
     private String stepenObrazovanja;
     @Column
     private Long brojRadneKnjizice;
-    @OneToMany
+    @OneToMany(mappedBy = "zaposleni")
     private List<Staz> staz;
+    @JsonIgnore
+    @OneToMany(mappedBy = "zaposleni")
+    private List<Plata> plata;
     @Column
     @Enumerated(EnumType.STRING)
     private StatusZaposlenog statusZaposlenog;

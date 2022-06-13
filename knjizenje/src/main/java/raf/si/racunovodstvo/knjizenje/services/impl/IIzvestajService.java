@@ -14,5 +14,11 @@ public interface IIzvestajService {
                                   String title,
                                   List<Date> datumiOd,
                                   List<Date> datumiDo,
-                                  List<String> brojKontaStartsWith);
+                                  List<String> brojKontaStartsWith, boolean isBilansUspeha);
+
+    Reports makePromenaNaKapitalTableReport(int godina1, int godina2, String opis);
+
+    Reports makeStatickiIzvestajOTransakcijamaTableReport(long preduzeceId, String naslov, Date pocetniDatum, Date krajniDatum, String token);
+
+    Reports makeSifraTransakcijaTableReport(String title, String sort, String token);
 }
