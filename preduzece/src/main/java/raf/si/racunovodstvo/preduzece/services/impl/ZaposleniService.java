@@ -73,7 +73,7 @@ public class ZaposleniService implements IZaposleniService {
     }
 
     @Override
-    @CachePut(value = RedisConstants.ZAPOSLENI_CACHE, key = "#zaposleni.zaposleniId")
+    @CachePut(value = RedisConstants.ZAPOSLENI_CACHE, key = "#result.zaposleniId")
     public ZaposleniResponse otkazZaposleni(Zaposleni zaposleni) {
 
         Optional<Zaposleni> currZaposleni = zaposleniRepository.findById(zaposleni.getZaposleniId());
@@ -95,7 +95,7 @@ public class ZaposleniService implements IZaposleniService {
     }
 
     @Override
-    @CachePut(value = RedisConstants.ZAPOSLENI_CACHE, key = "#zaposleni.zaposleniId")
+    @CachePut(value = RedisConstants.ZAPOSLENI_CACHE, key = "#result.zaposleniId")
     public ZaposleniResponse updateZaposleni(Zaposleni zaposleni) {
 
         Optional<Zaposleni> currZaposleni = zaposleniRepository.findById(zaposleni.getZaposleniId());
