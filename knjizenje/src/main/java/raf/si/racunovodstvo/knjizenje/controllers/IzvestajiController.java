@@ -47,9 +47,8 @@ public class IzvestajiController {
                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiOd,
                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiDo,
                                              @RequestHeader("Authorization") String token) throws DocumentException {
-        List<String> brojKontaStartsWith = List.of("0", "1", "2", "3", "4");
         byte[] pdf =
-            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, brojKontaStartsWith,false).getReport();
+            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, false).getReport();
         return ResponseEntity.ok(pdf);
     }
 
@@ -59,18 +58,16 @@ public class IzvestajiController {
                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiOd,
                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiDo,
                                              @RequestHeader("Authorization") String token) throws DocumentException {
-        List<String> brojKontaStartsWith = List.of("5", "6");
-        byte[] pdf =
-            izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, brojKontaStartsWith,true).getReport();
+        byte[] pdf = izvestajService.makeBilansTableReport(preduzece, token, title, datumiOd, datumiDo, true).getReport();
         return ResponseEntity.ok(pdf);
     }
 
     @GetMapping(path = "/staticki_izvestaj_o_transakcijama", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<?> getStatickiIzvestajOTransakcijama(@RequestParam Long preduzece,
-                                             @RequestParam String title,
-                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datumOd,
-                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datumDo,
-                                             @RequestHeader("Authorization") String token) throws DocumentException {
+                                                               @RequestParam String title,
+                                                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datumOd,
+                                                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date datumDo,
+                                                               @RequestHeader("Authorization") String token) throws DocumentException {
 
         byte[] pdf =
             izvestajService.makeStatickiIzvestajOTransakcijamaTableReport(preduzece, title, datumOd, datumDo, token).getReport();
@@ -79,7 +76,7 @@ public class IzvestajiController {
 
     @GetMapping(path = "/sifra_transakcije", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<?> getSifraTransakcije(@RequestParam String title,
-                                                 @RequestParam(defaultValue = "+saldo")  String sort,
+                                                 @RequestParam(defaultValue = "+saldo") String sort,
                                                  @RequestHeader("Authorization") String token) throws DocumentException {
 
         byte[] pdf =

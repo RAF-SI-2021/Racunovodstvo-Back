@@ -10,7 +10,7 @@ RUN mkdir -p $HOME
 WORKDIR $HOME
 
 ADD . $HOME
-RUN --mount=type=cache,target=/root/.m2 mvn -Drevision=$VERSION -Dmaven.test.skip -f $HOME/pom.xml clean package
+RUN --mount=type=cache,target=/root/.m2 mvn -Drevision=$VERSION -Dmaven.test.skip -f $HOME/pom.xml clean package -P prod
 # Finalni stage koji ce zapravno da pokrene aplikaciju
 
 FROM adoptopenjdk:11-jre-hotspot as extractor

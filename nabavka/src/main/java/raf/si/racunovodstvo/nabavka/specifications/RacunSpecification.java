@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.nabavka.exceptions.OperationNotSupportedException;
 import raf.si.racunovodstvo.nabavka.relations.DateRelations;
 import raf.si.racunovodstvo.nabavka.relations.DoubleRelations;
+import raf.si.racunovodstvo.nabavka.relations.IntegerRelations;
 import raf.si.racunovodstvo.nabavka.relations.LongRelations;
 import raf.si.racunovodstvo.nabavka.relations.RacunRelations;
 import raf.si.racunovodstvo.nabavka.relations.StringRelations;
@@ -30,6 +31,9 @@ public class RacunSpecification<T> implements Specification<T> {
         throws OperationNotSupportedException {
         if (Date.class == keyType) {
             return new DateRelations<>(root, builder, key, val);
+        }
+        if (Integer.class == keyType) {
+            return new IntegerRelations<>(root, builder, key, val);
         }
         if (Long.class == keyType) {
             return new LongRelations<>(root, builder, key, val);

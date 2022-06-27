@@ -75,9 +75,9 @@ public class IzvestajService implements IIzvestajService {
                                          String title,
                                          List<Date> datumiOd,
                                          List<Date> datumiDo,
-                                         List<String> brojKontaStartsWith, boolean isBilansUspeha) {
+                                         boolean isBilansUspeha) {
 
-        Map<String, List<BilansResponse>> bilansResponseListMap = bilansService.findBilans(brojKontaStartsWith, datumiOd, datumiDo);
+        Map<String, List<BilansResponse>> bilansResponseListMap = bilansService.findBilans(!isBilansUspeha, datumiOd, datumiDo);
         BilansTableContent bilansTableContent = new BilansTableContent(bilansResponseListMap,isBilansUspeha);
 
         String preduzece = generatePreduzeceString(preduzeceId, token);
@@ -109,27 +109,6 @@ public class IzvestajService implements IIzvestajService {
     public Reports makeSifraTransakcijaTableReport(String title, String sort, String token) {
         Page<SifraTransakcijeResponse> sifraTransakcijeResponses = sifraTransakcijeService.search(searchUtil.getSpec("sifraTransakcijeId>0"), Pageable.unpaged(), token);
         return new SifraTransakcijaHelper(title, sifraTransakcijeResponses.getContent(), sort).makeReport();
-    }
-
-    private String generateSumsString(List<BilansResponse> bilansResponseList) {
-        Long brojStavki = 0L;
-        Double duguje = 0.0;
-        Double potrazuje = 0.0;
-        Double saldo = 0.0;
-        for (BilansResponse bilansResponse : bilansResponseList) {
-            brojStavki += bilansResponse.getBrojStavki();
-            duguje += bilansResponse.getDuguje();
-            potrazuje += bilansResponse.getPotrazuje();
-            saldo += bilansResponse.getSaldo();
-        }
-        return "Ukupno stavki: "
-            + brojStavki
-            + " | Duguje ukupno: "
-            + duguje
-            + " | Potrazuje ukupno: "
-            + potrazuje
-            + " | Saldo ukupno: "
-            + saldo;
     }
 
     private String generatePreduzeceString(Long preduzeceId, String token) {

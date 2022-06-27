@@ -11,7 +11,7 @@ services:
       - racunovodstvo
 
   gateway:
-    image: gateway-test
+    image: ghcr.io/raf-si-2021/racunovodstvo-gateway:latest
     hostname: gateway
     restart: always
     ports:
@@ -46,6 +46,7 @@ services:
       - "3306"
     volumes:
       - db:/bitnami/mysql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     environment:
       MYSQL_REPLICATION_MODE: master
       MYSQL_REPLICATION_USER: repl_user
@@ -75,6 +76,26 @@ services:
     networks:
       - racunovodstvo
 
+  mysql_slave_1:
+    image: docker.io/bitnami/mysql:8.0
+    hostname: mysql_slave_1
+    container_name: mysql_slave_1
+    env_file: .env
+    ports:
+      - "3306"
+    depends_on:
+      - mysql_db
+    environment:
+      MYSQL_REPLICATION_MODE: slave
+      MYSQL_REPLICATION_USER: repl_user
+      MYSQL_REPLICATION_PASSWORD: $MYSQL_REPLICATION_PASSWORD
+      MYSQL_DATABASE: $MYSQL_NAME
+      MYSQL_MASTER_HOST: mysql_db
+      MYSQL_MASTER_PORT_NUMBER: 3306
+      MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
+    networks:
+      - racunovodstvo
+
   user_service:
     image: ghcr.io/raf-si-2021/racunovodstvo-user:latest
     hostname: user
@@ -83,8 +104,9 @@ services:
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
-      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/user?serverTimezone=UTC
+      MYSQL_SLAVE0_HOST: jdbc:mysql://mysql_slave:3306/user?serverTimezone=UTC
+      MYSQL_SLAVE1_HOST: jdbc:mysql://mysql_slave_1:3306/user?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REDIS_HOST: redis_db
@@ -108,8 +130,9 @@ services:
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
-      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/knjizenje?serverTimezone=UTC
+      MYSQL_SLAVE0_HOST: jdbc:mysql://mysql_slave:3306/knjizenje?serverTimezone=UTC
+      MYSQL_SLAVE1_HOST: jdbc:mysql://mysql_slave_1:3306/knjizenje?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REDIS_HOST: redis_db
@@ -134,8 +157,9 @@ services:
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
-      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/preduzece?serverTimezone=UTC
+      MYSQL_SLAVE0_HOST: jdbc:mysql://mysql_slave:3306/preduzece?serverTimezone=UTC
+      MYSQL_SLAVE1_HOST: jdbc:mysql://mysql_slave_1:3306/preduzece?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REDIS_HOST: redis_db
@@ -153,14 +177,15 @@ services:
       - gateway
 
   nabavka_service:
-    image: nabavka-test
+    image: ghcr.io/raf-si-2021/racunovodstvo-nabavka:latest
     hostname: nabavka
     restart: unless-stopped
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/si?serverTimezone=UTC
-      MYSQL_SLAVE_HOST: jdbc:mysql://mysql_slave:3306/si?serverTimezone=UTC
+      MYSQL_MASTER_HOST: jdbc:mysql://mysql_db:3306/nabavka?serverTimezone=UTC
+      MYSQL_SLAVE0_HOST: jdbc:mysql://mysql_slave:3306/nabavka?serverTimezone=UTC
+      MYSQL_SLAVE1_HOST: jdbc:mysql://mysql_slave_1:3306/nabavka?serverTimezone=UTC
       MYSQL_MASTER_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_SLAVE_ROOT_PASSWORD: $MYSQL_PASSWORD
       REDIS_HOST: redis_db

@@ -34,11 +34,13 @@ class IzvestajiControllerTest {
     private static final String MOCK_TITLE = "MOCK_TITLE";
     private static final String MOCK_BROJ_KONTA_OD = "MOCK_OD";
     private static final String MOCK_BROJ_KONTA_DO = "MOCK_DO";
-    private static final String MOCK_NAME = "MOCK_NAME";
     private static final String MOCK_TOKEN = "MOCK_TOKEN";
+    private static final String MOCK_SORT = "+saldo";
     private static final Long MOCK_PREDUZECE_ID = 1L;
     private static final Date MOCK_DATUM_OD = new Date();
     private static final Date MOCK_DATUM_DO = new Date();
+    private static final Integer MOCK_GODINA_1 = 2020;
+    private static final Integer MOCK_GODINA_2 = 2022;
 
     @Test
     void getBrutoBilansTest() throws DocumentException {
@@ -68,13 +70,12 @@ class IzvestajiControllerTest {
         Reports reports = Mockito.mock(Reports.class);
         List<Date> datumiOd = List.of(MOCK_DATUM_OD);
         List<Date> datumiDo = List.of(MOCK_DATUM_DO);
-        List<String> startsWith = List.of("0", "1", "2", "3", "4");
         given(izvestajService.makeBilansTableReport(MOCK_PREDUZECE_ID,
                                                     MOCK_TOKEN,
                                                     MOCK_TITLE,
                                                     datumiOd,
                                                     datumiDo,
-                                                    startsWith,false)).willReturn(reports);
+                                                    false)).willReturn(reports);
         given(reports.getReport()).willReturn(expected);
 
         byte[] result =
@@ -90,18 +91,72 @@ class IzvestajiControllerTest {
         List<Date> datumiOd = List.of(MOCK_DATUM_OD);
         List<Date> datumiDo = List.of(MOCK_DATUM_DO);
 
-        List<String> startsWith = List.of("5", "6");
         given(izvestajService.makeBilansTableReport(MOCK_PREDUZECE_ID,
                                                     MOCK_TOKEN,
                                                     MOCK_TITLE,
                                                     datumiOd,
                                                     datumiDo,
-                                                    startsWith,true)).willReturn(reports);
+                                                    true)).willReturn(reports);
         given(reports.getReport()).willReturn(expected);
 
         byte[] result =
             (byte[]) izvestajiController.getBilansUspeha(MOCK_PREDUZECE_ID, MOCK_TITLE, datumiOd, datumiDo, MOCK_TOKEN)
                                         .getBody();
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void getStatickiIzvestajiOTransakcijamaTest() throws DocumentException {
+        byte[] expected = new byte[]{};
+        Reports reports = Mockito.mock(Reports.class);
+
+        given(izvestajService.makeStatickiIzvestajOTransakcijamaTableReport(MOCK_PREDUZECE_ID,
+                MOCK_TITLE,
+                MOCK_DATUM_OD,
+                MOCK_DATUM_DO,
+                MOCK_TOKEN
+                )).willReturn(reports);
+        given(reports.getReport()).willReturn(expected);
+
+        byte[] result =
+                (byte[]) izvestajiController.getStatickiIzvestajOTransakcijama(MOCK_PREDUZECE_ID, MOCK_TITLE, MOCK_DATUM_OD, MOCK_DATUM_DO, MOCK_TOKEN)
+                        .getBody();
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void getSifraTransakcijeTest() throws DocumentException {
+        byte[] expected = new byte[]{};
+        Reports reports = Mockito.mock(Reports.class);
+
+        given(izvestajService.makeSifraTransakcijaTableReport(
+                MOCK_TITLE,
+                MOCK_SORT,
+                MOCK_TOKEN
+        )).willReturn(reports);
+        given(reports.getReport()).willReturn(expected);
+
+        byte[] result =
+                (byte[]) izvestajiController.getSifraTransakcije(MOCK_TITLE, MOCK_SORT, MOCK_TOKEN)
+                        .getBody();
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void getPromenaNaKapitalTest() throws DocumentException {
+        byte[] expected = new byte[]{};
+        Reports reports = Mockito.mock(Reports.class);
+
+        given(izvestajService.makePromenaNaKapitalTableReport(
+                MOCK_GODINA_1,
+                MOCK_GODINA_2,
+                MOCK_TITLE
+        )).willReturn(reports);
+        given(reports.getReport()).willReturn(expected);
+
+        byte[] result =
+                (byte[]) izvestajiController.getPromenaNaKapital(MOCK_GODINA_1, MOCK_GODINA_2, MOCK_TITLE, MOCK_TOKEN)
+                        .getBody();
         assertEquals(expected, result);
     }
 

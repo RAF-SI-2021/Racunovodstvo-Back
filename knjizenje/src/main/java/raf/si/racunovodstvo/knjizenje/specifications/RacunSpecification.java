@@ -29,12 +29,10 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-
 @AllArgsConstructor
 public class RacunSpecification<T> implements Specification<T> {
 
     private SearchCriteria criteria;
-
 
     private RacunRelations<T> getRelations(Root<T> root, CriteriaBuilder builder, Class keyType, String key, String val)
         throws OperationNotSupportedException {
@@ -77,9 +75,15 @@ public class RacunSpecification<T> implements Specification<T> {
         // join radi samo sa equal trenutno (nezavisno od prosledjene operacije), treba generalizovati
         if (isJoiningRequired(criteria.getKey())) {
             Expression exception = getExpresionForJoinedTable(root);
-
             if(criteria.getKey().toLowerCase().contains("datum")){
-                return builder.equal(exception, new Date(Long.parseLong(criteria.getValue().toString())*1000));
+                switch (criteria.getOperation()) {
+                    case ">":
+                        return builder.greaterThanOrEqualTo(exception, new Date(Long.parseLong(criteria.getValue().toString())*1000));
+                    case "<":
+                        return builder.lessThanOrEqualTo(exception, new Date(Long.parseLong(criteria.getValue().toString())*1000));
+                    default:
+                        return builder.equal(exception, new Date(Long.parseLong(criteria.getValue().toString())*1000));
+                }
             }
             return builder.equal(exception, criteria.getValue().toString());
         }

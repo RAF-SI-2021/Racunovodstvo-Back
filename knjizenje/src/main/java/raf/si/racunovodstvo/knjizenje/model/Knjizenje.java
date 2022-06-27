@@ -30,7 +30,7 @@ public class Knjizenje {
     @NotNull(message = "Broj naloga je obavezan")
     private String brojNaloga;
     @Column(nullable = false)
-    @NotNull(message = "Datum je obavezna")
+    @NotNull(message = "Datum je obavezan")
     private Date datumKnjizenja;
     @ManyToOne
     @JoinColumn(name = "dokument")

@@ -1,6 +1,5 @@
 package raf.si.racunovodstvo.knjizenje.utils;
 
-
 import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.knjizenje.exceptions.OperationNotSupportedException;
 import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecificationsBuilder;
@@ -23,7 +22,7 @@ public class SearchUtil<T> {
             String[] matches = condition.split(String.format("((?=%s)|(?<=%s))",regexOperations,regexOperations));
 
             if(matches.length != 3 || !operations.contains(matches[1])){
-                throw new OperationNotSupportedException("Lose formatiran uslova "+ condition);
+                throw new OperationNotSupportedException("Lose formatiran uslov "+ condition);
             }
 
             builder.with(matches[0],matches[1],matches[2]);

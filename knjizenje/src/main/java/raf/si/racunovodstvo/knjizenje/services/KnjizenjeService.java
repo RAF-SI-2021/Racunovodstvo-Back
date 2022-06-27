@@ -73,11 +73,8 @@ public class KnjizenjeService implements IKnjizenjeService {
         Knjizenje newKnjizenje = new Knjizenje();
 
         Dokument dokument;
-        if(knjizenje.getDokument() != null && dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).isPresent()){
-            dokument = dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta()).get();
-        } else {
-            dokument = dokumentRepository.save(knjizenje.getDokument());
-        }
+        Optional<Dokument> optionalDokument = dokumentRepository.findByBrojDokumenta(knjizenje.getDokument().getBrojDokumenta());
+        dokument = optionalDokument.orElseGet(() -> dokumentRepository.save(knjizenje.getDokument()));
 
         newKnjizenje.setDatumKnjizenja(knjizenje.getDatumKnjizenja());
         newKnjizenje.setBrojNaloga(knjizenje.getBrojNaloga());
@@ -87,7 +84,7 @@ public class KnjizenjeService implements IKnjizenjeService {
         newKnjizenje = knjizenjeRepository.save(newKnjizenje);
 
         for(Konto konto : kontoList){
-            if(konto.getKontoId() == null || !kontoService.findById(konto.getKontoId()).isPresent()){
+            if(konto.getKontoId() == null || kontoService.findById(konto.getKontoId()).isEmpty()){
                 konto.setKnjizenje(newKnjizenje);
                 kontoService.save(konto);
             }

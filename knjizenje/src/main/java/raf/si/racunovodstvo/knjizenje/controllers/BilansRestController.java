@@ -25,16 +25,14 @@ public class BilansRestController {
     @GetMapping(value = "/bilansStanja", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBilansStanja(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiOd,
                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiDo) {
-        List<String> brojKontaStartsWith = new ArrayList<>(Arrays.asList("0", "1", "2", "3", "4"));
-        Map<String,List<BilansResponse>> response = bilansService.findBilans(brojKontaStartsWith, datumiOd, datumiDo);
+        Map<String,List<BilansResponse>> response = bilansService.findBilans(true, datumiOd, datumiDo);
         return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 
     @GetMapping(value = "/bilansUspeha", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBilansUspeha(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiOd,
                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<Date> datumiDo) {
-        List<String> brojKontaStartsWith = new ArrayList<>(Arrays.asList("5", "6"));
-        Map<String,List<BilansResponse>> response = bilansService.findBilans(brojKontaStartsWith, datumiOd, datumiDo);
+        Map<String,List<BilansResponse>> response = bilansService.findBilans(false, datumiOd, datumiDo);
         return response.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(response);
     }
 

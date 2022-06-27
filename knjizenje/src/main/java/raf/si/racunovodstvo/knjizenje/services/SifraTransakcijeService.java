@@ -6,14 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import raf.si.racunovodstvo.knjizenje.converters.IConverter;
-import raf.si.racunovodstvo.knjizenje.model.SifraTransakcije;
-import raf.si.racunovodstvo.knjizenje.model.SifraTransakcije;
+import raf.si.racunovodstvo.knjizenje.converters.impl.SifraTransakcijeConverter;
+import raf.si.racunovodstvo.knjizenje.converters.impl.SifraTransakcijeReverseConverter;
 import raf.si.racunovodstvo.knjizenje.model.SifraTransakcije;
 import raf.si.racunovodstvo.knjizenje.repositories.SifraTransakcijeRepository;
 import raf.si.racunovodstvo.knjizenje.requests.SifraTransakcijeRequest;
-import raf.si.racunovodstvo.knjizenje.requests.SifraTransakcijeRequest;
-import raf.si.racunovodstvo.knjizenje.responses.SifraTransakcijeResponse;
-import raf.si.racunovodstvo.knjizenje.responses.SifraTransakcijeResponse;
 import raf.si.racunovodstvo.knjizenje.responses.SifraTransakcijeResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.ISifraTransakcijeService;
 
@@ -30,8 +27,8 @@ public class SifraTransakcijeService implements ISifraTransakcijeService {
 
     @Autowired
     public SifraTransakcijeService(SifraTransakcijeRepository sifraTransakcijeRepository,
-                                   IConverter<SifraTransakcije, SifraTransakcijeResponse> sifraTransakcijeReverseConverter,
-                                   IConverter<SifraTransakcijeRequest, SifraTransakcije> sifraTransakcijeConverter) {
+                                   SifraTransakcijeReverseConverter sifraTransakcijeReverseConverter,
+                                   SifraTransakcijeConverter sifraTransakcijeConverter) {
         this.sifraTransakcijeRepository = sifraTransakcijeRepository;
         this.sifraTransakcijeReverseConverter = sifraTransakcijeReverseConverter;
         this.sifraTransakcijeConverter = sifraTransakcijeConverter;

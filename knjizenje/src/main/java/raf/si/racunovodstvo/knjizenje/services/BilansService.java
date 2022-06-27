@@ -22,7 +22,7 @@ public class BilansService implements IBilansService {
     }
 
 
-    private void addMissing( List<BilansResponse> list){
+    private void addMissing(List<BilansResponse> list) {
 
         List<BilansResponse> extendBilansList = new ArrayList<>();
         Set<String> presentBrojKonta = new HashSet<>();
@@ -32,32 +32,31 @@ public class BilansService implements IBilansService {
             int length = brojKonta.length();
             String start = length > 3 ? brojKonta.substring(0, 3) : brojKonta.substring(0, brojKonta.length() - 1);
 
-            while(start.length() > 0 && !presentBrojKonta.contains(start)){
+            while (start.length() > 0 && !presentBrojKonta.contains(start)) {
                 presentBrojKonta.add(start);
-                var br = new BilansResponse(0.0,0.0,0L, start, "");
+                var br = new BilansResponse(0.0, 0.0, 0L, start, "");
                 extendBilansList.add(br);
-                start =  start.substring(0, start.length() - 1);
+                start = start.substring(0, start.length() - 1);
             }
         });
 
         list.addAll(extendBilansList);
 
     }
+
     @Override
-    public Map<String,List<BilansResponse>> findBilans(List<String> startsWith, List<Date> datumiOd, List<Date> datumiDo) {
-        Map<String,List<BilansResponse>> bilansLists = new HashMap<>();
-
-
+    public Map<String, List<BilansResponse>> findBilans(boolean isStanje, List<Date> datumiOd, List<Date> datumiDo) {
+        Map<String, List<BilansResponse>> bilansLists = new HashMap<>();
 
         for (int i = 0; i < datumiDo.size() && i < datumiOd.size(); i++) {
-            Set<BilansResponse> bilansSet = new HashSet<>();
 
-            String period = periodToString(datumiOd.get(i),datumiDo.get(i));
-            // kontnaGrupaRepository.findAll().stream().forEach(kontnaGrupa -> System.out.println(kontnaGrupa.getBrojKonta()));
-            bilansSet.addAll(kontnaGrupaRepository.findAllStartingWith(startsWith, datumiOd.get(i), datumiDo.get(i)));
-            bilansLists.put(period,new ArrayList<>(bilansSet));
+            String period = periodToString(datumiOd.get(i), datumiDo.get(i));
+            Set<BilansResponse> bilansSet =
+                new HashSet<>(isStanje ? kontnaGrupaRepository.findAllBilansStanja(datumiOd.get(i), datumiDo.get(i))
+                                       : kontnaGrupaRepository.findAllBilansUspeha(datumiOd.get(i), datumiDo.get(i)));
+            bilansLists.put(period, new ArrayList<>(bilansSet));
         }
-        bilansLists.forEach((key,list) -> {
+        bilansLists.forEach((key, list) -> {
             addMissing(list);
             list.sort(Comparator.comparing(BilansResponse::getBrojKonta).reversed());
             sumBilans(list);
