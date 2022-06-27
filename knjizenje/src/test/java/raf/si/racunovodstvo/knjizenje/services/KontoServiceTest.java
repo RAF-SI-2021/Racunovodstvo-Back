@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
 import raf.si.racunovodstvo.knjizenje.converters.impl.KontoConverter;
+import raf.si.racunovodstvo.knjizenje.model.KontnaGrupa;
 import raf.si.racunovodstvo.knjizenje.model.Konto;
 import raf.si.racunovodstvo.knjizenje.repositories.KontoRepository;
 import raf.si.racunovodstvo.knjizenje.responses.GlavnaKnjigaResponse;
@@ -25,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
@@ -124,6 +127,24 @@ class KontoServiceTest {
         lenient().when(kontoConverter.convert(kontoList)).thenReturn(page);
 
         assertEquals(page, kontoService.findAllGlavnaKnjigaResponse());
+    }
 
+    @Test
+    void saveKonto() {
+        Konto k = Mockito.mock(Konto.class);
+        KontnaGrupa kg = Mockito.mock(KontnaGrupa.class);
+        given(k.getKontnaGrupa()).willReturn(kg);
+        given(kg.getBrojKonta()).willReturn("1234");
+        given(kontoRepository.save(k)).willReturn(k);
+        assertEquals(k, kontoService.save(k));
+    }
+
+    @Test
+    void saveKontoError() {
+        Konto k = Mockito.mock(Konto.class);
+        KontnaGrupa kg = Mockito.mock(KontnaGrupa.class);
+        given(k.getKontnaGrupa()).willReturn(kg);
+        given(kg.getBrojKonta()).willReturn("34");
+        assertThrows(RuntimeException.class, () -> kontoService.save(k));
     }
 }

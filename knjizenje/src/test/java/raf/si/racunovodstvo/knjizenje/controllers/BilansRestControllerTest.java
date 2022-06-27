@@ -37,7 +37,7 @@ class BilansRestControllerTest {
         bilansResponseListMap.put("",new ArrayList<>());
         bilansResponseListMap.get("").add(new BilansResponse(500.0, 500.0, 1L, "001", ""));
 
-        given(bilansService.findBilans(any(), any(List.class), any(List.class))).willReturn(bilansResponseListMap);
+        given(bilansService.findBilans(any(Boolean.class), any(List.class), any(List.class))).willReturn(bilansResponseListMap);
         given(bilansService.findBrutoBilans(any(String.class), any(String.class), any(Date.class), any(Date.class))).willReturn(bilansResponseListMap.get(""));
 
         ResponseEntity<?> responseEntity1 = bilansRestController.getBilansStanja(datumiOd, datumiDo);

@@ -111,27 +111,6 @@ public class IzvestajService implements IIzvestajService {
         return new SifraTransakcijaHelper(title, sifraTransakcijeResponses.getContent(), sort).makeReport();
     }
 
-    private String generateSumsString(List<BilansResponse> bilansResponseList) {
-        Long brojStavki = 0L;
-        Double duguje = 0.0;
-        Double potrazuje = 0.0;
-        Double saldo = 0.0;
-        for (BilansResponse bilansResponse : bilansResponseList) {
-            brojStavki += bilansResponse.getBrojStavki();
-            duguje += bilansResponse.getDuguje();
-            potrazuje += bilansResponse.getPotrazuje();
-            saldo += bilansResponse.getSaldo();
-        }
-        return "Ukupno stavki: "
-            + brojStavki
-            + " | Duguje ukupno: "
-            + duguje
-            + " | Potrazuje ukupno: "
-            + potrazuje
-            + " | Saldo ukupno: "
-            + saldo;
-    }
-
     private String generatePreduzeceString(Long preduzeceId, String token) {
         Preduzece preduzece = preduzeceFeignClient.getPreduzeceById(preduzeceId, token).getBody();
         if (preduzece != null) {

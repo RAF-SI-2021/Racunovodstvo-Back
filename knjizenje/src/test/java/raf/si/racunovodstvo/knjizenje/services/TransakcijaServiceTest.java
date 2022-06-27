@@ -16,12 +16,16 @@ import raf.si.racunovodstvo.knjizenje.converters.impl.TransakcijaConverter;
 import raf.si.racunovodstvo.knjizenje.converters.impl.TransakcijaReverseConverter;
 import raf.si.racunovodstvo.knjizenje.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.knjizenje.model.Preduzece;
+import raf.si.racunovodstvo.knjizenje.model.SifraTransakcije;
 import raf.si.racunovodstvo.knjizenje.model.Transakcija;
+import raf.si.racunovodstvo.knjizenje.repositories.SifraTransakcijeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.TransakcijaRepository;
+import raf.si.racunovodstvo.knjizenje.requests.ObracunTransakcijeRequest;
 import raf.si.racunovodstvo.knjizenje.requests.TransakcijaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.TransakcijaResponse;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,8 +38,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TransakcijaServiceTest {
@@ -57,6 +60,9 @@ class TransakcijaServiceTest {
 
     @Mock
     private Specification<Transakcija> specificationMock;
+
+    @Mock
+    private SifraTransakcijeRepository sifraTransakcijeRepository;
 
     private static final String MOCK_TOKEN = "MOCK_TOKEN";
     private static final String MOCK_PREDUZECE_NAZIV = "MOCK_NAZIV";
@@ -195,5 +201,21 @@ class TransakcijaServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> transakcijaService.deleteById(1L));
         then(transakcijaRepository).should(never()).deleteById(anyLong());
+    }
+
+    @Test
+    void obracunZaradeTransakcijeTest() {
+        List<Transakcija> transakcijeList = mock(List.class);
+        ObracunTransakcijeRequest r = new ObracunTransakcijeRequest();
+        r.setDatum(new Date());
+        r.setPreduzeceId(1L);
+        r.setIme("IME");
+        r.setSifraTransakcijeId(1L);
+        r.setPrezime("PREZIME");
+        r.setSifraZaposlenog("SIFRA");
+        List<ObracunTransakcijeRequest> list = List.of(r);
+        given(transakcijaRepository.saveAll(any(List.class))).willReturn(transakcijeList);
+        given(sifraTransakcijeRepository.findById(1L)).willReturn(Optional.of(Mockito.mock(SifraTransakcije.class)));
+        assertEquals(transakcijeList, transakcijaService.obracunZaradeTransakcije(list));
     }
 }

@@ -5,16 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
 import raf.si.racunovodstvo.knjizenje.converter.impl.KnjizenjeConverter;
-import raf.si.racunovodstvo.knjizenje.model.Dokument;
-import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
-import raf.si.racunovodstvo.knjizenje.model.Konto;
+import raf.si.racunovodstvo.knjizenje.model.*;
 import raf.si.racunovodstvo.knjizenje.repositories.DokumentRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
+import raf.si.racunovodstvo.knjizenje.requests.KnjizenjeRequest;
 import raf.si.racunovodstvo.knjizenje.responses.KnjizenjeResponse;
 import raf.si.racunovodstvo.knjizenje.specifications.RacunSpecification;
 import raf.si.racunovodstvo.knjizenje.specifications.SearchCriteria;
@@ -49,6 +49,10 @@ class KnjizenjeServiceTest {
     private KontoService kontoService;
     @Mock
     private KnjizenjeConverter knjizenjeConverter;
+    @Mock
+    private TroskovniCentarService troskovniCentarService;
+    @Mock
+    private ProfitniCentarService profitniCentarService;
 
     private Konto konto1;
 
@@ -204,5 +208,57 @@ class KnjizenjeServiceTest {
         lenient().when(knjizenjeConverter.convert(knjizenjeList)).thenReturn(page);
 
         assertEquals(page, knjizenjeService.findAll(specification, pageSort));
+    }
+
+    @Test
+    void saveTest() {
+        KnjizenjeRequest kr = Mockito.mock(KnjizenjeRequest.class);
+        Knjizenje knj = new Knjizenje();
+        Konto k = Mockito.mock(Konto.class);
+        Dokument d = Mockito.mock(Dokument.class);
+        given(kr.getKonto()).willReturn(List.of(k));
+        given(kr.getDokument()).willReturn(d);
+        given(d.getBrojDokumenta()).willReturn("BROJ");
+
+        knj.setDatumKnjizenja(kr.getDatumKnjizenja());
+        knj.setBrojNaloga(kr.getBrojNaloga());
+        knj.setKomentar(kr.getKomentar());
+        knj.setDokument(d);
+
+        given(dokumentRepository.findByBrojDokumenta("BROJ")).willReturn(Optional.of(d));
+        given(knjizenjeRepository.save(any(Knjizenje.class))).willReturn(knj);
+        given(troskovniCentarService.findById(kr.getBazniCentarId())).willReturn(Optional.of(new TroskovniCentar()));
+        given(profitniCentarService.findById(kr.getBazniCentarId())).willReturn(Optional.empty());
+
+        assertEquals(knj, knjizenjeService.save(kr));
+    }
+
+    @Test
+    void saveTest2() {
+        KnjizenjeRequest kr = Mockito.mock(KnjizenjeRequest.class);
+        Knjizenje knj = new Knjizenje();
+        Konto k = Mockito.mock(Konto.class);
+        Dokument d = Mockito.mock(Dokument.class);
+        given(kr.getKonto()).willReturn(List.of(k));
+        given(kr.getDokument()).willReturn(d);
+        given(d.getBrojDokumenta()).willReturn("BROJ");
+
+        knj.setDatumKnjizenja(kr.getDatumKnjizenja());
+        knj.setBrojNaloga(kr.getBrojNaloga());
+        knj.setKomentar(kr.getKomentar());
+        knj.setDokument(d);
+
+        given(dokumentRepository.findByBrojDokumenta("BROJ")).willReturn(Optional.of(d));
+        given(knjizenjeRepository.save(any(Knjizenje.class))).willReturn(knj);
+        given(troskovniCentarService.findById(kr.getBazniCentarId())).willReturn(Optional.empty());
+        given(profitniCentarService.findById(kr.getBazniCentarId())).willReturn(Optional.of(new ProfitniCentar()));
+
+        assertEquals(knj, knjizenjeService.save(kr));
+    }
+
+    @Test
+    void findKontoByKnjizenjeIdNotFoundTest() {
+        given(knjizenjeRepository.findById(MOCK_ID)).willReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> knjizenjeService.findKontoByKnjizenjeId(MOCK_ID));
     }
 }
