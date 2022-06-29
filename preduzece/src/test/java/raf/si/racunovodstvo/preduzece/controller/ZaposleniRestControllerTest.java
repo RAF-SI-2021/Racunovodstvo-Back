@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.preduzece.model.Zaposleni;
 import raf.si.racunovodstvo.preduzece.responses.ZaposleniResponse;
 import raf.si.racunovodstvo.preduzece.services.impl.ZaposleniService;
+import raf.si.racunovodstvo.preduzece.specifications.RacunSpecificationsBuilder;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;

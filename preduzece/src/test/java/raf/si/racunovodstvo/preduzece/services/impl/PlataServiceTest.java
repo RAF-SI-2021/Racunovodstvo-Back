@@ -6,12 +6,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.preduzece.model.Koeficijent;
 import raf.si.racunovodstvo.preduzece.model.Plata;
 import raf.si.racunovodstvo.preduzece.model.Zaposleni;
 import raf.si.racunovodstvo.preduzece.repositories.PlataRepository;
 import raf.si.racunovodstvo.preduzece.requests.PlataRequest;
+import raf.si.racunovodstvo.preduzece.responses.PlataResponse;
 import raf.si.racunovodstvo.preduzece.specifications.RacunSpecification;
 import raf.si.racunovodstvo.preduzece.specifications.SearchCriteria;
 
@@ -38,6 +40,8 @@ class PlataServiceTest {
     private KoeficijentService koeficijentService;
     @Mock
     private ZaposleniService zaposleniService;
+    @Mock
+    private ModelMapper modelMapper;
 
     private static final Long MOCK_ID = 1L;
     private static final Date MOCK_DATE = new Date();
@@ -162,5 +166,58 @@ class PlataServiceTest {
         given(plataRepository.findPlatabyDatumAndZaposleni(MOCK_DATE, zaposleni)).willReturn(plata);
 
         assertEquals(plata, plataService.findPlatabyDatumAndZaposleni(MOCK_DATE, zaposleni));
+    }
+
+    @Test
+    void customFindByIdTest(){
+        PlataResponse response = new PlataResponse();
+        Plata plata = new Plata();
+
+        given(plataRepository.findByPlataId(MOCK_ID)).willReturn(Optional.of(plata));
+        given(modelMapper.map(plata, PlataResponse.class)).willReturn(response);
+        assertEquals(response, plataService.customFindById(MOCK_ID).get());
+    }
+
+    @Test
+    void customSaveTest(){
+        PlataResponse response = new PlataResponse();
+        Zaposleni zaposleni = new Zaposleni();
+        zaposleni.setZaposleniId(MOCK_ID);
+        List<Plata> plataList = new ArrayList<>();
+
+        Plata plata = new Plata();
+        plata.setNetoPlata(100000.0);
+        plata.setZaposleni(zaposleni);
+        plata.setDatumOd(new Date());
+        plata.setDatumDo(null);
+        plataList.add(plata);
+
+        PlataRequest request = new PlataRequest(1L, 500.0, new Date(), MOCK_ID);
+
+        given(zaposleniService.findById(MOCK_ID)).willReturn(Optional.of(zaposleni));
+        given(plataRepository.save(any(Plata.class))).willReturn(plata);
+        given(plataRepository.findAll()).willReturn(plataList);
+        given(koeficijentService.getCurrentKoeficijent()).willReturn(koeficijent);
+
+        given(modelMapper.map(plata, PlataResponse.class)).willReturn(response);
+
+        assertEquals(response, plataService.customSave(request));
+    }
+
+    @Test
+    void customFindAllTest(){
+        given(plataRepository.findAll()).willReturn(new ArrayList<>());
+
+        assertEquals(new ArrayList<>(), plataService.customFindAll());
+    }
+
+    @Test
+    void customFindAllSpecTest(){
+        Specification<Plata> specification =
+                new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_VALUE, MOCK_SEARCH_OPERATION));
+
+        given(plataRepository.findAll(specification)).willReturn(new ArrayList<>());
+
+        assertEquals(new ArrayList<>(), plataService.customFindAll(specification));
     }
 }

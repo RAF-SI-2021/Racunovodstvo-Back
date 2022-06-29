@@ -204,4 +204,27 @@ class ZaposleniServiceTest {
         assertEquals(expectedResponse.getZaposleniId(), actualResponse.getZaposleniId());
         assertEquals(expectedResponse.getStatusZaposlenog(), actualResponse.getStatusZaposlenog());
     }
+
+    @Test
+    void saveZaposleniTest(){
+        ZaposleniResponse response = new ZaposleniResponse();
+        Zaposleni zaposleni = new Zaposleni();
+
+        given(stazService.save(any(Staz.class))).willReturn(new Staz());
+        given(zaposleniRepository.save(zaposleni)).willReturn(zaposleni);
+        given(modelMapper.map(zaposleni, ZaposleniResponse.class)).willReturn(response);
+
+        assertEquals(response, zaposleniService.saveZaposleni(zaposleni));
+    }
+
+    @Test
+    void findZaposleniById(){
+        ZaposleniResponse response = new ZaposleniResponse();
+        Zaposleni zaposleni = new Zaposleni();
+
+        given(zaposleniRepository.findById(MOCK_ID)).willReturn(Optional.of(zaposleni));
+        given(modelMapper.map(zaposleni, ZaposleniResponse.class)).willReturn(response);
+
+        assertEquals(response, zaposleniService.findZaposleniById(MOCK_ID).get());
+    }
 }

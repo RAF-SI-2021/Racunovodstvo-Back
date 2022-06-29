@@ -7,11 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.preduzece.feign.TransakcijeFeignClient;
-import raf.si.racunovodstvo.preduzece.model.Obracun;
-import raf.si.racunovodstvo.preduzece.model.ObracunZaposleni;
-import raf.si.racunovodstvo.preduzece.model.Transakcija;
+import raf.si.racunovodstvo.preduzece.model.*;
 import raf.si.racunovodstvo.preduzece.repositories.ObracunRepository;
 import raf.si.racunovodstvo.preduzece.repositories.ObracunZaposleniRepository;
 import raf.si.racunovodstvo.preduzece.requests.ObracunTransakcijeRequest;
@@ -22,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ObracunServiceTest {
@@ -43,6 +41,30 @@ class ObracunServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+    }
+
+    private Obracun getObracun(){
+        Obracun obracun = new Obracun();
+        obracun.setSifraTransakcije(1L);
+
+        List<ObracunZaposleni> list = new ArrayList<>();
+        ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
+
+        Zaposleni zaposleni = new Zaposleni();
+        zaposleni.setZaposleniId(MOCK_ID);
+
+        Preduzece preduzece = new Preduzece();
+        preduzece.setPreduzeceId(MOCK_ID);
+
+        zaposleni.setPreduzece(preduzece);
+
+        obracunZaposleni.setZaposleni(zaposleni);
+        obracunZaposleni.setObracun(obracun);
+        list.add(obracunZaposleni);
+
+        obracun.setObracunZaposleniList(list);
+
+        return obracun;
     }
 
     @Test
@@ -76,12 +98,78 @@ class ObracunServiceTest {
     }
 
     @Test
-    void obradiObracunException(){
-        Obracun obracun = new Obracun();
-        given(obracunService.findById(MOCK_ID)).willReturn(Optional.of(obracun));
+    void obradiObracunException1(){
+        given(obracunService.findById(MOCK_ID)).willReturn(Optional.empty());
         assertThrows(RuntimeException.class, ()-> obracunService.obradiObracun(MOCK_ID,MOCK_TOKEN));
-        then(obracunRepository).should(never()).save(any());
     }
+
+    @Test
+    void obradiObracunException2(){
+        Obracun obracun = new Obracun();
+        obracun.setObradjen(true);
+        given(obracunService.findById(MOCK_ID)).willReturn(Optional.of(obracun));
+
+        assertThrows(RuntimeException.class, ()-> obracunService.obradiObracun(MOCK_ID,MOCK_TOKEN));
+    }
+
+    @Test
+    void obradiObracunException3(){
+        Obracun obracun = new Obracun();
+        obracun.setSifraTransakcije(0L);
+        given(obracunService.findById(MOCK_ID)).willReturn(Optional.of(obracun));
+
+        assertThrows(RuntimeException.class, ()-> obracunService.obradiObracun(MOCK_ID,MOCK_TOKEN));
+    }
+
+    @Test
+    void obradiObracunException4(){
+        given(obracunService.findById(MOCK_ID)).willReturn(Optional.of(getObracun()));
+        lenient().when(transakcijeFeignClient.obracunZaradeTransakcije(any(List.class), any(String.class)))
+                .thenReturn(new ResponseEntity(HttpStatus.BAD_REQUEST));
+
+        assertThrows(RuntimeException.class, ()-> obracunService.obradiObracun(MOCK_ID,MOCK_TOKEN));
+    }
+
+    @Test
+    void obradiObracunException5(){
+        given(obracunService.findById(MOCK_ID)).willReturn(Optional.of(getObracun()));
+        lenient().when(transakcijeFeignClient.obracunZaradeTransakcije(any(List.class), any(String.class)))
+                .thenReturn(new ResponseEntity(HttpStatus.OK));
+
+        assertThrows(RuntimeException.class, ()-> obracunService.obradiObracun(MOCK_ID,MOCK_TOKEN));
+    }
+
+    @Test
+    void obradiObracunException6(){
+        List<Transakcija> response = new ArrayList<>();
+        Transakcija transakcija = new Transakcija();
+        transakcija.setBrojTransakcije("1-2");
+        response.add(transakcija);
+
+        given(obracunService.findById(MOCK_ID)).willReturn(Optional.of(getObracun()));
+        lenient().when(transakcijeFeignClient.obracunZaradeTransakcije(any(List.class), any(String.class)))
+                .thenReturn(ResponseEntity.ok(response));
+
+        assertThrows(RuntimeException.class, ()-> obracunService.obradiObracun(MOCK_ID,MOCK_TOKEN));
+    }
+
+
+    @Test
+    void obradiObracun(){
+        Obracun obracun = getObracun();
+        List<Transakcija> response = new ArrayList<>();
+        Transakcija transakcija = new Transakcija();
+        transakcija.setBrojTransakcije("1-1");
+        response.add(transakcija);
+
+        given(obracunRepository.save(any(Obracun.class))).willReturn(obracun);
+        given(obracunService.findById(MOCK_ID)).willReturn(Optional.of(obracun));
+        lenient().when(transakcijeFeignClient.obracunZaradeTransakcije(any(List.class), any(String.class)))
+                .thenReturn(ResponseEntity.ok(response));
+
+        assertEquals(obracun, obracunService.obradiObracun(MOCK_ID,MOCK_TOKEN));
+    }
+
 
     @Test
     void updateObracunZaradeNaziv(){

@@ -10,6 +10,7 @@ import raf.si.racunovodstvo.preduzece.repositories.ObracunZaposleniRepository;
 import raf.si.racunovodstvo.preduzece.repositories.ObracunZaradeRepository;
 import raf.si.racunovodstvo.preduzece.repositories.PlataRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,6 +65,12 @@ class ObracunZaradeServiceTest {
     }
 
     @Test
+    void findByIdException(){
+        given(obracunZaradeRepository.findById(MOCK_ID)).willReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> obracunZaradeService.findById(MOCK_ID).get());
+    }
+
+    @Test
     void findAll(){
         List<ObracunZarade> obracunZaradeList = new ArrayList<>();
         given((obracunZaradeRepository.findAll())).willReturn(obracunZaradeList);
@@ -76,12 +83,13 @@ class ObracunZaradeServiceTest {
         obracunZaradeService.deleteById(MOCK_ID);
         then(obracunZaradeRepository).should(times(0)).deleteById(MOCK_ID);
     }
-    @Test
+
+    /*@Test
     void makeObracunZarade(){
         ObracunZarade obracunZarade = new ObracunZarade();
         obracunZaradeService.makeObracunZarade(MOCK_DATE);
         then(obracunZaradeRepository).should(atLeast(0)).save(obracunZarade);
-    }
+    }*/
 
     @Test
     void updateObracunZaradeNaziv(){
@@ -93,5 +101,11 @@ class ObracunZaradeServiceTest {
         then(obracunZaradeRepository).should(times(1)).save(obracunZarade);
 
         assertNotEquals(naziv,obracunZarade.getNaziv());
+    }
+
+    @Test
+    void updateObracunZaradeNazivExc(){
+        given(obracunZaradeRepository.findById(MOCK_ID)).willReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> obracunZaradeService.updateObracunZaradeNaziv(MOCK_ID, MOCK_NAZIV));
     }
 }

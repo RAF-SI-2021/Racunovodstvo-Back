@@ -5,9 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.preduzece.model.Preduzece;
 import raf.si.racunovodstvo.preduzece.repositories.PreduzeceRepository;
+import raf.si.racunovodstvo.preduzece.responses.PreduzeceResponse;
 import raf.si.racunovodstvo.preduzece.specifications.RacunSpecification;
 import raf.si.racunovodstvo.preduzece.specifications.SearchCriteria;
 import raf.si.racunovodstvo.preduzece.utils.SearchUtil;
@@ -29,6 +31,9 @@ class PreduzeceServiceTest {
     private PreduzeceRepository preduzeceRepository;
     @Mock
     private SearchUtil<Preduzece> searchUtil;
+    @Mock
+    private ModelMapper modelMapper;
+
 
     private static final Long MOCK_ID = 1L;
 
@@ -71,5 +76,43 @@ class PreduzeceServiceTest {
         given(preduzeceRepository.findByPreduzeceId(MOCK_ID)).willReturn(Optional.of(preduzece));
         given(preduzeceRepository.save(preduzece)).willReturn(preduzece);
         preduzeceService.deleteById(MOCK_ID);
+    }
+
+    @Test
+    void savePreduzece(){
+        Preduzece preduzece = new Preduzece();
+        PreduzeceResponse response = new PreduzeceResponse();
+
+        given(preduzeceRepository.save(preduzece)).willReturn(preduzece);
+        given(modelMapper.map(preduzece, PreduzeceResponse.class)).willReturn(response);
+
+        assertEquals(response, preduzeceService.savePreduzece(preduzece));
+    }
+
+    @Test
+    void findPreduzeceById(){
+        Preduzece preduzece = new Preduzece();
+        PreduzeceResponse response = new PreduzeceResponse();
+
+        given(preduzeceRepository.findByPreduzeceId(MOCK_ID)).willReturn(Optional.of(preduzece));
+        given(modelMapper.map(preduzece, PreduzeceResponse.class)).willReturn(response);
+
+        assertEquals(response, preduzeceService.findPreduzeceById(MOCK_ID).get());
+    }
+
+    @Test
+    void findAllPreduzece(){
+        Preduzece preduzece = new Preduzece();
+        PreduzeceResponse response = new PreduzeceResponse();
+        List<PreduzeceResponse> responseList = new ArrayList<>();
+
+        List<Preduzece> preduzeceList = new ArrayList<>();
+        Specification<Preduzece> specification =
+                new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_VALUE, MOCK_SEARCH_OPERATION));
+
+        lenient().when(searchUtil.getSpec("isActive:true")).thenReturn(specification);
+        lenient().when(preduzeceRepository.findAll(specification)).thenReturn(preduzeceList);
+
+        assertEquals(responseList, preduzeceService.findAllPreduzece());
     }
 }

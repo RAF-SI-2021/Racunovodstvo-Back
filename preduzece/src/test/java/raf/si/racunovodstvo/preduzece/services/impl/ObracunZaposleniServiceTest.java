@@ -7,14 +7,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import raf.si.racunovodstvo.preduzece.converters.impl.ObracunZaposleniConverter;
 import raf.si.racunovodstvo.preduzece.model.*;
+import raf.si.racunovodstvo.preduzece.model.enums.StatusZaposlenog;
+import raf.si.racunovodstvo.preduzece.repositories.ObracunRepository;
 import raf.si.racunovodstvo.preduzece.repositories.ObracunZaposleniRepository;
+import raf.si.racunovodstvo.preduzece.repositories.PlataRepository;
 import raf.si.racunovodstvo.preduzece.requests.ObracunZaposleniRequest;
+import raf.si.racunovodstvo.preduzece.specifications.RacunSpecification;
+import raf.si.racunovodstvo.preduzece.specifications.SearchCriteria;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +45,10 @@ class ObracunZaposleniServiceTest {
     @Mock
     private ObracunZaposleniRepository obracunZaposleniRepository;
     @Mock
+    private ObracunRepository obracunRepository;
+    @Mock
+    private PlataRepository plataRepository;
+    @Mock
     private ObracunZaposleniConverter obracunZaposleniConverter;
     @Mock
     private KoeficijentService koeficijentService;
@@ -44,6 +59,11 @@ class ObracunZaposleniServiceTest {
     private static final Double MOCK_NAJVISA_OSNOVCA = 105.0;
     private static final Double MOCK_NAJNIZA_VECA_OSNOVICA = 101.0;
     private static final Double MOCK_NAJVISA_MANJA_OSNOVICA = 99.0;
+
+    private static final String MOCK_SEARCH_KEY = "MOCK_KEY";
+    private static final String MOCK_SEARCH_VALUE = "MOCK_VALUE";
+    private static final String MOCK_SEARCH_OPERATION = "MOCK_OPERATION";
+
     private Koeficijent koeficijent;
 
     @BeforeEach
@@ -251,5 +271,65 @@ class ObracunZaposleniServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> obracunZaposleniService.update(0.5, null, 1L));
         then(obracunZaposleniRepository).should(never()).save(any());
+    }
+
+    @Test
+    void findAllTest1(){
+        ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
+        List<ObracunZaposleni> obracunZaposleniList = new ArrayList<>();
+        obracunZaposleniList.add(obracunZaposleni);
+
+        Page<ObracunZaposleni> page = new PageImpl<>(obracunZaposleniList);
+        Specification<ObracunZaposleni> specification =
+                new RacunSpecification<>(new SearchCriteria(MOCK_SEARCH_KEY, MOCK_SEARCH_VALUE, MOCK_SEARCH_OPERATION));
+        Pageable pageable = PageRequest.of(0, 20);
+
+        given(obracunZaposleniRepository.findAll(specification, pageable)).willReturn(page);
+        assertEquals(page, obracunZaposleniService.findAll(specification, pageable));
+    }
+
+    @Test
+    void findAllTest2(){
+        ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
+        List<ObracunZaposleni> obracunZaposleniList = new ArrayList<>();
+        obracunZaposleniList.add(obracunZaposleni);
+
+        Page<ObracunZaposleni> page = new PageImpl<>(obracunZaposleniList);
+        Pageable pageable = PageRequest.of(0, 20);
+
+        given(obracunZaposleniRepository.findAll(pageable)).willReturn(page);
+        assertEquals(page, obracunZaposleniService.findAll(pageable));
+    }
+
+    @Test
+    void makeObracun(){
+        Obracun obracun = new Obracun();
+        obracun.setObracunId(1L);
+        Date date = new Date();
+        Plata plata = new Plata();
+        Zaposleni zaposleni = new Zaposleni();
+        zaposleni.setZaposleniId(1L);
+        plata.setZaposleni(zaposleni);
+        List<Plata> plate = new ArrayList<>();
+        plate.add(plata);
+
+        ObracunZaposleni obracunZaposleni = new ObracunZaposleni();
+        obracunZaposleni.setObracun(obracun);
+        obracunZaposleni.setZaposleni(zaposleni);
+        obracunZaposleni.setNetoPlata(MOCK_NETO_PLATA);
+        obracunZaposleni.setUcinak(MOCK_UCINAK);
+        koeficijent.setNajnizaOsnovica(MOCK_NAJNIZA_OSNOVICA);
+        koeficijent.setNajvisaOsnovica(MOCK_NAJVISA_MANJA_OSNOVICA);
+
+        given(plataRepository.findPlataByDatumAndStatusZaposlenog(date, StatusZaposlenog.ZAPOSLEN)).willReturn(plate);
+
+        given(koeficijentService.getCurrentKoeficijent()).willReturn(koeficijent);
+        given(obracunZaposleniConverter.convert(any(ObracunZaposleniRequest.class))).willReturn(obracunZaposleni);
+        given(obracunZaposleniRepository.save(obracunZaposleni)).willReturn(obracunZaposleni);
+        given(obracunZaposleniRepository.findByZaposleniAndObracun(zaposleni, obracun)).willReturn(Optional.empty());
+
+        given(obracunRepository.save(any(Obracun.class))).willReturn(obracun);
+
+        assertEquals(obracun, obracunZaposleniService.makeObracun(date, 1L));
     }
 }
