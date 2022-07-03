@@ -1,7 +1,7 @@
 package raf.si.racunovodstvo.knjizenje.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,24 +11,23 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import raf.si.racunovodstvo.knjizenje.integration.test_model.LoginRequest;
+import raf.si.racunovodstvo.knjizenje.integration.test_model.LoginResponse;
 import raf.si.racunovodstvo.knjizenje.model.Knjizenje;
 import raf.si.racunovodstvo.knjizenje.repositories.KnjizenjeRepository;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(properties = {"spring.main.allow-bean-definition-overriding=true", "eureka.client.enabled=false"},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class KnjizenjeIntegrationTest {
+class KnjizenjeIntegrationTest extends DefaultBaseIT {
 
     private final static String URI = "/api/knjizenje";
 
@@ -40,30 +39,44 @@ public class KnjizenjeIntegrationTest {
 
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private Long knjizenjeId;
 
     private static final String MOCK_BR_NALOGA = "MOCK_BROJ_NALOGA";
     private static final Date MOCK_DATUM = new Date();
 
     @BeforeAll
     public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        objectMapper = new ObjectMapper();
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        LoginRequest loginRequest = new LoginRequest("user1", "user1");
+        String loginUrl = "http://" + userContainer.getHost() + ":" + userContainer.getMappedPort(8086) + "/auth/login";
+        LoginResponse loginResponse = postRest(loginUrl, loginRequest, LoginResponse.class);
+        token = "Bearer " + loginResponse.getJwt();
 
         Knjizenje knjizenje = new Knjizenje();
         knjizenje.setBrojNaloga(MOCK_BR_NALOGA);
         knjizenje.setDatumKnjizenja(MOCK_DATUM);
-        var x = knjizenjeRepository.save(knjizenje);
-        System.out.println("leee " + x.getKnjizenjeId());
+        knjizenje = knjizenjeRepository.save(knjizenje);
+        knjizenjeId = knjizenje.getKnjizenjeId();
     }
 
     @Test
     @Order(1)
-    void findAllTest() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/api/knjizenje/5").header("Authorization", "sssss")).andExpect(status().isOk()).andReturn();
+    void findByIdTest() throws Exception {
+        MvcResult mvcResult =
+            mockMvc.perform(get(URI + "/" + knjizenjeId).header("Authorization", token)).andExpect(status().isOk()).andReturn();
         mvcResult.getResponse().getContentAsString();
-        Knjizenje dva = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<Knjizenje>() {});
+        Knjizenje dva = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertEquals(MOCK_BR_NALOGA, dva.getBrojNaloga());
+    }
+
+    @Test
+    @Order(1)
+    void findByIdUnauthorizedTest() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get(URI + "/" + knjizenjeId).header("Authorization", token + "WRONG"))
+                                     .andExpect(status().is4xxClientError())
+                                     .andReturn();
     }
 }

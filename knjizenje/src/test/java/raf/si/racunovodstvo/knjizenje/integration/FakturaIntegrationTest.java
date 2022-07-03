@@ -1,7 +1,7 @@
 package raf.si.racunovodstvo.knjizenje.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,29 +11,32 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import raf.si.racunovodstvo.knjizenje.integration.test_model.LoginRequest;
+import raf.si.racunovodstvo.knjizenje.integration.test_model.LoginResponse;
 import raf.si.racunovodstvo.knjizenje.model.Faktura;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipDokumenta;
 import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
 import raf.si.racunovodstvo.knjizenje.repositories.FakturaRepository;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(properties = {"spring.main.allow-bean-definition-overriding=true", "eureka.client.enabled=false"},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class FakturaIntegrationTest {
+class FakturaIntegrationTest extends DefaultBaseIT {
 
     private final static String URI = "/api/faktura";
+
+    private Long fakturaId;
 
     @Autowired
     private FakturaRepository fakturaRepository;
@@ -42,9 +45,6 @@ public class FakturaIntegrationTest {
     private WebApplicationContext wac;
 
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private static final String MOCK_BR_FAKTURE = "MOCK_BR_FAKTURE";
     private static final Double MOCK_PRODAJNA_VREDNOST = 123.45;
@@ -55,8 +55,13 @@ public class FakturaIntegrationTest {
 
     @BeforeAll
     public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        objectMapper = new ObjectMapper();
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        LoginRequest loginRequest = new LoginRequest("user1", "user1");
+        String loginUrl = "http://" + userContainer.getHost() + ":" + userContainer.getMappedPort(8086) + "/auth/login";
+        LoginResponse loginResponse = postRest(loginUrl, loginRequest, LoginResponse.class);
+        token = "Bearer " + loginResponse.getJwt();
 
         Faktura fu1 = new Faktura();
         fu1.setBrojFakture(MOCK_BR_FAKTURE);
@@ -72,17 +77,24 @@ public class FakturaIntegrationTest {
         fu1.setTipDokumenta(TipDokumenta.FAKTURA);
         fu1.setKurs(MOCK_KURS);
         fu1.setNaplata(0.00);
-        fakturaRepository.save(fu1);
-        var x = fu1.getDokumentId();
-        System.out.println("le ludi " + x);
+        fu1 = fakturaRepository.save(fu1);
+        fakturaId = fu1.getDokumentId();
     }
 
     @Test
     @Order(1)
     void findAllTest() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get(URI + "/11").header("Authorization", "sssss")).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(get(URI + "/all").header("Authorization", token)).andExpect(status().isOk()).andReturn();
         mvcResult.getResponse().getContentAsString();
-        Faktura dva = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<Faktura>() {});
-        assertEquals(MOCK_BR_FAKTURE, dva.getBrojFakture());
+        List<Faktura> responseList = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertNotNull(responseList);
+        assertTrue(responseList.stream().anyMatch(faktura -> faktura.getDokumentId().equals(fakturaId)));
+    }
+
+    @Test
+    @Order(2)
+    void deleteByIdTest() throws Exception {
+        mockMvc.perform(delete(URI + "/" + fakturaId).header("Authorization", token)).andExpect(status().isNoContent());
+        assertTrue(fakturaRepository.findById(fakturaId).isEmpty());
     }
 }

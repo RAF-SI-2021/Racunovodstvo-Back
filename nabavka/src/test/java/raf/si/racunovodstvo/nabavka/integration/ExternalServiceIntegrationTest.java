@@ -3,6 +3,7 @@ package raf.si.racunovodstvo.nabavka.integration;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import raf.si.racunovodstvo.nabavka.feign.PreduzeceFeignClient;
+import raf.si.racunovodstvo.nabavka.feign.UserFeignClient;
 import raf.si.racunovodstvo.nabavka.integration.test_model.LoginRequest;
 import raf.si.racunovodstvo.nabavka.integration.test_model.LoginResponse;
 import raf.si.racunovodstvo.nabavka.integration.test_model.PreduzeceRequest;
@@ -33,6 +35,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,6 +56,9 @@ class ExternalServiceIntegrationTest extends BaseIT {
 
     @Autowired
     private PreduzeceFeignClient preduzeceFeignClient;
+
+    @Autowired
+    private UserFeignClient userFeignClient;
 
     private MockMvc mockMvc;
 
@@ -103,7 +109,18 @@ class ExternalServiceIntegrationTest extends BaseIT {
 
         assertNotNull(response);
         assertEquals(1L, response.getPreduzeceId());
-        //assertEquals(preduzece.getNaziv(), response.getNaziv());
+    }
+
+    @Test
+    void testAccess() {
+        int status = userFeignClient.validateToken(token).getStatusCodeValue();
+
+        assertEquals(200, status);
+    }
+
+    @Test
+    void testAccessFail() {
+        assertThrows(FeignException.class, () -> userFeignClient.validateToken("WRONG" + token));
     }
 
     @SneakyThrows
