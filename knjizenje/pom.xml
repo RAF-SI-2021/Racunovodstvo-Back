@@ -21,7 +21,7 @@
 		<jacoco.version>0.8.7</jacoco.version>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.coverage.exclusions>**/bootstrap/*, **/configuration/*, **/model/**, **/responses/*, **/requests/*, **/exceptions/**, **/relations/*, **/repositories, **/converters, **/*Application.java</sonar.coverage.exclusions>
+		<sonar.coverage.exclusions>**/bootstrap/*, **/configuration/*, **/model/**, **/responses/*, **/requests/*, **/exceptions/**, **/relations/*, **/repositories, **/converters, **/specification, **/*Application.java</sonar.coverage.exclusions>
 		<start-class>raf.si.racunovodstvo.knjizenje.KnjizenjeApplication</start-class>
 	</properties>
 	<dependencies>
