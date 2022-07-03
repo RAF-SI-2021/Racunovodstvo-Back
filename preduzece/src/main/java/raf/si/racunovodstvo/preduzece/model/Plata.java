@@ -60,7 +60,7 @@ public class Plata implements Serializable {
         this.doprinos1 = b * (koeficijent.getPenzionoOsiguranje1() + koeficijent.getZdravstvenoOsiguranje1() + koeficijent.getNezaposlenost1());
         this.doprinos2 = b * (koeficijent.getPenzionoOsiguranje2() + koeficijent.getZdravstvenoOsiguranje2() + koeficijent.getNezaposlenost2());
         this.porez = (b - koeficijent.getPoreskoOslobadjanje()) * koeficijent.getKoeficijentPoreza();
-        this.brutoPlata = this.netoPlata + this.porez;
+        this.brutoPlata = this.netoPlata + this.porez + this.doprinos1;
         this.ukupanTrosakZarade = this.brutoPlata + this.doprinos2;
     }
 }
