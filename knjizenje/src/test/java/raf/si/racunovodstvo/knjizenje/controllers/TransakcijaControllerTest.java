@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.ReflectionUtils;
 import raf.si.racunovodstvo.knjizenje.model.Transakcija;
+import raf.si.racunovodstvo.knjizenje.repositories.SifraTransakcijeRepository;
 import raf.si.racunovodstvo.knjizenje.requests.TransakcijaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.TransakcijaResponse;
 import raf.si.racunovodstvo.knjizenje.services.impl.ITransakcijaService;
@@ -44,6 +45,9 @@ class TransakcijaControllerTest {
 
     @Mock
     private Specification<Transakcija> specificationMock;
+
+    @Mock
+    private SifraTransakcijeRepository sifraTransakcijeRepository;
 
     private static final String SEARCH_MOCK = "SEARCH_MOCK";
     private static final String TOKEN_MOCK = "TOKEN_MOCK";
@@ -116,4 +120,12 @@ class TransakcijaControllerTest {
 
         then(transakcijaService).should(times(1)).deleteById(1L);
     }
+
+    @Test
+    void testObracunPlata() {
+        transakcijaController.obracunPlata(List.of());
+
+        then(sifraTransakcijeRepository).should(times(0)).findById(any(Long.class));
+    }
+
 }
