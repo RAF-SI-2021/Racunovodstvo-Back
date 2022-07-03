@@ -44,7 +44,9 @@ public class TransakcijaService implements ITransakcijaService {
 
     public TransakcijaService(TransakcijaRepository transakcijaRepository,
                               SifraTransakcijeRepository sifraTransakcijeRepository,
-                              FakturaService fakturaService, PovracajRepository povracajRepository, TransakcijaReverseConverter transakcijaReverseConverter,
+                              FakturaService fakturaService,
+                              PovracajRepository povracajRepository,
+                              TransakcijaReverseConverter transakcijaReverseConverter,
                               TransakcijaConverter transakcijaConverter,
                               PreduzeceFeignClient preduzeceFeignClient) {
         this.transakcijaRepository = transakcijaRepository;
@@ -93,14 +95,14 @@ public class TransakcijaService implements ITransakcijaService {
     @Override
     public List<Transakcija> obracunZaradeTransakcije(List<ObracunTransakcijeRequest> obracunTransakcijeRequests) {
         List<Transakcija> transakcijeList = new ArrayList<>();
-        for(ObracunTransakcijeRequest o : obracunTransakcijeRequests){
+        for (ObracunTransakcijeRequest o : obracunTransakcijeRequests) {
             Transakcija t = new Transakcija();
-            t.setBrojTransakcije("OZ " + o.getDatum().getMonth()+ "/" + o.getDatum().getYear() + "-" + o.getSifraZaposlenog());
+            t.setBrojTransakcije("OZ " + o.getDatum().getMonth() + "/" + o.getDatum().getYear() + "-" + o.getSifraZaposlenog());
             t.setTipTransakcije(TipTransakcije.ISPLATA);
             t.setDatumTransakcije(o.getDatum());
             t.setIznos(o.getIznos());
             t.setTipDokumenta(TipDokumenta.TRANSAKCIJA);
-            t.setBrojDokumenta("OZ " + o.getDatum().getMonth()+ "/" + o.getDatum().getYear() + "-" + o.getSifraZaposlenog());
+            t.setBrojDokumenta("OZ " + o.getDatum().getMonth() + "/" + o.getDatum().getYear() + "-" + o.getSifraZaposlenog());
             t.setPreduzeceId(o.getPreduzeceId());
             t.setSifraTransakcije(sifraTransakcijeRepository.findById(o.getSifraTransakcijeId()).get());
             transakcijeList.add(t);
@@ -130,7 +132,8 @@ public class TransakcijaService implements ITransakcijaService {
     public TransakcijaResponse createFromMPFaktura(Faktura faktura) {
         TransakcijaRequest transakcija = new TransakcijaRequest();
 
-        String brojTransakcije = this.generateBrojTransakcije("MPF", this.fakturaService.countMPFakture());
+        String brojTransakcije =
+            this.generateBrojTransakcije("MPT" + faktura.getBrojFakture() + faktura.getDokumentId(), this.fakturaService.countMPFakture());
         transakcija.setBrojDokumenta(brojTransakcije);
         transakcija.setTipDokumenta(TipDokumenta.TRANSAKCIJA);
         transakcija.setBrojTransakcije(brojTransakcije);

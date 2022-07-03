@@ -10,7 +10,7 @@ public class RedisContainer extends GenericContainer<RedisContainer> {
         super("redis:6.2.5-alpine");
         withExposedPorts(port);
         withNetwork(network);
-        withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("redis"));
+        //withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("redis"));
         withNetworkAliases("redis");
         waitingFor(new HostPortWaitStrategy());
         setStartupAttempts(3);

@@ -6,6 +6,6 @@ import org.springframework.context.annotation.Profile;
 
 @Profile("test")
 @Configuration
-@LoadBalancerClient(name = "preduzece")
+@LoadBalancerClient(name = "nabavka")
 public class FeignConfig {
 }

@@ -66,14 +66,18 @@ class BaseIT {
         String mysqlHost =
             "jdbc:mysql://" + mySQLMasterContainer.getHost() + ":" + mySQLMasterContainer.getMappedPort(3306) + "/si?serverTimezone=UTC";
         String knjizenjeExternalHost = "http://" + knjizenjeContainer.getHost() + ":" + knjizenjeContainer.getMappedPort(8085);
+        String userExternalHost = "http://" + userContainer.getHost() + ":" + userContainer.getMappedPort(8086);
 
         String knjizenjeHost = knjizenjeContainer.getContainerInfo().getConfig().getHostName();
+        String userHost = userContainer.getContainerInfo().getConfig().getHostName();
         registry.add("spring.datasource.url", () -> mysqlHost);
         registry.add("eureka.client.service-url.defaultZone", () -> eurekaHost);
         registry.add("spring.datasource.password", () -> "test");
         registry.add("service.knjizenje.url", () -> knjizenjeHost);
+        registry.add("service.user.url", () -> userHost);
         registry.add("eureka.client.enabled", () -> "false");
         registry.add("spring.cloud.loadbalancer.ribbon.enabled", () -> "false");
         registry.add("spring.cloud.discovery.client.simple.instances." + knjizenjeHost + "[0].uri", () -> knjizenjeExternalHost);
+        registry.add("spring.cloud.discovery.client.simple.instances." + userHost + "[0].uri", () -> userExternalHost);
     }
 }

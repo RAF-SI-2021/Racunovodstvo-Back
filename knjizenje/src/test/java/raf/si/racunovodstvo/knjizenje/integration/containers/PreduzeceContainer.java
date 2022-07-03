@@ -13,10 +13,9 @@ public class PreduzeceContainer extends GenericContainer<PreduzeceContainer> {
         super("ghcr.io/raf-si-2021/racunovodstvo-preduzece:dev");
         withExposedPorts(port);
         withNetwork(network);
-        withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("preduzece"));
         withNetworkAliases("preduzece");
         waitingFor(new HostPortWaitStrategy());
-        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(35000)));
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(28000)));
         setStartupAttempts(3);
 
         addEnv("SERVER_PORT", port + "");

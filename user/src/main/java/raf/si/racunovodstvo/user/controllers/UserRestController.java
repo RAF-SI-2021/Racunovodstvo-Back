@@ -6,7 +6,7 @@ import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import raf.si.racunovodstvo.user.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.user.model.Preduzece;
 import raf.si.racunovodstvo.user.model.User;
 import raf.si.racunovodstvo.user.requests.UpdateUserRequest;
@@ -25,30 +25,21 @@ public class UserRestController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final PreduzeceFeignClient preduzeceFeignClient;
 
-    private RestTemplate restTemplate;
-
-    private String URL = "http://preduzece/api/preduzece/%d";
-
-    public UserRestController(UserService userService, PasswordEncoder passwordEncoder, RestTemplate restTemplate){
+    public UserRestController(UserService userService, PasswordEncoder passwordEncoder, PreduzeceFeignClient preduzeceFeignClient){
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.restTemplate = restTemplate;
+        this.preduzeceFeignClient = preduzeceFeignClient;
     }
 
     private Preduzece getPreduzeceById(Long id, String token) throws IOException {
         if(id == null){
             return null;
         }
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", token);
-        HttpEntity request = new HttpEntity(headers);
 
         // baca izuzetak ako nije ispravan token
-        ResponseEntity<String> response = restTemplate.exchange(String.format(URL, id), HttpMethod.GET, request, String.class);
-        String result = response.getBody();
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(result, Preduzece.class);
+        return preduzeceFeignClient.getPreduzeceById(id, token).getBody();
     }
 
     @GetMapping(value = "/all",

@@ -10,7 +10,7 @@ public class MySQLSlaveContainer extends MySQLContainer {
     public MySQLSlaveContainer(Network network, int port, String hostName) {
         super(network, port, hostName);;
 
-        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(16000)));
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(18000)));
 
         addEnv("MYSQL_REPLICATION_MODE", "slave");
         addEnv("MYSQL_ROOT_PASSWORD", "test");

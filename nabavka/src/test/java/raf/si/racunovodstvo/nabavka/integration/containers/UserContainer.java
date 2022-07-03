@@ -2,6 +2,7 @@ package raf.si.racunovodstvo.nabavka.integration.containers;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
+import org.testcontainers.containers.startupcheck.MinimumDurationRunningStartupCheckStrategy;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
 
 import java.time.Duration;
@@ -13,8 +14,9 @@ public class UserContainer extends GenericContainer<UserContainer> {
         super("ghcr.io/raf-si-2021/racunovodstvo-user:dev");
         withNetwork(network);
         withExposedPorts(port);
-        withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("user"));
+        //withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("user"));
         withNetworkAliases("user");
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(25000)));
         waitingFor(new HostPortWaitStrategy());
 
         addEnv("SERVER_PORT", port + "");
