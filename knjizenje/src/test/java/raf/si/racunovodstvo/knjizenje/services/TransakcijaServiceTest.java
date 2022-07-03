@@ -270,6 +270,24 @@ class TransakcijaServiceTest {
         assertNull(transakcijaResponse);
     }
 
+    @Test
+    void testFindByPreduzeceId() {
+        when(transakcijaRepository.findAllByPreduzeceId(anyLong())).thenReturn(List.of());
+
+        List<TransakcijaResponse> transakcijaResponses = transakcijaService.findByPreduzeceId(1l);
+
+        assertEquals(0, transakcijaResponses.size());
+    }
+
+    @Test
+    void testFindByPreduzeceIdAndDate() {
+        when(transakcijaRepository.findAllByPreduzeceIdAndDatumTransakcijeBetween(anyLong(), any(Date.class), any(Date.class))).thenReturn(List.of());
+
+        List<TransakcijaResponse> transakcijaResponses = transakcijaService.findByPreduzeceIdAndDate(1l, new Date(), new Date());
+
+        assertEquals(0, transakcijaResponses.size());
+    }
+
     private Date getDate(int year, int month, int day) {
         LocalDate localDate = LocalDate.of(year, month, day);
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
