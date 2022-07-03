@@ -15,15 +15,22 @@ import org.springframework.http.ResponseEntity;
 import raf.si.racunovodstvo.knjizenje.converters.impl.TransakcijaConverter;
 import raf.si.racunovodstvo.knjizenje.converters.impl.TransakcijaReverseConverter;
 import raf.si.racunovodstvo.knjizenje.feign.PreduzeceFeignClient;
+import raf.si.racunovodstvo.knjizenje.model.Faktura;
+import raf.si.racunovodstvo.knjizenje.model.Povracaj;
 import raf.si.racunovodstvo.knjizenje.model.Preduzece;
 import raf.si.racunovodstvo.knjizenje.model.SifraTransakcije;
 import raf.si.racunovodstvo.knjizenje.model.Transakcija;
+import raf.si.racunovodstvo.knjizenje.model.enums.TipDokumenta;
+import raf.si.racunovodstvo.knjizenje.model.enums.TipFakture;
+import raf.si.racunovodstvo.knjizenje.repositories.PovracajRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.SifraTransakcijeRepository;
 import raf.si.racunovodstvo.knjizenje.repositories.TransakcijaRepository;
 import raf.si.racunovodstvo.knjizenje.requests.ObracunTransakcijeRequest;
 import raf.si.racunovodstvo.knjizenje.requests.TransakcijaRequest;
 import raf.si.racunovodstvo.knjizenje.responses.TransakcijaResponse;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +39,7 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -63,6 +71,12 @@ class TransakcijaServiceTest {
 
     @Mock
     private SifraTransakcijeRepository sifraTransakcijeRepository;
+
+    @Mock
+    private FakturaService fakturaService;
+
+    @Mock
+    private PovracajRepository povracajRepository;
 
     private static final String MOCK_TOKEN = "MOCK_TOKEN";
     private static final String MOCK_PREDUZECE_NAZIV = "MOCK_NAZIV";
@@ -217,5 +231,47 @@ class TransakcijaServiceTest {
         given(transakcijaRepository.saveAll(any(List.class))).willReturn(transakcijeList);
         given(sifraTransakcijeRepository.findById(1L)).willReturn(Optional.of(Mockito.mock(SifraTransakcije.class)));
         assertEquals(transakcijeList, transakcijaService.obracunZaradeTransakcije(list));
+    }
+
+    @Test
+    void testCreateFromMPFaktura() {
+        Faktura mpf1 = new Faktura();
+        mpf1.setBrojFakture("MP12/21");
+        mpf1.setBrojDokumenta(mpf1.getBrojFakture());
+        mpf1.setDatumIzdavanja(getDate(2021, 4, 5));
+        mpf1.setRokZaPlacanje(getDate(2021, 4, 5));
+        mpf1.setDatumPlacanja(getDate(2021, 4, 5));
+        mpf1.setProdajnaVrednost(5300.00);
+        mpf1.setRabatProcenat(0.00);
+        mpf1.setPorezProcenat(20.00);
+        mpf1.setPreduzeceId(1L);
+        mpf1.setValuta("RSD");
+        mpf1.setTipFakture(TipFakture.MALOPRODAJNA_FAKTURA);
+        mpf1.setTipDokumenta(TipDokumenta.FAKTURA);
+        mpf1.setKurs(1.00);
+        mpf1.setNaplata(0.00);
+
+        when(fakturaService.countMPFakture()).thenReturn(1l);
+        TransakcijaResponse transakcijaResponse = transakcijaService.createFromMPFaktura(new Faktura());
+
+        assertNull(transakcijaResponse);
+    }
+
+    @Test
+    void testCreateFromPovracaj() {
+        Povracaj pov1 = new Povracaj();
+        pov1.setBrojPovracaja("P01");
+        pov1.setDatumPovracaja(getDate(2021, 4, 5));
+        pov1.setProdajnaVrednost(5300.00);
+
+        when(povracajRepository.count()).thenReturn(0l);
+        TransakcijaResponse transakcijaResponse = transakcijaService.createFromPovracaj(pov1);
+
+        assertNull(transakcijaResponse);
+    }
+
+    private Date getDate(int year, int month, int day) {
+        LocalDate localDate = LocalDate.of(year, month, day);
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }
