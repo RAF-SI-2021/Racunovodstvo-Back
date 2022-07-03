@@ -39,7 +39,7 @@ public class BootstrapData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Kalkulacija k1 = napraviDefaultKalkulaciju("AAA");
+        Kalkulacija k1 = napraviDefaultKalkulaciju("AAA", "Vrsac");
         k1.setLokacija(new Lokacija());
         Lokacija l1 = new Lokacija();
         l1.setAdresa("Beograd");
@@ -48,7 +48,7 @@ public class BootstrapData implements CommandLineRunner {
         k1.setLokacija(l1);
         kalkulacijaRepository.save(k1);
 
-        Kalkulacija k2 = napraviDefaultKalkulaciju("BBB");
+        Kalkulacija k2 = napraviDefaultKalkulaciju("BBB", "Subotica");
         l1 = new Lokacija();
         l1.setAdresa("Novi Sad");
         l1.setNaziv("NS naziv");
@@ -56,7 +56,7 @@ public class BootstrapData implements CommandLineRunner {
         k1.setLokacija(l1);
         kalkulacijaRepository.save(k2);
 
-        Kalkulacija k3 = napraviDefaultKalkulaciju("CCC");
+        Kalkulacija k3 = napraviDefaultKalkulaciju("CCC", "Pirot");
         TroskoviNabavke troskoviNabavke = new TroskoviNabavke();
         troskoviNabavke.setNaziv("Test");
         troskoviNabavke.setCena(100.0);
@@ -71,8 +71,8 @@ public class BootstrapData implements CommandLineRunner {
         konverzija.setBrojKonverzije("ABC");
         konverzija.setTroskoviNabavke(new ArrayList<>());
         l1 = new Lokacija();
-        l1.setAdresa("adresa");
-        l1.setNaziv("naziv");
+        l1.setAdresa("Leskovac");
+        l1.setNaziv("LE naziv");
         l1 = lokacijaRepository.save(l1);
         konverzija.setLokacija(l1);
         konverzija.setDatum(new Date());
@@ -123,10 +123,10 @@ public class BootstrapData implements CommandLineRunner {
 
     }
 
-    private Kalkulacija napraviDefaultKalkulaciju(String brojKalkulacije) {
+    private Kalkulacija napraviDefaultKalkulaciju(String brojKalkulacije, String adresa) {
         Lokacija l1 = new Lokacija();
-        l1.setAdresa("adresa");
-        l1.setNaziv("naziv");
+        l1.setAdresa(adresa);
+        l1.setNaziv(adresa + " naziv");
         l1 = lokacijaRepository.save(l1);
 
         Kalkulacija kalkulacija = new Kalkulacija();

@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestTemplate;
+import raf.si.racunovodstvo.user.feign.PreduzeceFeignClient;
 import raf.si.racunovodstvo.user.model.Preduzece;
 import raf.si.racunovodstvo.user.model.User;
 import raf.si.racunovodstvo.user.requests.UpdateUserRequest;
@@ -32,6 +33,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +47,7 @@ class UserRestControllerTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
-    private RestTemplate restTemplate;
+    private PreduzeceFeignClient preduzeceFeignClient;
 
     private static final Long MOCK_ID = 1L;
     private static final String MOCK_USERNAME = "DUMMY_USERNAME";
@@ -99,10 +102,11 @@ class UserRestControllerTest {
         User user = new User();
         user.setPreduzeceId(MOCK_ID);
         List<User> userList = new ArrayList<>();
-        String body = "{\"preduzeceId\":1}";
+        Preduzece preduzece = new Preduzece();
+        preduzece.setPreduzeceId(MOCK_ID);
 
         given(userService.findAll()).willReturn(userList);
-        given(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).willReturn(ResponseEntity.ok(body));
+        given(preduzeceFeignClient.getPreduzeceById(anyLong(), anyString())).willReturn(ResponseEntity.ok(preduzece));
 
         ResponseEntity<?> responseEntity = userRestController.createUser(user, TOKEN);
 
@@ -140,10 +144,12 @@ class UserRestControllerTest {
         UpdateUserRequest updateUserRequest = new UpdateUserRequest();
         updateUserRequest.setUserId(MOCK_ID);
         updateUserRequest.setPreduzeceId(MOCK_ID);
-        String body = "{\"preduzeceId\":1}";
+
+        Preduzece preduzece = new Preduzece();
+        preduzece.setPreduzeceId(MOCK_ID);
 
         given(userService.findById(MOCK_ID)).willReturn(Optional.of(user));
-        given(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).willReturn(ResponseEntity.ok(body));
+        given(preduzeceFeignClient.getPreduzeceById(anyLong(), anyString())).willReturn(ResponseEntity.ok(preduzece));
 
         ResponseEntity<?> responseEntity = userRestController.updateUser(updateUserRequest, TOKEN);
 

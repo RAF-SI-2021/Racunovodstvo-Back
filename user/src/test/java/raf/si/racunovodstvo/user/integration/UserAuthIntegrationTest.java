@@ -80,27 +80,34 @@ class UserAuthIntegrationTest extends BaseIT {
 
     @Test
     @Order(1)
-    void loginTest() throws Exception {
+    void loginTestFailure() throws Exception {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setPassword("WRONG");
+        loginRequest.setUsername(MOCK_UID);
+        ObjectMapper mapper = new ObjectMapper();
+        String requestJson = mapper.writeValueAsString(loginRequest);
+
+        mockMvc.perform(post(AUTH_URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
+               .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @Order(2)
+    void loginTestSuccess() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setPassword(MOCK_PASSWORD);
         loginRequest.setUsername(MOCK_UID);
         ObjectMapper mapper = new ObjectMapper();
         String requestJson = mapper.writeValueAsString(loginRequest);
 
-        String result = mockMvc.perform(post(AUTH_URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
-                               .andExpect(status().isOk())
-                               .andReturn()
-                               .getResponse()
-                               .getContentAsString();
-        Map<String, String> resultMap = mapper.readValue(result, new TypeReference<>() {
-        });
-        jwtToken = resultMap.getOrDefault("jwt", jwtToken);
-        System.out.println(jwtToken);
+        mockMvc.perform(post(AUTH_URI + "/login").contentType(APPLICATION_JSON).content(requestJson))
+               .andExpect(status().isOk());
     }
-    
+
     @Test
     @Order(2)
     void getAllTest() throws Exception {
+        System.out.println(jwtToken);
         mockMvc.perform(get(URI + "/all").header("Authorization", "Bearer " + jwtToken)).andExpect(status().isOk());
     }
 
@@ -147,7 +154,7 @@ class UserAuthIntegrationTest extends BaseIT {
     void accessUnauthenticatedTest() throws Exception {
         mockMvc.perform(get(AUTH_URI + "/access")).andExpect(status().isForbidden());
     }
-    
+
     @Test
     @Order(3)
     void deleteUserNotFoundTest() throws Exception {

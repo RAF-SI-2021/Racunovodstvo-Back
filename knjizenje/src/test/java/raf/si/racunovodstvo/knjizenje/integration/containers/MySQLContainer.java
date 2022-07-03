@@ -14,7 +14,6 @@ public abstract class MySQLContainer extends GenericContainer<MySQLContainer> {
         withExposedPorts(port);
         withNetwork(network);
         withNetworkAliases(hostName);
-        withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName(hostName));
         waitingFor(new HostPortWaitStrategy());
         setStartupAttempts(3);
 

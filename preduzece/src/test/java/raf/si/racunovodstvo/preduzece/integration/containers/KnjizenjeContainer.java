@@ -13,10 +13,9 @@ public class KnjizenjeContainer extends GenericContainer<KnjizenjeContainer> {
         super("ghcr.io/raf-si-2021/racunovodstvo-knjizenje:dev");
         withExposedPorts(port);
         withNetwork(network);
-        withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withHostName("knjizenje"));
         withNetworkAliases("knjizenje");
         waitingFor(new HostPortWaitStrategy());
-        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(25000)));
+        withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofMillis(29000)));
 
         addEnv("SERVER_PORT", port + "");
         addEnv("SPRING_PROFILES_ACTIVE", "prod");

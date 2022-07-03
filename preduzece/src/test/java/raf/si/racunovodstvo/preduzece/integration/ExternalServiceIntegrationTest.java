@@ -2,6 +2,7 @@ package raf.si.racunovodstvo.preduzece.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import raf.si.racunovodstvo.preduzece.feign.TransakcijeFeignClient;
+import raf.si.racunovodstvo.preduzece.feign.UserFeignClient;
 import raf.si.racunovodstvo.preduzece.integration.test_model.LoginRequest;
 import raf.si.racunovodstvo.preduzece.integration.test_model.LoginResponse;
 import raf.si.racunovodstvo.preduzece.model.Obracun;
@@ -47,6 +49,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -87,6 +90,9 @@ class ExternalServiceIntegrationTest extends BaseIT {
     @Autowired
     private TransakcijeFeignClient transakcijeFeignClient;
 
+    @Autowired
+    private UserFeignClient userFeignClient;
+
     private MockMvc mockMvc;
 
     private static final String MOCK_NAZIV = "TESTNI OBRACUN";
@@ -98,6 +104,7 @@ class ExternalServiceIntegrationTest extends BaseIT {
         String loginUrl = "http://" + userContainer.getHost() + ":" + userContainer.getMappedPort(8086) + "/auth/login";
         LoginResponse loginResponse = postRest(loginUrl, loginRequest, LoginResponse.class);
         token = loginResponse.getJwt();
+        System.out.println("TOKEN: " + token);
 
         obracun = new Obracun();
         obracun.setNaziv(MOCK_NAZIV);
@@ -109,6 +116,14 @@ class ExternalServiceIntegrationTest extends BaseIT {
         obracunId = obracun.getObracunId();
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
+    }
+
+    @Test
+    void getKursnaLista() throws Exception {
+        String result = mockMvc.perform(get(URI_KURSNA_LISTA).header("Authorization", "Bearer " + token)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        KursnaListaResponse response = mapper.readValue(result, new TypeReference<>() {
+        });
+        assertNotNull(response.getResult());
     }
 
     @Test
@@ -129,14 +144,6 @@ class ExternalServiceIntegrationTest extends BaseIT {
         ObracunZaradeConfigResponse response = mapper.readValue(result, new TypeReference<>() {
         });
         assertEquals(1L, response.getSifraTransakcije().getSifraTransakcijeId());
-    }
-
-    @Test
-    void getKursnaLista() throws Exception {
-        String result = mockMvc.perform(get(URI_KURSNA_LISTA)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        KursnaListaResponse response = mapper.readValue(result, new TypeReference<>() {
-        });
-        assertNotNull(response.getResult());
     }
 
     @Test
@@ -211,6 +218,18 @@ class ExternalServiceIntegrationTest extends BaseIT {
         ObracunZaposleni saved = obracunZaposleniRepository.save(obracunZaposleni);
         obracunZaposleni.setObracunZaposleniId(saved.getObracunZaposleniId());
         return obracunZaposleni;
+    }
+
+    @Test
+    void testAccess() {
+        int status = userFeignClient.validateToken("Bearer " + token).getStatusCodeValue();
+
+        assertEquals(200, status);
+    }
+
+    @Test
+    void testAccessFail() {
+        assertThrows(FeignException.class, () -> userFeignClient.validateToken("WRONG" + token));
     }
 
     @SneakyThrows

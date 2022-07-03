@@ -3,6 +3,7 @@ package raf.si.racunovodstvo.knjizenje.integration;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import raf.si.racunovodstvo.knjizenje.feign.PreduzeceFeignClient;
+import raf.si.racunovodstvo.knjizenje.feign.UserFeignClient;
 import raf.si.racunovodstvo.knjizenje.integration.test_model.LoginRequest;
 import raf.si.racunovodstvo.knjizenje.integration.test_model.LoginResponse;
 import raf.si.racunovodstvo.knjizenje.model.Faktura;
@@ -36,6 +38,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,10 +48,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ExternalServiceIntegrationTest extends BaseIT {
+class ExternalServiceIntegrationTest extends DefaultBaseIT {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final RestTemplate restTemplate = new RestTemplate();
     private String token;
 
     private final static String URI_IZVESTAJI = "/api/izvestaji";
@@ -62,6 +63,9 @@ class ExternalServiceIntegrationTest extends BaseIT {
 
     @Autowired
     private PreduzeceFeignClient preduzeceFeignClient;
+
+    @Autowired
+    private UserFeignClient userFeignClient;
 
     private MockMvc mockMvc;
 
@@ -133,15 +137,15 @@ class ExternalServiceIntegrationTest extends BaseIT {
         assertEquals(1L, response.getPreduzeceId());
     }
 
-    @SneakyThrows
-    private <R> R postRest(String url, Object req, Class<R> clazz) {
-        HttpHeaders headers = new HttpHeaders();
-        if (token != null && !token.isBlank()) {
-            headers.set(HttpHeaders.AUTHORIZATION, token);
-        }
-        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        HttpEntity<String> request = new HttpEntity<>(mapper.writeValueAsString(req), headers);
-        ResponseEntity<R> response = restTemplate.postForEntity(url, request, clazz);
-        return response.getBody();
+    @Test
+    void testAccess() {
+        int status = userFeignClient.validateToken(token).getStatusCodeValue();
+
+        assertEquals(200, status);
+    }
+
+    @Test
+    void testAccessFail() {
+        assertThrows(FeignException.class, () -> userFeignClient.validateToken("WRONG" + token));
     }
 }
